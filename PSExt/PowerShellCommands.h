@@ -2,4 +2,4 @@
 
 void InvokePowerShellCommand(PCSTR command);
 HRESULT InitializeDbgPsHost();
-HRESULT UninitializeDbgPsHost();
+void UninitializeDbgPsHost();

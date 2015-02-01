@@ -1,16 +1,14 @@
 using System::String;
 using namespace System::Globalization;
 using namespace System::Management::Automation;
-
+#include <msclr\marshal.h>
 
 #include "engextcpp.hpp"
-#include <msclr\marshal.h>
+
 #include "PowerShellCommands.h"
 #include "PowerShellHostUI.hpp"
+#include "InvokeDebuggerCommand.h"
 
-
-using namespace msclr::interop;
-ref class PowerShellHostUI;
 
 ref class DbgPSHost : Host::PSHost  {
 	System::Guid _myId;
@@ -84,36 +82,49 @@ public:
 	}
 
 	
-
-
-	static String^ InvokeCommand(String^ command) {
-		TheShell->AddScript(command);
-		auto res = TheShell->Invoke();
-		marshal_context context;
+	static int Initialize(){
+		auto host = gcnew DbgPSHost;
+		auto iss = Runspaces::InitialSessionState::Create();
 		
-		for each(auto r in res){
-			String^ str = r->ToString();
-			const wchar_t* t = context.marshal_as<const wchar_t*>(str);
-			g_ExtInstancePtr->Out(t);
-		}
-		return "Foobar";
+		iss->Commands->Add(gcnew Runspaces::SessionStateCmdletEntry("Invoke-DebuggerCommand", InvokeDebuggerCommand::typeid, nullptr));
+		iss->Commands->Add(gcnew Runspaces::SessionStateAliasEntry("idc", "Invoke-DebuggerCommand", ""));
+
+		_runspace = Runspaces::RunspaceFactory::CreateRunspace(host, iss);				
+		return S_OK;
 	}
+
+	static void Uninitialize(){
+		_runspace->~Runspace();
+	}
+
+	static void InvokeCommand(String^ command) {	
+		if (_runspace->RunspaceStateInfo->State == Runspaces::RunspaceState::BeforeOpen){
+			_runspace->Open();
+		}
+		PowerShell^ ps = PowerShell::Create();
+		try{
+			ps->Runspace = _runspace;
+			ps->AddScript(command);
+			ps->Invoke();
+		}
+		finally{			
+			ps->~PowerShell();			
+		}		
+	}
+private:
+	static Runspaces::Runspace^ _runspace;
 };
 
 void InvokePowerShellCommand(PCSTR command){
-
-	DbgPSHost::InvokeCommand(marshal_as<String^>(command));
+	auto cmd = msclr::interop::marshal_as<String^>(command);
+	DbgPSHost::InvokeCommand(cmd);
 }
 
 HRESULT InitializeDbgPsHost(){
-	auto host = gcnew DbgPSHost;
-	auto runspace = Runspaces::RunspaceFactory::CreateRunspace(host);
-	runspace->Open();
-
+	return DbgPSHost::Initialize();
 }
-HRESULT UninitializeDbgPsHost(){
-	
-
+void UninitializeDbgPsHost(){	
+	DbgPSHost::Uninitialize();
 }
 
 

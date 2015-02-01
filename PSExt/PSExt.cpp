@@ -26,11 +26,16 @@
 class EXT_CLASS : public ExtExtension
 {
 public:	
-	EXT_COMMAND_METHOD(posh);	
+	EXT_COMMAND_METHOD(ps);	
 
 	HRESULT Initialize() override{
 		
 		return InitializeDbgPsHost();
+	}
+
+	void Uninitialize() override{
+
+		UninitializeDbgPsHost();
 	}
 };
 
@@ -40,7 +45,7 @@ EXT_DECLARE_GLOBALS();
 
 //----------------------------------------------------------------------------
 //
-// ummods extension command.
+// ps extension command.
 //
 // This command uses the framework's built-in OS
 // data querying methods to do a walk over the
@@ -63,65 +68,10 @@ EXT_DECLARE_GLOBALS();
 
 
 
-EXT_COMMAND(posh,
+EXT_COMMAND(ps,
 	"Invokes a powershell command for the debugger",
-	"{;e,o,d=@$peb;peb;PEB address}")
+	"{{custom}}{{s:cmd}}{{l:a powershell pipeline to execute}}")
 {
 	auto args = GetRawArgStr();
-	InvokePowerShellCommand(args);
-	// Create a typed object for the PEB argument address.
-	// The argument is defaulted to @$peb automatically so
-	// we can always assume an argument value is available.
-	ExtRemoteTyped Peb("(ntdll!_PEB*)@$extin", GetUnnamedArgU64(0));
-
-	//
-	// This pass shows how to explicitly construct
-	// typed objects to walk the PEB's loaded module list.
-	//
-
-	Out("Native loaded module list:\n");
-
-	ExtRemoteTyped LdrListHead =
-		Peb.Field("Ldr.InMemoryOrderModuleList");
-	ExtRemoteTypedList LdrList(LdrListHead,
-		"ntdll!_LDR_DATA_TABLE_ENTRY",
-		"InMemoryOrderLinks");
-	for (LdrList.StartHead(); LdrList.HasNode(); LdrList.Next())
-	{
-		ExtRemoteTyped Node = LdrList.GetTypedNode();
-
-		Out("Loader list entry at %p\n", LdrList.GetNodeOffset());
-		Out("  full path '%msu'\n",
-			LdrList.GetNodeOffset() + Node.GetFieldOffset("FullDllName"));
-		Node.OutFullValue();
-		Out("\n");
-	}
-
-	//
-	// This pass shows how things can be simplified by
-	// using the framework's built-in support for getting
-	// an appropriate typed module list typed object.
-	// The framework automatically chooses the 32- or
-	// 64-bit module list based on the current debugger
-	// mode, so this code properly handles both WOW64 and
-	// native module lists.
-	//
-
-	if (Is32On64())
-	{
-		Out("WOW64 32-bit loaded module list:\n");
-	}
-	else
-	{
-		Out("Native loaded module list:\n");
-	}
-
-	ExtRemoteTypedList LdrList2 =
-		ExtNtOsInformation::GetUserLoadedModuleList();
-	for (LdrList2.StartHead(); LdrList2.HasNode(); LdrList2.Next())
-	{
-		ExtRemoteTyped Node = LdrList2.GetTypedNode();
-
-		Out("Loader list entry at %p\n", LdrList2.GetNodeOffset());
-	}
+	InvokePowerShellCommand(args);	
 }
