@@ -27,6 +27,7 @@ class EXT_CLASS : public ExtExtension
 {
 public:	
 	EXT_COMMAND_METHOD(ps);	
+	EXT_COMMAND_METHOD(test);
 
 	HRESULT Initialize() override{
 		
@@ -75,3 +76,14 @@ EXT_COMMAND(ps,
 	auto args = GetRawArgStr();
 	InvokePowerShellCommand(args);	
 }
+
+#include "NativeDebuggerBreakpoint.h"
+
+EXT_COMMAND(test,
+	"Test the command under development",
+	"{{custom}}{{s:cmd}}{{l:a your custom args if needed}}")
+{	
+	auto bps = NativeDebuggerBreakpoint::GetBreakpoints();
+	
+}
+

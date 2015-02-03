@@ -3,6 +3,7 @@
 #include <msclr/marshal.h>
 #include <msclr/lock.h>
 using namespace System::Collections::Concurrent;
+using namespace System;
 
 ref class DebuggerDispatcher{
 	
@@ -52,13 +53,13 @@ ref class DebuggerDispatcher{
 	System::Threading::Thread^ _dispatchThread;
 	msclr::interop::marshal_context _marshal_context;
 
-	MethodInvocationInfo^ GetMethodInvocation(String^ methodName){
+	MethodInvocationInfo^ GetMethodInvocation(System::String^ methodName){
 		return gcnew MethodInvocationInfo(
 			GetType()->GetMethod(methodName),
 			this,
 			gcnew array<Object^>(0));
 	}
-	MethodInvocationInfo^ GetMethodInvocation(String^ methodName, Object^ arg1){
+	MethodInvocationInfo^ GetMethodInvocation(System::String^ methodName, Object^ arg1){
 		return gcnew MethodInvocationInfo(
 			GetType()->GetMethod(methodName),
 			this,
@@ -76,14 +77,6 @@ ref class DebuggerDispatcher{
 		auto res =_invocationInfo->GetResult();
 		_invocationInfo = nullptr;
 		return res;
-	}
-
-	Object^ InvokeFunction(String^ methodName){
-		return InvokeFunction(GetMethodInvocation(methodName));
-	}
-
-	Object^ InvokeFunction(String^ methodName, Object^ arg1){
-		return InvokeFunction(GetMethodInvocation(methodName, arg1));
 	}
 
 	DebuggerDispatcher(){
@@ -104,6 +97,13 @@ public:
 		}
 	}
 	
+	Object^ InvokeFunction(String^ methodName){
+		return InvokeFunction(GetMethodInvocation(methodName));
+	}
+
+	Object^ InvokeFunction(String^ methodName, Object^ arg1){
+		return InvokeFunction(GetMethodInvocation(methodName, arg1));
+	}
 
 	void Start(System::Threading::WaitHandle^ pipelineCompleted){
 		_dispatchThread = System::Threading::Thread::CurrentThread;
@@ -158,5 +158,30 @@ public:
 		auto str = _marshal_context.marshal_as<PCWSTR>(output);
 		g_ExtInstancePtr->Out(str);
 	}		
+
+};
+
+enum BreakpointKind{
+	Code,
+	Data,
+};
+
+enum DataBreakpointKind{
+	Read,
+	Write,
+	ReadWrite = Read | Write,
+	Execute,
+	IO
+};
+
+ref class BreakpointData{
+
+};
+
+ref class DebuggerBreakpoint{
+
+	System::Collections::Generic::List<BreakpointData^>^ GetBreakpoints(){
+		return nullptr;
+	}
 
 };
