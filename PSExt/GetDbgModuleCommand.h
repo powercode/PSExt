@@ -35,8 +35,8 @@ public:
 		for each(auto line in res->Split(gcnew array<wchar_t>(2){ '\r', '\n' }, System::StringSplitOptions::RemoveEmptyEntries)){
 			auto match = _pattern->Match(line);
 			if (match->Success){
-				auto start = Convert::ToUInt64(match->Groups[1]->Value, 16);
-				auto end = Convert::ToUInt64(match->Groups[2]->Value, 16);
+				auto start = Convert::ToUInt64(match->Groups[1]->Value->Remove(8,1), 16);
+				auto end = Convert::ToUInt64(match->Groups[2]->Value->Remove(8, 1), 16);
 				auto name = match->Groups[3]->Value;
 				WriteObject(gcnew SimpleDbgModule(start,end,name));
 			}
