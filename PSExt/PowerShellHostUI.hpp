@@ -1,5 +1,7 @@
+#pragma once
 #include "PowerShellHostRawUI.hpp"
 #include <msclr\marshal.h>
+#include "DebuggerDispatcher.h"
 
 
 ref class PowerShellHostUI : System::Management::Automation::Host::PSHostUserInterface{
@@ -14,10 +16,7 @@ public:
 	}
 
 	System::String ^ReadLine(void)override {
-		wchar_t buf[256];
-		ULONG inputSize = 0;
-		g_ExtInstancePtr->m_Control4->InputWide(buf, 256, &inputSize);
-		return msclr::interop::marshal_as<String^>(buf);		
+		return DebuggerDispatcher::Instance->ReadLine();		
 	}
 
 	System::Security::SecureString ^ReadLineAsSecureString(void)override {
@@ -30,48 +29,39 @@ public:
 	}
 
 	void Write(System::String ^ output)override {
-		auto str = _marshal_context.marshal_as<PCWSTR>(output);
-		g_ExtInstancePtr->Out(str);
+		DebuggerDispatcher::Instance->Write(output);
 	}
 
 	void Write(System::ConsoleColor,System::ConsoleColor,System::String ^ output)override {
-		auto str = _marshal_context.marshal_as<PCWSTR>(output);
-		g_ExtInstancePtr->Out(str);
+		Write(output);
 	}
 
 	void WriteLine(System::String^ output)override {
-		auto str = _marshal_context.marshal_as<PCWSTR>(output);
-		g_ExtInstancePtr->Out(L"%s\r\n", str);
+		Write(output + System::Environment::NewLine);
 	}
 
 	void WriteErrorLine(System::String ^ error)override {
-		auto str = _marshal_context.marshal_as<PCWSTR>(error);
-		g_ExtInstancePtr->Err(L"ERROR: %s\r\n", str);
+		WritePrefixedLine("Error", error);
 	}
 
 	void WriteDebugLine(System::String ^text)override {
-		auto str = _marshal_context.marshal_as<PCWSTR>(text);
-		g_ExtInstancePtr->Out(L"DEBUG: %s\r\n", str);
+		WritePrefixedLine("Debug", text);
 	}
 
 	void WriteProgress(__int64,System::Management::Automation::ProgressRecord ^)override {
 	}
 
 	void WriteVerboseLine(System::String ^text)override {
-		auto str = _marshal_context.marshal_as<PCWSTR>(text);
-		g_ExtInstancePtr->Out(L"VERBOSE: %s\r\n", str);
+		WritePrefixedLine("Verbose", text);
 	}
 
-	void WriteDebuggerOutput(System::String ^text, System::String^ prefix){
-		WriteDebuggerOutput(prefix + text);
+	void WriteWarningLine(System::String ^text)override {
+		WritePrefixedLine("Warning", text);
 	}
 
-	void WriteDebuggerOutput(System::String ^text){
-		auto str = _marshal_context.marshal_as<PCWSTR>(text);
-		g_ExtInstancePtr->Out(str);
+	void WritePrefixedLine(String^ prefix, System::String^ output) {
+		Write(System::String::Format("{0}: {1}{2}", prefix, output, System::Environment::NewLine));
 	}
-
-	void WriteWarningLine(System::String ^)override {}
 
 	System::Collections::Generic::Dictionary<System::String ^,System::Management::Automation::PSObject ^> ^Prompt(System::String ^,System::String ^,System::Collections::ObjectModel::Collection<System::Management::Automation::Host::FieldDescription ^> ^)override {
 		throw gcnew  PSNotImplementedException();
@@ -88,7 +78,5 @@ public:
 	int PromptForChoice(System::String ^,System::String ^,System::Collections::ObjectModel::Collection<System::Management::Automation::Host::ChoiceDescription ^> ^,int)override {
 		throw gcnew  PSNotImplementedException();
 	}
-
-
 	   
 };

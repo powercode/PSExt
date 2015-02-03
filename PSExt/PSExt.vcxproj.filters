@@ -30,10 +30,16 @@
     <ClInclude Include="PowerShellHostUI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InvokeDebuggerCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="engextcpp.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="InvokeDebuggerCommand.h">
+    <ClInclude Include="DebuggerDispatcher.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetDbgModuleCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,4 +1,4 @@
-
+#pragma once
 #include <engextcpp.hpp>
 
 using namespace System::Management::Automation;
@@ -67,7 +67,7 @@ public:
 
 	property Host::Size WindowSize{
 		Host::Size get() override{
-			return Host::Size(80, 50);
+			return Host::Size(160, 50);
 		}
 		void set(Host::Size) override {			
 		}
