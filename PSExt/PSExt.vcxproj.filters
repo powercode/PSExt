@@ -24,12 +24,6 @@
     <ClInclude Include="PowerShellCommands.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PowerShellHostRawUI.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PowerShellHostUI.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="InvokeDebuggerCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -45,6 +39,18 @@
     <ClInclude Include="NativeDebuggerBreakpoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Breakpoints.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetDebuggerBreakpointCommand.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DebuggerProxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Client.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSExt.cpp">
@@ -53,7 +59,22 @@
     <ClCompile Include="engextcpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DbgPSHost.cpp">
+    <ClCompile Include="DebuggerProxy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DebuggerDispatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Client.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PowerShellCommands.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NativeDebuggerBreakpoint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Breakpoints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

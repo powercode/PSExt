@@ -31,12 +31,12 @@ public:
 
 	HRESULT Initialize() override{
 		
-		return InitializeDbgPsHost();
+		return InitializePowerShell();
 	}
 
 	void Uninitialize() override{
 
-		UninitializeDbgPsHost();
+		UninitializePowerShell();
 	}
 };
 
@@ -83,7 +83,9 @@ EXT_COMMAND(test,
 	"Test the command under development",
 	"{{custom}}{{s:cmd}}{{l:a your custom args if needed}}")
 {	
-	auto bps = NativeDebuggerBreakpoint::GetBreakpoints();
-	
+	auto bps = NativeDebuggerBreakpoint::GetBreakpoints();	
+	for (auto& bp : bps){
+		g_Ext->Out(L"%s", bp.Command.c_str());
+	}
 }
 

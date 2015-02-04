@@ -137,48 +137,43 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Breakpoints.h" />
+    <ClInclude Include="Client.h" />
     <ClInclude Include="DebuggerDispatcher.h" />
+    <ClInclude Include="DebuggerProxy.h" />
     <ClInclude Include="engextcpp.hpp" />
     <ClInclude Include="GetDbgModuleCommand.h" />
+    <ClInclude Include="GetDebuggerBreakpointCommand.h" />
     <ClInclude Include="InvokeDebuggerCommand.h" />
     <ClInclude Include="NativeDebuggerBreakpoint.h" />
     <ClInclude Include="PowerShellCommands.h" />
-    <ClInclude Include="PowerShellHostRawUI.hpp" />
-    <ClInclude Include="PowerShellHostUI.hpp" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="engextcpp.cpp">
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
+    <ClCompile Include="Breakpoints.cpp" >
+      <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
-    <ClCompile Include="DbgPSHost.cpp">
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsManaged>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExceptionHandling>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExceptionHandling>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExceptionHandling>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExceptionHandling>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">4691</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4691</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">4691</DisableSpecificWarnings>
-      <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|x64'">4691</DisableSpecificWarnings>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</CompileAsManaged>
-      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">None</DebugInformationFormat>
-      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Release|x64'">None</DebugInformationFormat>
+    <ClCompile Include="Client.cpp">
+      <CompileAsManaged>true</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="DebuggerDispatcher.cpp">
+      <CompileAsManaged>true</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="DebuggerProxy.cpp">
+      <CompileAsManaged>true</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="engextcpp.cpp">
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <ClCompile Include="NativeDebuggerBreakpoint.cpp">
+      <CompileAsManaged>true</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="PowerShellCommands.cpp">
+      <CompileAsManaged>true</CompileAsManaged>
+      <DisableSpecificWarnings>4691</DisableSpecificWarnings>
     </ClCompile>
     <ClCompile Include="PSExt.cpp">
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</BasicRuntimeChecks>
-      <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</BasicRuntimeChecks>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExceptionHandling>
-      <ExceptionHandling Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExceptionHandling>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</CompileAsManaged>
-      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</CompileAsManaged>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Disabled</Optimization>
-      <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Disabled</Optimization>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +185,11 @@
     <Reference Include="mscorlib" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management.Automation" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PSExtCmdlets\PSExtCmdlets.csproj">
+      <Project>{789e85cb-0a34-4175-9ebe-3f1e0661f483}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
