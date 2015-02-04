@@ -34,6 +34,12 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1684</NoWarn>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>PSExt.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,7 +55,9 @@
     <Compile Include="BreakpointFlags.cs" />
     <Compile Include="BreakType.cs" />
     <Compile Include="DataBreakpointAccessTypes.cs" />
+    <Compile Include="DbgBaseCmdlet.cs" />
     <Compile Include="GetDbgBreakpointCommand.cs" />
+    <Compile Include="GetDebuggerModuleCommand.cs" />
     <Compile Include="IDebugger.cs" />
     <Compile Include="HostUserInterface.cs" />
     <Compile Include="InvokeDbgCommand.cs" />
@@ -58,6 +66,10 @@
     <Compile Include="PsHost.cs" />
     <Compile Include="PSSession.cs" />
     <Compile Include="RawUserInterface.cs" />
+    <Compile Include="SimpleDbgModule.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PSExt.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

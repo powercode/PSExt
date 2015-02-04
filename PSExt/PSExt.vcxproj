@@ -139,21 +139,23 @@
   <ItemGroup>
     <ClInclude Include="Breakpoints.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="CmdletLoader.h" />
     <ClInclude Include="DebuggerDispatcher.h" />
     <ClInclude Include="DebuggerProxy.h" />
     <ClInclude Include="engextcpp.hpp" />
     <ClInclude Include="GetDbgModuleCommand.h" />
-    <ClInclude Include="GetDebuggerBreakpointCommand.h" />
-    <ClInclude Include="InvokeDebuggerCommand.h" />
     <ClInclude Include="NativeDebuggerBreakpoint.h" />
     <ClInclude Include="PowerShellCommands.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Breakpoints.cpp" >
+    <ClCompile Include="Breakpoints.cpp">
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="Client.cpp">
+      <CompileAsManaged>true</CompileAsManaged>
+    </ClCompile>
+    <ClCompile Include="CmdletLoader.cpp">
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="DebuggerDispatcher.cpp">
@@ -189,6 +191,11 @@
   <ItemGroup>
     <ProjectReference Include="..\PSExtCmdlets\PSExtCmdlets.csproj">
       <Project>{789e85cb-0a34-4175-9ebe-3f1e0661f483}</Project>
+      <Private>true</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

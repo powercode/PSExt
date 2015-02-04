@@ -11,7 +11,9 @@
 //----------------------------------------------------------------------------
 
 #include <engextcpp.hpp>
+#include <Shlwapi.h>
 #include "PowerShellCommands.h"
+#include "CmdletLoader.h"
 //----------------------------------------------------------------------------
 //
 // Base extension class.
@@ -23,14 +25,42 @@
 //
 //----------------------------------------------------------------------------
 
+
+
+HMODULE GetCurrentModule()
+{ // NB: XP+ solution!
+	HMODULE hModule = NULL;
+	GetModuleHandleEx(
+		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
+		(LPCTSTR)GetCurrentModule,
+		&hModule);
+
+	return hModule;
+}
+
+int AddCurrentToDllPath(){
+	char buf[MAX_PATH];
+	GetModuleFileName(GetCurrentModule(), (LPSTR)buf, MAX_PATH);
+	::PathRemoveFileSpec(buf);
+	auto res = SetDllDirectoryA(buf);
+	if (res == 0){
+		auto err = GetLastError();
+		return err;
+	}
+	return 0;
+}
+
 class EXT_CLASS : public ExtExtension
 {
 public:	
 	EXT_COMMAND_METHOD(ps);	
 	EXT_COMMAND_METHOD(test);
 
+
+
 	HRESULT Initialize() override{
-		
+		AddCurrentToDllPath();
+		LoadCmdletAssembly();
 		return InitializePowerShell();
 	}
 

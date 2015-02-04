@@ -16,6 +16,9 @@
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
       <AdditionalUsingDirectories>$(MSBuildProjectDirectory)\..\PSExtCmdlets\bin\$(Configuration)</AdditionalUsingDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalDependencies>shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemGroup />
 </Project>

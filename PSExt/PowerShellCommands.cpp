@@ -5,8 +5,6 @@ using namespace System::Threading;
 using namespace System::Management::Automation;
 
 #include <msclr\marshal.h>
-
-
 #include "DebuggerDispatcher.h"
 #include "DebuggerProxy.h"
 #include "PowerShellCommands.h"
@@ -51,7 +49,8 @@ public:
 	
 };
 
-HRESULT InitializePowerShell(){
+
+HRESULT InitializePowerShell(){	
 	return Program::Initialize();
 }
 

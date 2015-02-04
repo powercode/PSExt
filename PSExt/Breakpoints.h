@@ -1,4 +1,5 @@
 #pragma once
+#using <PSExtCmdlets.dll>
 
 ref class DebuggerBreakpoint{
 public:

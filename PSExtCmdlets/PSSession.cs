@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,10 +17,10 @@ namespace PSExt {
 			_program = program;
 			var initialSessionState = InitialSessionState.CreateDefault();
 			initialSessionState.Commands.Add(GetInitialCommands());
+			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger, "Interface to the Windows debuggers", ScopedItemOptions.Constant));
 			var host = new DbgPsHost(debugger, program);
 			_runspace = RunspaceFactory.CreateRunspace(host, initialSessionState);
 		}
-
 
 		public static int Initialize(IDebugger debugger, IProgram program) {
 			_theSession = new PSSession(debugger, program);
