@@ -5,10 +5,16 @@
 using namespace System;
 using namespace System::Collections::Generic;
 
+DebuggerProxy::DebuggerProxy(){
+	_client = gcnew Client();
+	_breakpoints = gcnew DebuggerBreakpoint();
+}
+
 String^ DebuggerProxy::ExecuteCommand(String^ command)
 {
-	return command;
+	return _client->ExecuteCommand(command);
 }
+
 
 List<PSExt::BreakpointData^>^ DebuggerProxy::GetBreakpoints(){
 	return DebuggerBreakpoint::GetBreakpoints();

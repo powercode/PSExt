@@ -5,7 +5,7 @@ namespace PSExt
 {
 	[Cmdlet(VerbsCommon.Get, "DbgModule")]
 	[OutputType(typeof(SimpleDbgModule))]
-	class GetDebuggerModuleCommand: DbgBaseCmdlet{	
+	public class GetDebuggerModuleCommand: DbgBaseCmdlet{	
 		static readonly System.Text.RegularExpressions.Regex Pattern = new System.Text.RegularExpressions.Regex("(?<f>\\S+)\\s(?<t>\\S+)\\s+(?<m>\\S+)");
 
 		protected override void EndProcessing() {

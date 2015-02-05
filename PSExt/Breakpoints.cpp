@@ -11,7 +11,7 @@ using namespace System::Collections::Generic;
 List<BreakpointData^>^ DebuggerBreakpoint::GetBreakpoints(){
 
 	if (DebuggerDispatcher::Instance->DispatchRequired()){
-		auto res = (List<BreakpointData^>^)DebuggerDispatcher::Instance->InvokeFunction(DebuggerBreakpoint::typeid, "GetBreakPoints");
+		auto res = (List<BreakpointData^>^)DebuggerDispatcher::Instance->InvokeFunction(DebuggerBreakpoint::typeid, "GetBreakpoints");
 		return res;
 	}
 	auto bps = NativeDebuggerBreakpoint::GetBreakpoints();
@@ -25,7 +25,7 @@ List<BreakpointData^>^ DebuggerBreakpoint::GetBreakpoints(){
 		auto cmd = msclr::interop::marshal_as<String^>(nbp.Command);
 		auto expr = msclr::interop::marshal_as<String^>(nbp.OffsetExpression);
 		res->Add(gcnew BreakpointData(p.Offset, k, flags, dk, p.DataSize, p.ProcType, p.MatchThread,
-			p.PassCount, p.CurrentPassCount, p.Id, cmd, expr));
+			p.Id, p.PassCount, p.CurrentPassCount, cmd, expr));
 	}
 	return res;
 }

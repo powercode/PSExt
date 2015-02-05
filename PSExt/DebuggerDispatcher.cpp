@@ -6,19 +6,25 @@
 
 using namespace System::Collections::Generic;
 using namespace System;
+using namespace System::Reflection;
 
 ref class  MethodInvocationInfo{
-	System::Reflection::MethodInfo^ _mi;
+	MethodInfo^ _mi;
 	Object^ _this;
 	Object^ _res;
 	array<Object^>^ _args;
+
+	
 public:
-	MethodInvocationInfo(System::Reflection::MethodInfo^ mi, Object^ that, array<Object^>^ args)
+	MethodInvocationInfo(MethodInfo^ mi, Object^ that, array<Object^>^ args)
 		: _mi(mi)
 		, _this(that)
 		, _res(nullptr)
 		, _args(args)
 	{
+		if (mi == nullptr){
+			throw gcnew ArgumentNullException("mi", "The method was not found");
+		}
 	}
 	MethodInvocationInfo(System::Reflection::MethodInfo^ mi, Object^ that, Object^ arg1)
 		: _mi(mi)
@@ -26,6 +32,9 @@ public:
 		, _res(nullptr)
 		, _args(gcnew array<Object^>(1))
 	{
+		if (mi == nullptr){
+			throw gcnew ArgumentNullException("mi", "The method was not found");
+		}
 		_args[0] = arg1;
 	}
 	MethodInvocationInfo(System::Reflection::MethodInfo^ mi, Object^ that, Object^ arg1, Object^ arg2)
@@ -34,11 +43,15 @@ public:
 		, _res(nullptr)
 		, _args(gcnew array<Object^>(2))
 	{
+		if (mi == nullptr){
+			throw gcnew ArgumentNullException("mi", "The method was not found");
+		}
 		_args[0] = arg1;
 		_args[1] = arg2;
 	}
 
 	void Invoke(){
+		
 		_res = _mi->Invoke(_this, _args);
 	}
 
@@ -53,16 +66,25 @@ DebuggerDispatcher::DebuggerDispatcher(){
 	_lock = gcnew Object();
 }
 
+MethodInfo^ DebuggerDispatcher::GetMethodInfo(Type^ type, String^ methodName){
+	auto retval = type->GetMethod(methodName);
+	if (retval == nullptr){
+		throw gcnew ArgumentOutOfRangeException("methodName", methodName, "No method was found with the specified name.");
+	}
+	return retval;
+}
+
+
 MethodInvocationInfo^ DebuggerDispatcher::GetMethodInvocation(Type^ type, Object^ instance, System::String^ methodName){
 	return gcnew MethodInvocationInfo(
-		type->GetMethod(methodName),
+		GetMethodInfo(type, methodName),
 		instance,
 		gcnew array<Object^>(0));
 }
 
 MethodInvocationInfo^ DebuggerDispatcher::GetMethodInvocation(Type^ type, Object^ instance, System::String^ methodName, Object^ arg1){
 	return gcnew MethodInvocationInfo(
-		type->GetMethod(methodName),
+		GetMethodInfo(type, methodName),
 		instance,
 		arg1);
 }

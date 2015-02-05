@@ -4,11 +4,18 @@ namespace PSExt
 {
 	public abstract class DbgBaseCmdlet : PSCmdlet
 	{
-		protected IDebugger Debugger { get; private set; }
+		private IDebugger _debugger;
+
+		protected IDebugger Debugger
+		{
+			get
+			{
+				return _debugger ?? (_debugger = (IDebugger) SessionState.PSVariable.Get("Debugger").Value);
+			}
+		}
 
 		protected DbgBaseCmdlet()
-		{
-			Debugger = (IDebugger) SessionState.PSVariable.Get("Debugger").Value;
+		{			
 		}
 	}
 }

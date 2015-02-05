@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq.Expressions;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
@@ -36,6 +38,10 @@ namespace PSExt {
 		}
 
 		private void Invoke(string command) {
+			if (_runspace.RunspaceStateInfo.State == RunspaceState.BeforeOpen)
+			{
+				_runspace.Open();
+			}
 			_pipelineDoneEvent.Reset();
 			var pipeTask = Task.Factory.StartNew(() => InvokePipeline(command));
 			_program.ProcessEvents(_pipelineDoneEvent);
@@ -47,23 +53,30 @@ namespace PSExt {
 				_runspace.Open();
 			}
 			var ps = PowerShell.Create();
-			try {
+			
+			try
+			{
 				ps.Runspace = _runspace;
 				ps.AddScript(command);
-				ps.AddCommand(new CmdletInfo("Out-Default", typeof(Microsoft.PowerShell.Commands.OutDefaultCommand)));
+				ps.AddCommand(new CmdletInfo("Out-Default", typeof (Microsoft.PowerShell.Commands.OutDefaultCommand)));
 				ps.Commands.Commands[0].MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
 				ps.Invoke();
+			}
+			catch (Exception e)
+			{
+				Debug.WriteLine(e);
 			}
 			finally {
 				ps.Dispose();
 				_pipelineDoneEvent.Set();
-			}
+			}			
+			
 		}
 
 		static IEnumerable<SessionStateCommandEntry> GetInitialCommands() {
 			yield return new SessionStateCmdletEntry("Invoke-DbgCommand", typeof(InvokeDbgCommand), "");
 			yield return new SessionStateCmdletEntry("Get-DbgBreakpoint", typeof(GetDbgBreakpointCommand), "");
-			yield return new SessionStateCmdletEntry("Get-DbgModule", typeof(InvokeDbgCommand), "");
+			yield return new SessionStateCmdletEntry("Get-DbgModule", typeof(GetDebuggerModuleCommand), "");
 			yield return new SessionStateAliasEntry("idc", "Invoke-DbgCommand");
 		}
 

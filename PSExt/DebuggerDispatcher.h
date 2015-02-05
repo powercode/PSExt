@@ -16,7 +16,7 @@ ref class DebuggerDispatcher{
 	System::Object^ InvokeFunction(MethodInvocationInfo^ invocationInfo);
 	
 	DebuggerDispatcher();
-
+	static System::Reflection::MethodInfo^ GetMethodInfo(System::Type^ type, System::String^ methodName);
 
 public:
 	static DebuggerDispatcher^ instance;

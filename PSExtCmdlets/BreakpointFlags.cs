@@ -5,6 +5,7 @@ namespace PSExt
 	[Flags]
 	public enum BreakpointFlags
 	{
+		None = 0,
 		// Go-only breakpoints are only active when
 		// the engine is in unrestricted execution
 		// mode.  They do not fire when the engine
