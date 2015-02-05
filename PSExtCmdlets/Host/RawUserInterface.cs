@@ -1,16 +1,9 @@
 using System;
 using System.Management.Automation.Host;
 
-namespace PSExt
+namespace PSExt.Host
 {
 	internal class RawUserInterface : PSHostRawUserInterface {
-		private readonly IDebugger _debugger;
-
-		public RawUserInterface(IDebugger debugger)
-		{
-			_debugger = debugger;
-		}
-
 		/// <summary>
 		/// Gets or sets the background color of text to be written.
 		/// This implementation maps to the Console.Background property.

@@ -55,18 +55,18 @@
     <Compile Include="BreakpointFlags.cs" />
     <Compile Include="BreakType.cs" />
     <Compile Include="DataBreakpointAccessTypes.cs" />
-    <Compile Include="DbgBaseCmdlet.cs" />
-    <Compile Include="GetDbgBreakpointCommand.cs" />
-    <Compile Include="GetDebuggerModuleCommand.cs" />
-    <Compile Include="HostUtilities.cs" />
+    <Compile Include="Commands\DbgBaseCmdlet.cs" />
+    <Compile Include="Commands\GetDbgBreakpointCommand.cs" />
+    <Compile Include="Commands\GetDebuggerModuleCommand.cs" />
+    <Compile Include="Host\HostUtilities.cs" />
     <Compile Include="IDebugger.cs" />
-    <Compile Include="HostUserInterface.cs" />
-    <Compile Include="InvokeDbgCommand.cs" />
+    <Compile Include="Host\HostUserInterface.cs" />
+    <Compile Include="Commands\InvokeDbgCommand.cs" />
     <Compile Include="IProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PsHost.cs" />
+    <Compile Include="Host\PsHost.cs" />
     <Compile Include="PSSession.cs" />
-    <Compile Include="RawUserInterface.cs" />
+    <Compile Include="Host\RawUserInterface.cs" />
     <Compile Include="SimpleDbgModule.cs" />
   </ItemGroup>
   <ItemGroup>

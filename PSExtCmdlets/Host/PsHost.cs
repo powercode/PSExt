@@ -3,6 +3,7 @@ using System.Collections;
 using System.Globalization;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
+using PSExt.Host;
 
 namespace PSExt
 {

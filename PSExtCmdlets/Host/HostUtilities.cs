@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Security;
 using Microsoft.Win32;
 
-namespace PSExt
+namespace PSExt.Host
 {
 	/// <summary>
 	///     Helper functions for setting $profile.

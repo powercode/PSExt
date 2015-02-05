@@ -1,6 +1,6 @@
 ﻿using System.Management.Automation;
 
-namespace PSExt
+namespace PSExt.Commands
 {
 	[Cmdlet(VerbsCommon.Get, "DbgBreakpoint")]
 	[OutputType(typeof(BreakpointData))]

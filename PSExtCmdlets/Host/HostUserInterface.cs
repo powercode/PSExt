@@ -7,7 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Text;
 
-namespace PSExt
+namespace PSExt.Host
 {
 	internal class HostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
 	{
@@ -21,7 +21,7 @@ namespace PSExt
 		public HostUserInterface(IDebugger debugger)
 		{
 			_debugger = debugger;
-			_rawUi = new RawUserInterface(debugger);
+			_rawUi = new RawUserInterface();
 		}
 
 		/// <summary>

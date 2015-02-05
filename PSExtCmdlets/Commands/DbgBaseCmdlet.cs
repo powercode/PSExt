@@ -1,6 +1,6 @@
 using System.Management.Automation;
 
-namespace PSExt
+namespace PSExt.Commands
 {
 	public abstract class DbgBaseCmdlet : PSCmdlet
 	{

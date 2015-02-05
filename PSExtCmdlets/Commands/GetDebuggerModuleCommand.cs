@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Management.Automation;
 
-namespace PSExt
+namespace PSExt.Commands
 {
 	[Cmdlet(VerbsCommon.Get, "DbgModule")]
 	[OutputType(typeof(SimpleDbgModule))]

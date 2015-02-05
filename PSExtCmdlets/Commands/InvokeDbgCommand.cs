@@ -1,7 +1,7 @@
 using System;
 using System.Management.Automation;
 
-namespace PSExt
+namespace PSExt.Commands
 {
 	[Cmdlet(VerbsLifecycle.Invoke, "DbgCommand")]
 	[OutputType(typeof(string))]

@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.PowerShell.Commands;
+using PSExt.Commands;
+using PSExt.Host;
 
 namespace PSExt
 {
