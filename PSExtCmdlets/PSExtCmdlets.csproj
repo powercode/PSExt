@@ -58,6 +58,7 @@
     <Compile Include="DbgBaseCmdlet.cs" />
     <Compile Include="GetDbgBreakpointCommand.cs" />
     <Compile Include="GetDebuggerModuleCommand.cs" />
+    <Compile Include="HostUtilities.cs" />
     <Compile Include="IDebugger.cs" />
     <Compile Include="HostUserInterface.cs" />
     <Compile Include="InvokeDbgCommand.cs" />
