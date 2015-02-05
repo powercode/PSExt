@@ -11,7 +11,6 @@
 //----------------------------------------------------------------------------
 
 #include <engextcpp.hpp>
-#include <Shlwapi.h>
 #include "PowerShellCommands.h"
 #include "CmdletLoader.h"
 //----------------------------------------------------------------------------
@@ -26,30 +25,6 @@
 //----------------------------------------------------------------------------
 
 
-
-HMODULE GetCurrentModule()
-{ // NB: XP+ solution!
-	HMODULE hModule = NULL;
-	GetModuleHandleEx(
-		GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS,
-		(LPCTSTR)GetCurrentModule,
-		&hModule);
-
-	return hModule;
-}
-
-int AddCurrentToDllPath(){
-	char buf[MAX_PATH];
-	GetModuleFileName(GetCurrentModule(), (LPSTR)buf, MAX_PATH);
-	::PathRemoveFileSpec(buf);
-	auto res = SetDllDirectoryA(buf);
-	if (res == 0){
-		auto err = GetLastError();
-		return err;
-	}
-	return 0;
-}
-
 class EXT_CLASS : public ExtExtension
 {
 public:	
@@ -59,7 +34,6 @@ public:
 
 
 	HRESULT Initialize() override{
-		AddCurrentToDllPath();
 		LoadCmdletAssembly();
 		return InitializePowerShell();
 	}
@@ -107,15 +81,15 @@ EXT_COMMAND(ps,
 	InvokePowerShellCommand(args);	
 }
 
-#include "NativeDebuggerBreakpoint.h"
+#include "Symbols.h"
 
 EXT_COMMAND(test,
 	"Test the command under development",
 	"{{custom}}{{s:cmd}}{{l:a your custom args if needed}}")
 {	
-	auto bps = NativeDebuggerBreakpoint::GetBreakpoints();	
-	for (auto& bp : bps){
-		g_Ext->Out(L"%s", bp.Command.c_str());
+	auto syms= Symbols::GetMatchingSymbols(L"mem*");	
+	for (auto& s : syms){
+		g_Ext->Out(L"0x%p: %s\r\n", s.Offset, s.Name.c_str());
 	}
 }
 

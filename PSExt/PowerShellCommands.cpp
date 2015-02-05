@@ -44,9 +44,7 @@ public:
 
 	static void InvokeCommand(String^ command) {
 		PSExt::PSSession::InvokeCommand(command);		
-	}
-
-	
+	}	
 };
 
 

@@ -43,17 +43,14 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
     <Reference Include="System.Management.Automation" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BreakpointData.cs" />
     <Compile Include="BreakpointFlags.cs" />
     <Compile Include="BreakType.cs" />
+    <Compile Include="Commands\NewBreakpointCommand.cs" />
     <Compile Include="DataBreakpointAccessTypes.cs" />
     <Compile Include="Commands\DbgBaseCmdlet.cs" />
     <Compile Include="Commands\GetDbgBreakpointCommand.cs" />

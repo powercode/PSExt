@@ -26,6 +26,7 @@ namespace PSExt
 			initialSessionState.Commands.Add(GetInitialCommands());
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger,
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
+			initialSessionState.Variables.Add(new SessionStateVariableEntry("ShellID", "PSExt", "", ScopedItemOptions.Constant));
 			_host = new DbgPsHost(debugger, program);
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
 		}
@@ -248,6 +249,7 @@ namespace PSExt
 		{
 			yield return new SessionStateCmdletEntry("Invoke-DbgCommand", typeof (InvokeDbgCommand), "");
 			yield return new SessionStateCmdletEntry("Get-DbgBreakpoint", typeof (GetDbgBreakpointCommand), "");
+			yield return new SessionStateCmdletEntry("New-DbgBreakpoint", typeof(NewBreakpointCommand), "");
 			yield return new SessionStateCmdletEntry("Get-DbgModule", typeof (GetDebuggerModuleCommand), "");
 			yield return new SessionStateAliasEntry("idc", "Invoke-DbgCommand");
 		}

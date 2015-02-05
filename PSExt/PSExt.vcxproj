@@ -146,6 +146,7 @@
     <ClInclude Include="GetDbgModuleCommand.h" />
     <ClInclude Include="NativeDebuggerBreakpoint.h" />
     <ClInclude Include="PowerShellCommands.h" />
+    <ClInclude Include="Symbols.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -177,6 +178,7 @@
     <ClCompile Include="PSExt.cpp">
       <Optimization>Disabled</Optimization>
     </ClCompile>
+    <ClCompile Include="Symbols.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PSExt.def" />

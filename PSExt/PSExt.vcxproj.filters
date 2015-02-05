@@ -48,6 +48,9 @@
     <ClInclude Include="CmdletLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Symbols.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PSExt.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CmdletLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Symbols.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

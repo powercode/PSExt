@@ -35,6 +35,8 @@ namespace PSExt
 			CurrentPassCount = currentPasscount;
 			Command = command;
 			Expression = expr;			
-		}
+		}		
+
+
 	}
 }
