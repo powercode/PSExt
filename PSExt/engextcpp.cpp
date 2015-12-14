@@ -200,7 +200,7 @@ ExtCommandDesc::ExtCommandDesc(_In_ PCSTR Name,
 
     ExtCommandDesc* Cur, *Prev;
 
-    Prev = NULL;
+    Prev = nullptr;
     for (Cur = s_Commands; Cur; Cur = Cur->m_Next)
     {
         if (strcmp(Name, Cur->m_Name) < 0)
@@ -4450,6 +4450,24 @@ ExtRemoteTyped::Clear(void)
     ZeroMemory(&m_Typed, sizeof(m_Typed));
     m_Release = false;
     ExtRemoteData::Clear();
+}
+
+ExtRemoteList::ExtRemoteList(ULONG64 Head, ULONG LinkOffset, bool Double)
+	: m_Head(Head)
+    , m_LinkOffset(LinkOffset)
+    , m_Double(Double)
+    , m_MaxIter(65536)
+	, m_CurIter(0)
+{        
+}
+
+ExtRemoteList::ExtRemoteList(ExtRemoteData& Head, ULONG LinkOffset, bool Double)
+	: m_Head(Head.m_Offset)
+    , m_LinkOffset(LinkOffset)
+    , m_Double(Double)
+    , m_MaxIter(65536)
+	, m_CurIter(0)
+{      
 }
 
 //----------------------------------------------------------------------------

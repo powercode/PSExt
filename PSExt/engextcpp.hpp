@@ -97,7 +97,7 @@ public:
 //----------------------------------------------------------------------------
 
 #define EXT_RELEASE(_Unk) \
-    ((_Unk) != NULL ? ((_Unk)->Release(), (void)((_Unk) = NULL)) : (void)NULL)
+    ((_Unk) != nullptr ? ((_Unk)->Release(), (void)((_Unk) = nullptr)) : (void)nullptr)
 
 #define EXT_DIMAT(_Array, _EltType) (sizeof(_Array) / sizeof(_EltType))
 #define EXT_DIMA(_Array) EXT_DIMAT(_Array, (_Array)[0])
@@ -171,7 +171,7 @@ class ExtStatusException : public ExtException
 {
 public:
     ExtStatusException(_In_ HRESULT Status,
-                       _In_opt_ PCSTR Message = NULL)
+                       _In_opt_ PCSTR Message = nullptr)
         : ExtException(Status, Message) { }
 };
 
@@ -199,7 +199,7 @@ public:
 
 //----------------------------------------------------------------------------
 //
-// A checked pointer ensures that its value is non-NULL.
+// A checked pointer ensures that its value is non-nullptr.
 // This kind of wrapper is used for engine interface pointers
 // so that extensions can simply use whatever interface they
 // prefer with soft failure against engines that don't support
@@ -214,12 +214,12 @@ public:
     ExtCheckedPointer(_In_ PCSTR Message)
     {
         m_Message = Message;
-        m_Ptr = NULL;
+        m_Ptr = nullptr;
     }
 
     bool IsSet(void) const
     {
-        return m_Ptr != NULL;
+        return m_Ptr != nullptr;
     }
     void Throw(void) const throw(...)
     {
@@ -282,7 +282,7 @@ protected:
 //----------------------------------------------------------------------------
 //
 // An unknown holder is a safe pointer for an IUnknown.
-// It automatically checks for NULL usage and calls
+// It automatically checks for nullptr usage and calls
 // Release on destruction.
 //
 //----------------------------------------------------------------------------
@@ -293,7 +293,7 @@ class ExtUnknownHolder
 public:
     ExtUnknownHolder(void)
     {
-        m_Unk = NULL;
+        m_Unk = nullptr;
     }
     ~ExtUnknownHolder(void)
     {
@@ -305,7 +305,7 @@ public:
         if (!m_Unk)
         {
             throw ExtStatusException(E_NOINTERFACE,
-                                     "ExtUnknownHolder NULL reference");
+                                     "ExtUnknownHolder nullptr reference");
         }
         return m_Unk;
     }
@@ -317,8 +317,8 @@ public:
     _T* Relinquish(void)
     {
         _T* Ret = m_Unk;
-        m_Unk = NULL;
-        return m_Unk;
+        m_Unk = nullptr;
+        return Ret;
     }
 
     bool operator==(const _T* Unk) const
@@ -343,7 +343,7 @@ public:
         if (m_Unk)
         {
             throw ExtStatusException(E_NOINTERFACE,
-                                     "ExtUnknownHolder non-NULL & reference");
+                                     "ExtUnknownHolder non-nullptr & reference");
         }
         return &m_Unk;
     }
@@ -369,7 +369,7 @@ protected:
 //----------------------------------------------------------------------------
 //
 // A delete holder is a safe pointer for a dynamic object.
-// It automatically checks for NULL usage and calls
+// It automatically checks for nullptr usage and calls
 // delete on destruction.
 //
 //----------------------------------------------------------------------------
@@ -380,7 +380,7 @@ class ExtDeleteHolder
 public:
     ExtDeleteHolder(void)
     {
-        m_Ptr = NULL;
+        m_Ptr = nullptr;
     }
     ~ExtDeleteHolder(void)
     {
@@ -404,7 +404,7 @@ public:
     }
     _T* New(_In_ ULONG Elts) throw(...)
     {
-        if (Elts > (ULONG_PTR)-1 / sizeof(_T))
+        if (Elts > static_cast<ULONG_PTR>(-1) / sizeof(_T))
         {
             throw ExtStatusException
                 (HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW),
@@ -433,7 +433,7 @@ public:
         {
             delete m_Ptr;
         }
-        m_Ptr = NULL;
+        m_Ptr = nullptr;
     }
         
     _T* Get(void) const throw(...)
@@ -441,7 +441,7 @@ public:
         if (!m_Ptr)
         {
             throw ExtStatusException(E_INVALIDARG,
-                                     "ExtDeleteHolder NULL reference");
+                                     "ExtDeleteHolder nullptr reference");
         }
         return m_Ptr;
     }
@@ -453,7 +453,7 @@ public:
     _T* Relinquish(void)
     {
         _T* Ret = m_Ptr;
-        m_Ptr = NULL;
+        m_Ptr = nullptr;
         return Ret;
     }
 
@@ -483,7 +483,7 @@ public:
         if (m_Ptr)
         {
             throw ExtStatusException(E_INVALIDARG,
-                                     "ExtDeleteHolder non-NULL & reference");
+                                     "ExtDeleteHolder non-nullptr & reference");
         }
         return &m_Ptr;
     }
@@ -607,7 +607,7 @@ public:
     void WINAPI Refresh(void) throw(...);
     void WINAPI Restore(void);
 
-    bool IsHolding(void)
+    bool IsHolding(void) const
     {
         return m_ProcType != DEBUG_ANY_ID;
     }
@@ -717,7 +717,7 @@ public:
 
     void Resize(_In_ ULONG Elts) throw(...)
     {
-        if (Elts > (ULONG_PTR)-1 / sizeof(_T))
+        if (Elts > static_cast<ULONG_PTR>(-1) / sizeof(_T))
         {
             throw ExtStatusException
                 (HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW),
@@ -754,7 +754,7 @@ public:
     void Require(_In_ ULONG Elts,
                  _In_ ULONG Extra = 0) throw(...)
     {
-        if (Elts > (ULONG)-1 - Extra)
+        if (Elts > static_cast<ULONG>(-1) - Extra)
         {
             throw ExtStatusException
                 (HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW),
@@ -771,7 +771,7 @@ public:
                         _In_ ULONG Round) throw(...)
     {
         if (Round < 2 ||
-            Elts > (ULONG)-1 - Round)
+            Elts > static_cast<ULONG>(-1) - Round)
         {
             throw ExtStatusException
                 (HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW),
@@ -803,7 +803,7 @@ public:
     }
     void Clear(void)
     {
-        m_Ptr = NULL;
+        m_Ptr = nullptr;
         m_EltsAlloc = 0;
         m_EltsUsed = 0;
         m_Owned = false;
@@ -820,7 +820,7 @@ public:
         if (!m_Ptr)
         {
             throw ExtStatusException(E_INVALIDARG,
-                                     "ExtBuffer NULL reference");
+                                     "ExtBuffer nullptr reference");
         }
         return m_Ptr;
     }
@@ -891,7 +891,6 @@ public:
         throw ExtStatusException(E_INVALIDARG,
                                  "ExtBuffer can't be assigned "
                                  "an unsized pointer");
-        return *this;
     }
 
 protected:
@@ -915,13 +914,11 @@ public:
     {
         throw ExtStatusException(E_INVALIDARG,
                                  "ExtDeclBuffer can't be assigned a buffer");
-        return *this;
     }
     ExtDeclBuffer& operator=(_In_opt_ _T* Ptr)
     {
         throw ExtStatusException(E_INVALIDARG,
                                  "ExtDeclBuffer can't be assigned a buffer");
-        return *this;
     }
 
 protected:
@@ -940,7 +937,7 @@ class ExtDeclAlignedBuffer : public ExtBuffer<_T>
 {
 public:
     ExtDeclAlignedBuffer(void) :
-        ExtBuffer((_T*)m_Decl, _DeclElts, false, 0)
+        ExtBuffer(reinterpret_cast<_T*>(&m_Decl[0]), _DeclElts, false, 0)
     {
     };
 
@@ -949,14 +946,12 @@ public:
         throw ExtStatusException(E_INVALIDARG,
                                  "ExtDeclAlignedBuffer "
                                  "can't be assigned a buffer");
-        return *this;
     }
     ExtDeclAlignedBuffer& operator=(_In_opt_ _T* Ptr)
     {
         throw ExtStatusException(E_INVALIDARG,
                                  "ExtDeclAlignedBuffer "
                                  "can't be assigned a buffer");
-        return *this;
     }
 
 protected:
@@ -1027,7 +1022,7 @@ public:
                   ExpressionDelimited ||
                   ExpressionBits != 64 ||
                   ExpressionRadix != 0 ||
-                  ExpressionEvaluator != NULL)) ||
+                  ExpressionEvaluator != nullptr)) ||
                 (String &&
                  StringRemainder);
         }
@@ -1066,7 +1061,7 @@ public:
 // at an array of descriptors.  Callbacks will then be sent
 // automatically to the formatting methods when necessary.
 //
-// The final array entry should have TypeName == NULL.
+// The final array entry should have TypeName == nullptr.
 //
 //----------------------------------------------------------------------------
 
@@ -1092,7 +1087,7 @@ struct ExtKnownStruct
 // at an array of descriptors.  Callbacks will then be sent
 // automatically to the provider methods when necessary.
 //
-// The final array entry should have ValueName == NULL.
+// The final array entry should have ValueName == nullptr.
 //
 //----------------------------------------------------------------------------
 
@@ -1175,7 +1170,7 @@ public:
     ExtCheckedPointer<IDebugSymbols> m_Symbols;
     ExtCheckedPointer<IDebugSystemObjects> m_System;
 
-    // These derived interfaces may be NULL on
+    // These derived interfaces may be nullptr on
     // older engines which do not support them.
     // The checked pointers will automatically
     // protect access.
@@ -1233,53 +1228,55 @@ public:
     bool m_IsRemote;
     bool m_OutCallbacksDmlAware;
     
-    bool IsUserMode(void)
+    bool IsUserMode(void) const
     {
         return m_DebuggeeClass == DEBUG_CLASS_USER_WINDOWS;
     }
-    bool IsKernelMode(void)
+    bool IsKernelMode(void) const
     {
         return m_DebuggeeClass == DEBUG_CLASS_KERNEL;
     }
-    bool IsLiveLocalUser(void)
+    bool IsLiveLocalUser(void) const
     {
         return
             m_DebuggeeClass == DEBUG_CLASS_USER_WINDOWS &&
             m_DebuggeeQual == DEBUG_USER_WINDOWS_PROCESS;
     }
-    bool IsMachine32(_In_ ULONG Machine)
-    {
+
+	static bool IsMachine32(_In_ ULONG Machine)
+	{
         return
             Machine == IMAGE_FILE_MACHINE_I386 ||
             Machine == IMAGE_FILE_MACHINE_ARM ||
             Machine == IMAGE_FILE_MACHINE_THUMB ||
             Machine == IMAGE_FILE_MACHINE_ARMNT;
     }
-    bool IsCurMachine32(void)
+    bool IsCurMachine32(void) const
     {
         return IsMachine32(m_Machine);
     }
-    bool IsMachine64(_In_ ULONG Machine)
-    {
+
+	static bool IsMachine64(_In_ ULONG Machine)
+	{
         return
             Machine == IMAGE_FILE_MACHINE_AMD64 ||
             Machine == IMAGE_FILE_MACHINE_IA64;
     }
-    bool IsCurMachine64(void)
+    bool IsCurMachine64(void) const
     {
         return IsMachine64(m_Machine);
     }
-    bool Is32On64(void)
+    bool Is32On64(void) const
     {
         return IsCurMachine32() && IsMachine64(m_ActualMachine);
     }
-    bool CanQueryVirtual(void)
+    bool CanQueryVirtual(void) const
     {
         return
             m_DebuggeeClass == DEBUG_CLASS_USER_WINDOWS ||
             m_DebuggeeClass == DEBUG_CLASS_IMAGE_FILE;
     }
-    bool HasFullMemBasic(void)
+    bool HasFullMemBasic(void) const
     {
         return
             m_DebuggeeClass == DEBUG_CLASS_USER_WINDOWS &&
@@ -1290,11 +1287,11 @@ public:
               (m_DumpFormatFlags &
                DEBUG_FORMAT_USER_SMALL_FULL_MEMORY_INFO) != 0));
     }
-    bool IsExtensionRemote(void)
+    bool IsExtensionRemote(void) const
     {
         return m_IsRemote;
     }
-    bool AreOutputCallbacksDmlAware(void)
+    bool AreOutputCallbacksDmlAware(void) const
     {
         // Applies to callbacks present in client
         // at the start of the extension command.
@@ -1310,14 +1307,14 @@ public:
     // Common mode checks which throw on mismatches.
     //
 
-    void RequireUserMode(void)
+    void RequireUserMode(void) const
     {
         if (!IsUserMode())
         {
             throw ExtStatusException(S_OK, "user-mode only");
         }
     }
-    void RequireKernelMode(void)
+    void RequireKernelMode(void) const
     {
         if (!IsKernelMode())
         {
@@ -1386,7 +1383,7 @@ public:
         if (m_Advanced2.IsSet() &&
             m_Advanced2->
             Request(DEBUG_REQUEST_CURRENT_OUTPUT_CALLBACKS_ARE_DML_AWARE,
-                    NULL, 0, NULL, 0, NULL) == S_OK)
+                    nullptr, 0, nullptr, 0, nullptr) == S_OK)
         {
             m_OutCallbacksDmlAware = true;
         }
@@ -1487,7 +1484,7 @@ public:
     void WINAPIV AppendString(_In_ PCSTR Format,
                               ...) throw(...);
 
-    bool IsAppendStart(void)
+    bool IsAppendStart(void) const
     {
         return m_AppendAt == m_AppendBuffer;
     }
@@ -1507,7 +1504,7 @@ public:
 
     ULONG WINAPI GetEffectiveProcessor(void) throw(...);
     void WINAPI SetEffectiveProcessor(_In_ ULONG ProcType,
-                                      _Inout_opt_ ExtEffectiveProcessorTypeHolder* Holder = NULL) throw(...);
+                                      _Inout_opt_ ExtEffectiveProcessorTypeHolder* Holder = nullptr) throw(...);
 
     //
     // Cached symbol info.  The cache is
@@ -1521,8 +1518,8 @@ public:
     ULONG WINAPI GetCachedFieldOffset(_Inout_ PULONG64 Cookie,
                                _In_ PCSTR Type,
                                _In_ PCSTR Field,
-                               _Out_opt_ PULONG64 ModBase = NULL,
-                               _Out_opt_ PULONG TypeId = NULL);
+                               _Out_opt_ PULONG64 ModBase = nullptr,
+                               _Out_opt_ PULONG TypeId = nullptr);
     bool WINAPI GetCachedSymbolInfo(_In_ ULONG64 Cookie,
                              _Out_ PDEBUG_CACHED_SYMBOL_INFO Info);
     bool WINAPI AddCachedSymbolInfo(_In_ PDEBUG_CACHED_SYMBOL_INFO Info,
@@ -1588,7 +1585,7 @@ public:
     // or IDebugSymbols3::OutputSymbolByOffset.
     bool WINAPI GetOffsetSymbol(_In_ ULONG64 Offs,
                                _Inout_ ExtBuffer<char>* Name,
-                               _Out_opt_ PULONG64 Displacement = NULL,
+                               _Out_opt_ PULONG64 Displacement = nullptr,
                                _In_ bool AddDisp = false) throw(...);
     
     // Returns index of the first module whose name
@@ -1596,7 +1593,7 @@ public:
     // at the given module list index and only
     // looks at loaded modules.
     ULONG WINAPI FindFirstModule(_In_ PCSTR Pattern,
-                                 _Inout_opt_ ExtBuffer<char>* Name = NULL,
+                                 _Inout_opt_ ExtBuffer<char>* Name = nullptr,
                                  _In_ ULONG StartIndex = 0) throw(...);
 
     //
@@ -1707,20 +1704,20 @@ public:
     //
 
     ULONG WINAPI FindRegister(_In_ PCSTR Name,
-                       _Inout_opt_ PULONG IndexCache = NULL);
+                       _Inout_opt_ PULONG IndexCache =	nullptr);
     ULONG64 WINAPI GetRegisterU64(_In_ PCSTR Name,
-                           _Inout_opt_ PULONG IndexCache = NULL);
+                           _Inout_opt_ PULONG IndexCache = nullptr);
     void WINAPI SetRegisterU64(_In_ PCSTR Name,
                         _In_ ULONG64 Val,
-                        _Inout_opt_ PULONG IndexCache = NULL);
+                        _Inout_opt_ PULONG IndexCache = nullptr);
     
     ULONG WINAPI FindPseudoRegister(_In_ PCSTR Name,
-                             _Inout_opt_ PULONG IndexCache = NULL);
+                             _Inout_opt_ PULONG IndexCache = nullptr);
     ULONG64 WINAPI GetPseudoRegisterU64(_In_ PCSTR Name,
-                                 _Inout_opt_ PULONG IndexCache = NULL);
+                                 _Inout_opt_ PULONG IndexCache = nullptr);
     void WINAPI SetPseudoRegisterU64(_In_ PCSTR Name,
                               _In_ ULONG64 Val,
-                              _Inout_opt_ PULONG IndexCache = NULL);
+                              _Inout_opt_ PULONG IndexCache = nullptr);
 
     ULONG64 GetExtRetU64(void)
     {
@@ -1744,13 +1741,13 @@ public:
         Name[1] = 't';
         if (Index < 10)
         {
-            Name[2] = (char)('0' + Index);
+            Name[2] = static_cast<char>('0' + Index);
             Name[3] = 0;
         }
         else if (Index < EXT_DIMA(m_TempRegIndex))
         {
-            Name[2] = (char)('0' + (Index / 10));
-            Name[3] = (char)('0' + (Index % 10));
+            Name[2] = static_cast<char>('0' + (Index / 10));
+            Name[3] = static_cast<char>('0' + (Index % 10));
             Name[4] = 0;
         }
         else
@@ -1784,14 +1781,14 @@ public:
     // for a numeric argument, will result in an exception.
     //
 
-    ULONG GetNumUnnamedArgs(void)
+    ULONG GetNumUnnamedArgs(void) const
     {
         return m_NumUnnamedArgs;
     }
     
     PCSTR WINAPI GetUnnamedArgStr(_In_ ULONG Index) throw(...);
     ULONG64 WINAPI GetUnnamedArgU64(_In_ ULONG Index) throw(...);
-    bool HasUnnamedArg(_In_ ULONG Index)
+    bool HasUnnamedArg(_In_ ULONG Index) const
     {
         return Index < m_NumUnnamedArgs;
     }
@@ -1802,12 +1799,12 @@ public:
                       _In_ bool Required = true) throw(...);
     bool HasArg(_In_ PCSTR Name)
     {
-        return FindArg(Name, false) != NULL;
+        return FindArg(Name, false) != nullptr;
     }
     bool HasCharArg(_In_ CHAR Name)
     {
         CHAR NameStr[2] = {Name, 0};
-        return FindArg(NameStr, false) != NULL;
+        return FindArg(NameStr, false) != nullptr;
     }
 
     bool WINAPI SetUnnamedArg(_In_ ULONG Index,
@@ -1824,7 +1821,7 @@ public:
                           _In_ ULONG64 Arg,
                           _In_ bool OnlyIfUnset = false) throw(...)
     {
-        return SetUnnamedArg(Index, NULL, Arg, OnlyIfUnset);
+        return SetUnnamedArg(Index, nullptr, Arg, OnlyIfUnset);
     }
 
     bool WINAPI SetArg(_In_ PCSTR Name,
@@ -1841,14 +1838,14 @@ public:
                    _In_ ULONG64 Arg,
                    _In_ bool OnlyIfUnset = false) throw(...)
     {
-        return SetArg(Name, NULL, Arg, OnlyIfUnset);
+        return SetArg(Name, nullptr, Arg, OnlyIfUnset);
     }
 
-    PCSTR GetRawArgStr(void)
+    PCSTR GetRawArgStr(void) const
     {
         return m_RawArgStr;
     }
-    PSTR GetRawArgCopy(void)
+    PSTR GetRawArgCopy(void) const
     {
         // This string may be chopped up if
         // the default argument parsing occurred.
@@ -1869,7 +1866,7 @@ public:
                      _In_ LONG64 Limit,
                      _Out_ PLONG64 Val) throw(...)
     {
-        return GetExpr64(Str, true, (ULONG64)Limit, (PULONG64)Val);
+        return GetExpr64(Str, true, static_cast<ULONG64>(Limit), reinterpret_cast<PULONG64>(Val));
     }
 
     ULONG64 EvalExprU64(_In_ PCSTR Str)
@@ -1878,7 +1875,7 @@ public:
         DEBUG_VALUE FullVal;
         
         if ((Status = m_Control->
-             Evaluate(Str, DEBUG_VALUE_INT64, &FullVal, NULL)) != S_OK)
+             Evaluate(Str, DEBUG_VALUE_INT64, &FullVal, nullptr)) != S_OK)
         {
             ThrowStatus(Status, "Unable to evaluate '%s'", Str);
         }
@@ -1894,22 +1891,25 @@ public:
         }
         throw ExtStatusException(E_INVALIDARG);
     }
-    void ThrowInterrupt(void) throw(...)
+    void ThrowInterrupt(void) const throw(...)
     {
         if (m_Control->GetInterrupt() == S_OK)
         {
             throw ExtInterruptException();
         }
     }
-    void DECLSPEC_NORETURN ThrowOutOfMemory(void) throw(...)
+
+	static void DECLSPEC_NORETURN ThrowOutOfMemory(void) throw(...)
     {
         throw ExtStatusException(E_OUTOFMEMORY);
     }
-    void DECLSPEC_NORETURN ThrowContinueSearch(void) throw(...)
+
+	static void DECLSPEC_NORETURN ThrowContinueSearch(void) throw(...)
     {
         throw ExtStatusException(DEBUG_EXTENSION_CONTINUE_SEARCH);
     }
-    void DECLSPEC_NORETURN ThrowReloadExtension(void) throw(...)
+
+	static void DECLSPEC_NORETURN ThrowReloadExtension(void) throw(...)
     {
         throw ExtStatusException(DEBUG_EXTENSION_RELOAD_EXTENSION);
     }
@@ -1921,8 +1921,9 @@ public:
     void DECLSPEC_NORETURN WINAPIV ThrowStatus(_In_ HRESULT Status,
                                                _In_ PCSTR Format,
                                                ...) throw(...);
-    void DECLSPEC_NORETURN WINAPIV
-        ThrowLastError(_In_opt_ PCSTR Message = NULL) throw(...)
+
+	static void DECLSPEC_NORETURN WINAPIV
+        ThrowLastError(_In_opt_ PCSTR Message = nullptr) throw(...)
         {
             ExtStatusException Ex(HRESULT_FROM_WIN32(GetLastError()),
                                   Message);
@@ -1937,7 +1938,7 @@ public:
                         _In_opt_ PCSTR Args)
     {
         return CallExtCodeSEH(Desc, Client, Args,
-                              NULL, NULL, NULL, NULL);
+                              nullptr, nullptr, nullptr, nullptr);
     }
     // If you're doing a hybrid dbgeng/EngExtCpp extension
     // and you have plain dbgeng code that wants to
@@ -1951,20 +1952,20 @@ public:
     HRESULT CallRawMethod(_In_ PDEBUG_CLIENT Client,
                           _In_ ExtRawMethod Method,
                           _In_opt_ PVOID Context,
-                          _In_opt_ PCSTR Name = NULL)
+                          _In_opt_ PCSTR Name = nullptr)
     {
-        return CallExtCodeSEH(NULL, Client, NULL,
-                              Method, NULL, Context, Name);
+        return CallExtCodeSEH(nullptr, Client, nullptr,
+                              Method, nullptr, Context, Name);
     }
     // Similar to CallRawMethod except that the
     // code invoked is a plain function.
     HRESULT CallRawFunction(_In_ PDEBUG_CLIENT Client,
                             _In_ ExtRawFunction Function,
                             _In_opt_ PVOID Context,
-                            _In_opt_ PCSTR Name = NULL)
+                            _In_opt_ PCSTR Name = nullptr)
     {
-        return CallExtCodeSEH(NULL, Client, NULL,
-                              NULL, Function, Context, Name);
+        return CallExtCodeSEH(nullptr, Client, nullptr,
+                              nullptr, Function, Context, Name);
     }
 
     //
@@ -2241,7 +2242,7 @@ void _Name(void)
 // /? is automatically provided for all commands unless custom
 // argument parsing is indicated.
 //
-// A NULL or empty argument string indicates no arguments.
+// A nullptr or empty argument string indicates no arguments.
 // Commands are currently limited to a maximum of 64 arguments.
 //
 //----------------------------------------------------------------------------
@@ -2253,7 +2254,7 @@ void _Name(void)
 // These descs must always be global.
 #define EXT_EXPLICIT_COMMAND_DESC(_Name, _Desc, _Args)                        \
 ExtCommandDesc g_##_Name##Desc(#_Name,                                        \
-                               NULL,                                          \
+                               nullptr,                                          \
                                _Desc,                                         \
                                _Args)
 
@@ -2358,15 +2359,15 @@ public:
     
     CHAR GetChar(void) throw(...)
     {
-        return (CHAR)GetData(sizeof(CHAR));
+        return static_cast<CHAR>(GetData(sizeof(CHAR)));
     }
     UCHAR GetUchar(void) throw(...)
     {
-        return (UCHAR)GetData(sizeof(UCHAR));
+        return static_cast<UCHAR>(GetData(sizeof(UCHAR)));
     }
     BOOLEAN GetBoolean(void) throw(...)
     {
-        return (BOOLEAN)GetData(sizeof(BOOLEAN));
+        return static_cast<BOOLEAN>(GetData(sizeof(BOOLEAN)));
     }
     bool GetStdBool(void) throw(...)
     {
@@ -2374,41 +2375,41 @@ public:
     }
     BOOL GetW32Bool(void) throw(...)
     {
-        return (BOOL)GetData(sizeof(BOOL));
+        return static_cast<BOOL>(GetData(sizeof(BOOL)));
     }
     SHORT GetShort(void) throw(...)
     {
-        return (SHORT)GetData(sizeof(SHORT));
+        return static_cast<SHORT>(GetData(sizeof(SHORT)));
     }
     USHORT GetUshort(void) throw(...)
     {
-        return (USHORT)GetData(sizeof(USHORT));
+        return static_cast<USHORT>(GetData(sizeof(USHORT)));
     }
     LONG GetLong(void) throw(...)
     {
-        return (LONG)GetData(sizeof(LONG));
+        return static_cast<LONG>(GetData(sizeof(LONG)));
     }
     ULONG GetUlong(void) throw(...)
     {
-        return (ULONG)GetData(sizeof(ULONG));
+        return static_cast<ULONG>(GetData(sizeof(ULONG)));
     }
     LONG64 GetLong64(void) throw(...)
     {
-        return (LONG64)GetData(sizeof(LONG64));
+        return static_cast<LONG64>(GetData(sizeof(LONG64)));
     }
     ULONG64 GetUlong64(void) throw(...)
     {
-        return (ULONG64)GetData(sizeof(ULONG64));
+        return static_cast<ULONG64>(GetData(sizeof(ULONG64)));
     }
     float GetFloat(void) throw(...)
     {
         GetData(sizeof(float));
-        return *(float *)&m_Data;
+        return *reinterpret_cast<float *>(&m_Data);
     }
     double GetDouble(void) throw(...)
     {
         GetData(sizeof(double));
-        return *(double *)&m_Data;
+        return *reinterpret_cast<double *>(&m_Data);
     }
     
     void SetChar(_In_ CHAR Data) throw(...)
@@ -2457,11 +2458,11 @@ public:
     }
     void SetFloat(_In_ float Data) throw(...)
     {
-        SetData(*(ULONG*)&Data, sizeof(float));
+        SetData(*reinterpret_cast<ULONG*>(&Data), sizeof(float));
     }
     void SetDouble(_In_ double Data) throw(...)
     {
-        SetData(*(ULONG64*)&Data, sizeof(double));
+        SetData(*reinterpret_cast<ULONG64*>(&Data), sizeof(double));
     }
     
     //
@@ -2473,12 +2474,12 @@ public:
     LONG64 GetLongPtr(void) throw(...)
     {
         return g_Ext->m_PtrSize == 8 ?
-            (LONG64)GetData(g_Ext->m_PtrSize) :
-            (LONG)GetData(g_Ext->m_PtrSize);
+            static_cast<LONG64>(GetData(g_Ext->m_PtrSize)) :
+            static_cast<LONG>(GetData(g_Ext->m_PtrSize));
     }
     ULONG64 GetUlongPtr(void) throw(...)
     {
-        return (ULONG64)GetData(g_Ext->m_PtrSize);
+        return static_cast<ULONG64>(GetData(g_Ext->m_PtrSize));
     }
 
     //
@@ -2504,7 +2505,7 @@ public:
     {
         return g_Ext->m_PtrSize == 8 ?
             GetData(g_Ext->m_PtrSize) :
-            (LONG)GetData(g_Ext->m_PtrSize);
+            static_cast<LONG>(GetData(g_Ext->m_PtrSize));
     }
 
     //
@@ -2539,12 +2540,12 @@ public:
                           _In_ ULONG BufferChars,
                           _In_ ULONG MaxChars = 1024,
                           _In_ bool MustFit = false,
-                          _Out_opt_ PULONG NeedChars = NULL) throw(...);
+                          _Out_opt_ PULONG NeedChars = nullptr) throw(...);
     PWSTR WINAPI GetString(_Out_writes_opt_(BufferChars) PWSTR Buffer,
                            _In_ ULONG BufferChars,
                            _In_ ULONG MaxChars = 1024,
                            _In_ bool MustFit = false,
-                           _Out_opt_ PULONG NeedChars = NULL) throw(...);
+                           _Out_opt_ PULONG NeedChars = nullptr) throw(...);
     PSTR WINAPI GetString(_Inout_ ExtBuffer<char>* Buffer,
                           _In_ ULONG MaxChars = 1024) throw(...);
     PWSTR WINAPI GetString(_Inout_ ExtBuffer<WCHAR>* Buffer,
@@ -2562,7 +2563,7 @@ public:
 protected:
     void Clear(void)
     {
-        m_Name = NULL;
+        m_Name = nullptr;
         m_Offset = 0;
         m_ValidOffset = false;
         m_Bytes = 0;
@@ -2615,8 +2616,8 @@ public:
     ExtRemoteTyped(_In_ PCSTR Type,
                    _In_ ULONG64 Offset,
                    _In_ bool PtrTo,
-                   _Inout_opt_ PULONG64 CacheCookie = NULL,
-                   _In_opt_ PCSTR LinkField = NULL) throw(...)
+                   _Inout_opt_ PULONG64 CacheCookie = nullptr,
+                   _In_opt_ PCSTR LinkField = nullptr) throw(...)
     {
         m_Release = false;
         Set(Type, Offset, PtrTo, CacheCookie, LinkField);
@@ -2660,8 +2661,8 @@ public:
     void WINAPI Set(_In_ PCSTR Type,
                     _In_ ULONG64 Offset,
                     _In_ bool PtrTo,
-                    _Inout_opt_ PULONG64 CacheCookie = NULL,
-                    _In_opt_ PCSTR LinkField = NULL) throw(...);
+                    _Inout_opt_ PULONG64 CacheCookie = nullptr,
+                    _In_opt_ PCSTR LinkField = nullptr) throw(...);
 
     // Uses a circle string.
     void WINAPIV SetPrint(_In_ PCSTR Format,
@@ -2680,7 +2681,7 @@ public:
         ULONG Size;
         
         ErtIoctl("GetTypeSize", EXT_TDOP_GET_TYPE_SIZE, ErtIn,
-                 NULL, 0, NULL, NULL, 0, &Size);
+                 nullptr, 0, nullptr, nullptr, 0, &Size);
         return Size;
     }
     
@@ -2698,7 +2699,7 @@ public:
     }
     ExtRemoteTyped operator[](_In_ ULONG Index)
     {
-        return ArrayElement((LONG64)Index);
+        return ArrayElement(static_cast<LONG64>(Index));
     }
     ExtRemoteTyped operator[](_In_ LONG64 Index)
     {
@@ -2712,7 +2713,7 @@ public:
                 (HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW),
                  "Array index too large");
         }
-        return ArrayElement((LONG64)Index);
+        return ArrayElement(static_cast<LONG64>(Index));
     }
     ExtRemoteTyped operator*(void)
     {
@@ -2765,12 +2766,12 @@ protected:
     HRESULT WINAPI ErtIoctl(_In_ PCSTR Message,
                             _In_ EXT_TDOP Op,
                             _In_ ULONG Flags,
-                            _In_opt_ PCSTR InStr = NULL,
+                            _In_opt_ PCSTR InStr = nullptr,
                             _In_ ULONG64 In64 = 0,
-                            _Out_opt_ ExtRemoteTyped* Ret = NULL,
-                            _Out_writes_opt_(StrBufferChars) PSTR StrBuffer = NULL,
+                            _Out_opt_ ExtRemoteTyped* Ret = nullptr,
+                            _Out_writes_opt_(StrBufferChars) PSTR StrBuffer = nullptr,
                             _In_ ULONG StrBufferChars = 0,
-                            _Out_opt_ PULONG Out32 = NULL);
+                            _Out_opt_ PULONG Out32 = nullptr);
     void WINAPI Clear(void);
 };
 
@@ -2778,7 +2779,7 @@ protected:
 //
 // ExtRemoteList wraps a basic singly- or double-linked list.
 // It can iterate over the list and retrieve nodes both
-// forwards and backwards.  It handles both NULL-terminated
+// forwards and backwards.  It handles both nullptr-terminated
 // and lists that are circular through a head pointer (NT-style).
 //
 // When doubly-linked it is assumed that the previous
@@ -2789,26 +2790,15 @@ protected:
 class ExtRemoteList
 {
 public:
-    ExtRemoteList(_In_ ULONG64 Head,
-                  _In_ ULONG LinkOffset,
-                  _In_ bool Double = false)
-    {
-        m_Head = Head;
-        m_LinkOffset = LinkOffset;
-        m_Double = Double;
-        m_MaxIter = 65536;
-    }
-    ExtRemoteList(_In_ ExtRemoteData& Head,
-                  _In_ ULONG LinkOffset,
-                  _In_ bool Double = false)
-    {
-        m_Head = Head.m_Offset;
-        m_LinkOffset = LinkOffset;
-        m_Double = Double;
-        m_MaxIter = 65536;
-    }
+	ExtRemoteList(_In_ ULONG64 Head,
+	                   _In_ ULONG LinkOffset,
+	                   _In_ bool Double = false);
 
-    void StartHead(void)
+	ExtRemoteList(_In_ ExtRemoteData& Head,
+	                   _In_ ULONG LinkOffset,
+	                   _In_ bool Double = false);
+
+	void StartHead(void)
     {
         m_Node.Set(m_Head, g_Ext->m_PtrSize);
         m_CurIter = 0;
@@ -2887,7 +2877,7 @@ public:
                        _In_ PCSTR LinkField,
                        _In_ ULONG64 TypeModBase = 0,
                        _In_ ULONG TypeId = 0,
-                       _Inout_opt_ PULONG64 CacheCookie = NULL,
+                       _Inout_opt_ PULONG64 CacheCookie = nullptr,
                        _In_ bool Double = false) throw(...)
         : ExtRemoteList(Head, 0, Double)
     {
@@ -2898,7 +2888,7 @@ public:
                        _In_ PCSTR LinkField,
                        _In_ ULONG64 TypeModBase = 0,
                        _In_ ULONG TypeId = 0,
-                       _Inout_opt_ PULONG64 CacheCookie = NULL,
+                       _Inout_opt_ PULONG64 CacheCookie = nullptr,
                        _In_ bool Double = false) throw(...)
         : ExtRemoteList(Head, 0, Double)
     {
@@ -2909,7 +2899,7 @@ public:
                         _In_ PCSTR LinkField,
                         _In_ ULONG64 TypeModBase = 0,
                         _In_ ULONG TypeId = 0,
-                        _Inout_opt_ PULONG64 CacheCookie = NULL) throw(...)
+                        _Inout_opt_ PULONG64 CacheCookie = nullptr) throw(...)
     {
         m_Type = Type;
         m_TypeModBase = TypeModBase;
@@ -3098,7 +3088,7 @@ protected:
 
 #define EXT_DEFINE_DECL(_Def) \
     { #_Def, _Def },
-#define EXT_DEFINE_END { NULL, 0 }
+#define EXT_DEFINE_END { nullptr, 0 }
 
 // In order to avoid #define replacement on the names
 // these macros cannot be nested macros.
@@ -3199,7 +3189,7 @@ public:
     // so that they take priority for bitwise maps.
     ExtDefine* WINAPI Map(_In_ ULONG64 Value);
     PCSTR WINAPI MapStr(_In_ ULONG64 Value,
-                        _In_opt_ PCSTR InvalidStr = NULL);
+                        _In_opt_ PCSTR InvalidStr = nullptr);
 
     // For a bitwise map, outputs all defines
     // that can be found in the value.
@@ -3207,7 +3197,7 @@ public:
     // Uses wrapped output.
     void WINAPI Out(_In_ ULONG64 Value,
                     _In_ ULONG Flags = 0,
-                    _In_opt_ PCSTR InvalidStr = NULL);
+                    _In_opt_ PCSTR InvalidStr = nullptr);
     
     ExtDefine* m_Defines;
     ULONG m_Flags;
@@ -3226,8 +3216,8 @@ public:
     ExtCaptureOutput(void)
     {
         m_Started = false;
-        m_Text = NULL;
-        m_CharTypeSize = (ULONG) sizeof(_CharType);
+        m_Text = nullptr;
+        m_CharTypeSize = static_cast<ULONG>(sizeof(_CharType));
         Delete();
     }
     ~ExtCaptureOutput(void)
@@ -3242,12 +3232,12 @@ public:
         _Out_ PVOID* Interface
         )
     {
-        *Interface = NULL;
+        *Interface = nullptr;
 
         if (IsEqualIID(InterfaceId, __uuidof(IUnknown)) ||
             IsEqualIID(InterfaceId, __uuidof(_BaseClass)))
         {
-            *Interface = (_BaseClass *)this;
+            *Interface = static_cast<_BaseClass *>(this);
             AddRef();
             return S_OK;
         }
@@ -3281,17 +3271,17 @@ public:
         )
     {
         ULONG Chars;
-        ULONG CharTypeSize = (ULONG) sizeof(_CharType);
+        ULONG CharTypeSize = static_cast<ULONG>(sizeof(_CharType));
 
         UNREFERENCED_PARAMETER(Mask);
         
         if (CharTypeSize == sizeof(char))
         {
-            Chars = (ULONG) strlen((PSTR)Text) + 1;
+            Chars = static_cast<ULONG>(strlen(reinterpret_cast<PCSTR>(Text))) + 1;
         }
         else
         {
-            Chars = (ULONG) wcslen((PWSTR)Text) + 1;
+            Chars = static_cast<ULONG>(wcslen(reinterpret_cast<PCWSTR>(Text))) + 1;
         }
         if (Chars < 2)
         {
@@ -3323,7 +3313,7 @@ public:
                 return E_OUTOFMEMORY;
             }
 
-            m_Text = (_CharType*)NewMem;
+            m_Text = static_cast<_CharType*>(NewMem);
             m_AllocChars = NewBytes / CharTypeSize;
         }
 
@@ -3342,15 +3332,13 @@ public:
         if (m_CharTypeSize == sizeof(char))
         {
             if ((Status = g_Ext->m_Client->
-                 GetOutputCallbacks((IDebugOutputCallbacks**)
-                                    &m_OldOutCb)) != S_OK)
+                 GetOutputCallbacks(reinterpret_cast<IDebugOutputCallbacks**>(&m_OldOutCb))) != S_OK)
             {
                 g_Ext->ThrowStatus(Status,
                                    "Unable to get previous output callback");
             }
             if ((Status = g_Ext->m_Client->
-                 SetOutputCallbacks((IDebugOutputCallbacks*)
-                                    this)) != S_OK)
+                 SetOutputCallbacks(reinterpret_cast<IDebugOutputCallbacks*>(this))) != S_OK)
             {
                 g_Ext->ThrowStatus(Status,
                                    "Unable to set capture output callback");
@@ -3359,15 +3347,13 @@ public:
         else
         {
             if ((Status = g_Ext->m_Client5->
-                 GetOutputCallbacksWide((IDebugOutputCallbacksWide**)
-                                        &m_OldOutCb)) != S_OK)
+                 GetOutputCallbacksWide(reinterpret_cast<IDebugOutputCallbacksWide**>(&m_OldOutCb))) != S_OK)
             {
                 g_Ext->ThrowStatus(Status,
                                    "Unable to get previous output callback");
             }
             if ((Status = g_Ext->m_Client5->
-                 SetOutputCallbacksWide((IDebugOutputCallbacksWide*)
-                                        this)) != S_OK)
+                 SetOutputCallbacksWide(reinterpret_cast<IDebugOutputCallbacksWide*>(this))) != S_OK)
             {
                 g_Ext->ThrowStatus(Status,
                                    "Unable to set capture output callback");
@@ -3387,8 +3373,7 @@ public:
         if (m_CharTypeSize == sizeof(char))
         {
             if ((Status = g_Ext->m_Client->
-                 SetOutputCallbacks((IDebugOutputCallbacks*)
-                                    m_OldOutCb)) != S_OK)
+                 SetOutputCallbacks(reinterpret_cast<IDebugOutputCallbacks*>(m_OldOutCb))) != S_OK)
             {
                 g_Ext->ThrowStatus(Status,
                                    "Unable to restore output callback");
@@ -3397,15 +3382,14 @@ public:
         else
         {
             if ((Status = g_Ext->m_Client5->
-                 SetOutputCallbacksWide((IDebugOutputCallbacksWide*)
-                                        m_OldOutCb)) != S_OK)
+                 SetOutputCallbacksWide(reinterpret_cast<IDebugOutputCallbacksWide*>(m_OldOutCb))) != S_OK)
             {
                 g_Ext->ThrowStatus(Status,
                                    "Unable to restore output callback");
             }
         }
 
-        m_OldOutCb = NULL;
+        m_OldOutCb = nullptr;
     }
 
     void Delete(void)
@@ -3416,7 +3400,7 @@ public:
         }
 
         free(m_Text);
-        m_Text = NULL;
+        m_Text = nullptr;
         m_AllocChars = 0;
         m_UsedChars = 0;
     }

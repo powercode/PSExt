@@ -37,7 +37,8 @@ DString Symbols::GetNameByOffset(ULONG64 offset){
 }
 
 SymbolSearchResult::SymbolSearchResult() 
-	: Name(50, L'\0')
+	: Offset(0)
+	, Name(50, L'\0')
 {
 }
 
@@ -49,7 +50,8 @@ SymbolsSearch::~SymbolsSearch(){
 }
 
 
-bool SymbolsSearch::GetNextMatch(OUT SymbolSearchResult& nextMatch){
+bool SymbolsSearch::GetNextMatch(OUT SymbolSearchResult& nextMatch) const
+{
 	auto buf = const_cast<PWSTR>(nextMatch.Name.data());
 	auto len = static_cast<ULONG>(nextMatch.Name.size());
 	ULONG matchSize;

@@ -15,17 +15,17 @@ struct SymbolSearchResult{
 
 using SymbolSearchResults = std::vector < SymbolSearchResult > ;
 
-class Symbols{
+class Symbols final {
 	static bool GetNameByOffset(ULONG64 offset, OUT DString name);
 public:
 	static SymbolSearchResults GetMatchingSymbols(PCWSTR pattern);
 	static DString GetNameByOffset(ULONG64 offset);
 };
 
-class SymbolsSearch{
+class SymbolsSearch final{
 	ULONG64 _searchHandle;
 public:	
-	SymbolsSearch(PCWSTR pattern);
-	bool GetNextMatch(OUT SymbolSearchResult& nextMatch);
+	explicit SymbolsSearch(PCWSTR pattern);
+	bool GetNextMatch(OUT SymbolSearchResult& nextMatch) const;
 	~SymbolsSearch();
 };
