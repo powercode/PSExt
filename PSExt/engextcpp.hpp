@@ -14,7 +14,6 @@
 // Copyright (C) Microsoft Corporation, 2005-2009.
 //
 //----------------------------------------------------------------------------
-
 #if _MSC_VER > 1000
 #pragma once
 #endif
@@ -22,12 +21,16 @@
 #ifndef __ENGEXTCPP_HPP__
 #define __ENGEXTCPP_HPP__
 
+#pragma warning (push)
+#pragma warning (disable:4838 4091)
+
+
 #ifndef __cplusplus
 #error engextcpp.hpp requires C++.
 #endif
 
 #include <windows.h>
-#include <dbgeng.h>
+#include "nowarn/dbgeng.h"
 #define KDEXT_64BIT
 #include <wdbgexts.h>
 
@@ -3463,5 +3466,5 @@ typedef ExtCaptureOutput<WCHAR, IDebugOutputCallbacksWide> ExtCaptureOutputW;
 #endif
       
 #include <poppack.h>
-
+#pragma warning (pop)
 #endif // #ifndef __ENGEXTCPP_HPP__

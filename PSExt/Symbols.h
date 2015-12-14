@@ -1,5 +1,5 @@
 #pragma once
-#include <dbgeng.h>
+#include "nowarn/dbgeng.h"
 #include <string>
 #include <vector>
 

@@ -1,6 +1,6 @@
 #pragma once
 #using <PSExtCmdlets.dll>
-#include <dbgeng.h>
+#include "nowarn/dbgeng.h"
 
 ref class DebuggerBreakpoint{
 	

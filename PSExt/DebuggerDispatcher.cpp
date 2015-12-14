@@ -107,10 +107,10 @@ Object^ DebuggerDispatcher::InvokeFunction(Type^ type, Object^ instance, String^
 }
 
 DebuggerDispatcher^ DebuggerDispatcher::Instance::get(){	
-	if (instance == nullptr){
-		instance = gcnew DebuggerDispatcher();
+	if (s_instance == nullptr){
+		s_instance = gcnew DebuggerDispatcher();
 	}
-	return instance;	
+	return s_instance;
 }
 
 System::Object^ DebuggerDispatcher::InvokeFunction(MethodInvocationInfo^ invocationInfo){

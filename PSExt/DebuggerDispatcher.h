@@ -19,7 +19,7 @@ ref class DebuggerDispatcher{
 	static System::Reflection::MethodInfo^ GetMethodInfo(System::Type^ type, System::String^ methodName);
 
 public:
-	static DebuggerDispatcher^ instance;
+	static DebuggerDispatcher^ s_instance;
 	static property DebuggerDispatcher^ Instance{ DebuggerDispatcher^ get();};
 
 	System::Object^ InvokeFunction(System::Type^ type, System::String^ methodName);

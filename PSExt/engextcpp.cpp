@@ -8,7 +8,7 @@
 
 #include "engextcpp.hpp"
 #include <strsafe.h>
-#include <dbghelp.h>
+#include "nowarn/dbghelp.h"
 
 #if defined(_PREFAST_) || defined(_PREFIX_)
 #define PRE_ASSUME(_Cond) _Analysis_assume_(_Cond)

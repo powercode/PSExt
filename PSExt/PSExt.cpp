@@ -10,7 +10,7 @@
 //
 //----------------------------------------------------------------------------
 
-#include <engextcpp.hpp>
+#include "engextcpp.hpp"
 #include "PowerShellCommands.h"
 #include "CmdletLoader.h"
 //----------------------------------------------------------------------------
