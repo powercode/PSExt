@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using PSExt.Commands;
@@ -22,11 +23,13 @@ namespace PSExt
 		public PSSession(IDebugger debugger, IProgram program)
 		{
 			_program = program;
-			var initialSessionState = InitialSessionState.CreateDefault();
-			initialSessionState.Commands.Add(GetInitialCommands());
+			var initialSessionState = InitialSessionState.CreateDefault();			
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger,
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("ShellID", "PSExt", "", ScopedItemOptions.Constant));
+			var location = Assembly.GetExecutingAssembly().Location;
+			initialSessionState.ImportPSModule(new []{location });
+			initialSessionState.Commands.Add(new SessionStateAliasEntry("idc", "Invoke-DbgCommand"));
 			_host = new DbgPsHost(debugger, program);
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
 		}

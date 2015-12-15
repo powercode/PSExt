@@ -1,0 +1,7 @@
+.load C:\repos\PSExt\x64\Debug\PSExt.dll
+.symfix c:\sym
+.reload -f
+!ps get-module
+!ps get-DbgModule
+!ps idc lmv
+q
