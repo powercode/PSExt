@@ -9,5 +9,6 @@ namespace PSExt
 		void Write(string value);
 		IList<BreakpointData> GetBreakpoints();
 		IList<BreakpointData> AddBreakpoints(BreakpointData data);
+		IList<ModuleData> GetModules();
 	}
 }

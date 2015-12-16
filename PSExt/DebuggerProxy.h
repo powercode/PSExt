@@ -14,6 +14,6 @@ public:
 	virtual void Write(System::String^ output);
 	virtual System::Collections::Generic::IList<PSExt::BreakpointData^>^ GetBreakpoints();
 	virtual System::Collections::Generic::IList<PSExt::BreakpointData^>^ AddBreakpoints(PSExt::BreakpointData^ data);
-	
+	virtual System::Collections::Generic::IList<PSExt::ModuleData^>^ GetModules();
 };
 

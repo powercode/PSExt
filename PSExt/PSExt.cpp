@@ -32,7 +32,6 @@ public:
 	EXT_COMMAND_METHOD(test);
 
 
-
 	HRESULT Initialize() override{
 		LoadCmdletAssembly();
 		return InitializePowerShell();
@@ -87,9 +86,8 @@ EXT_COMMAND(test,
 	"Test the command under development",
 	"{{custom}}{{s:cmd}}{{l:a your custom args if needed}}")
 {	
-	auto syms= Symbols::GetMatchingSymbols(L"mem*");	
+	auto syms= Symbols::GetMatchingSymbols(L"ntdll!mem*");	
 	for (auto& s : syms){
 		g_Ext->Out(L"0x%p: %s\r\n", s.Offset, s.Name.c_str());
-	}
+	}	
 }
-

@@ -6,13 +6,7 @@ namespace PSExt.Commands
 	{
 		private IDebugger _debugger;
 
-		protected IDebugger Debugger
-		{
-			get
-			{
-				return _debugger ?? (_debugger = (IDebugger) SessionState.PSVariable.Get("Debugger").Value);
-			}
-		}
+		protected IDebugger Debugger => _debugger ?? (_debugger = (IDebugger) SessionState.PSVariable.Get("Debugger").Value);
 
 		protected DbgBaseCmdlet()
 		{			

@@ -2,6 +2,7 @@
 #include "Client.h"
 #include "Breakpoints.h"
 #include "DebuggerDispatcher.h"
+#include "Module.h"
 
 using namespace System;
 using namespace System::Collections::Generic;
@@ -17,12 +18,9 @@ String^ DebuggerProxy::ExecuteCommand(String^ command)
 	if (DebuggerDispatcher::Instance->DispatchRequired()){
 		return (String^) DebuggerDispatcher::Instance->InvokeFunction(Client::typeid, _client, "ExecuteCommand", command);
 		
-	}
+	}	
 	return _client->ExecuteCommand(command);
 }
-
-
-
 
 String^ DebuggerProxy::ReadLine(){
 	if (DebuggerDispatcher::Instance->DispatchRequired()){
@@ -52,4 +50,11 @@ IList<BreakpointData^>^ DebuggerProxy::AddBreakpoints(BreakpointData^ data){
 	}
 
 	return DebuggerBreakpoint::AddBreakpoints(data);
+}
+
+IList<ModuleData^>^ DebuggerProxy::GetModules() {
+	if (DebuggerDispatcher::Instance->DispatchRequired()) {
+		return (IList<ModuleData^>^) DebuggerDispatcher::Instance->InvokeFunction(Modules::typeid, "GetModules");
+	}
+	return Modules::GetModules();
 }

@@ -5,6 +5,7 @@ namespace PSExt.Commands
 {
 	[Cmdlet(VerbsLifecycle.Invoke, "DbgCommand")]
 	[OutputType(typeof(string))]
+	[Alias("idc")]
 	public class InvokeDbgCommand : DbgBaseCmdlet
 	{
 		[Parameter(Mandatory = true, Position = 1)]

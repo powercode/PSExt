@@ -64,12 +64,15 @@
     <Compile Include="IDebugger.cs" />
     <Compile Include="Host\HostUserInterface.cs" />
     <Compile Include="Commands\InvokeDbgCommand.cs" />
+    <Compile Include="ImageFileMachineType.cs" />
     <Compile Include="IProgram.cs" />
+    <Compile Include="ModuleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Host\PsHost.cs" />
     <Compile Include="PSSession.cs" />
     <Compile Include="Host\RawUserInterface.cs" />
     <Compile Include="SimpleDbgModule.cs" />
+    <Compile Include="SymType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

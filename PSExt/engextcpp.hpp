@@ -1189,6 +1189,7 @@ public:
 	ExtCheckedPointer<IDebugControl4> m_Control4;
 	ExtCheckedPointer<IDebugControl5> m_Control5;
 	ExtCheckedPointer<IDebugControl6> m_Control6;
+	ExtCheckedPointer<IDebugControl7> m_Control7;
 	ExtCheckedPointer<IDebugDataSpaces2> m_Data2;
 	ExtCheckedPointer<IDebugDataSpaces3> m_Data3;
 	ExtCheckedPointer<IDebugDataSpaces4> m_Data4;
@@ -1336,47 +1337,29 @@ public:
 	// the warning, error and verbose cases.
 	ULONG m_OutMask;
 
-	void WINAPIV Out(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV Warn(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV Err(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV Verb(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV Out(_In_ PCWSTR Format,
-		...) const;
-	void WINAPIV Warn(_In_ PCWSTR Format,
-		...) const;
-	void WINAPIV Err(_In_ PCWSTR Format,
-		...) const;
-	void WINAPIV Verb(_In_ PCWSTR Format,
-		...) const;
+	void WINAPIV Out(_In_ PCSTR Format,	...) const;
+	void WINAPIV Warn(_In_ PCSTR Format, ...) const;
+	void WINAPIV Err(_In_ PCSTR Format, ...) const;
+	void WINAPIV Verb(_In_ PCSTR Format, ...) const;
+	void WINAPIV Out(_In_ PCWSTR Format, ...) const;
+	void WINAPIV Warn(_In_ PCWSTR Format, ...) const;
+	void WINAPIV Err(_In_ PCWSTR Format, ...) const;
+	void WINAPIV Verb(_In_ PCWSTR Format, ...) const;
 
-	void WINAPIV Dml(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV DmlWarn(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV DmlErr(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV DmlVerb(_In_ PCSTR Format,
-		...) const;
-	void WINAPIV Dml(_In_ PCWSTR Format,
-		...) const;
-	void WINAPIV DmlWarn(_In_ PCWSTR Format,
-		...) const;
-	void WINAPIV DmlErr(_In_ PCWSTR Format,
-		...) const;
-	void WINAPIV DmlVerb(_In_ PCWSTR Format,
-		...) const;
+	void WINAPIV Dml(_In_ PCSTR Format,	...) const;
+	void WINAPIV DmlWarn(_In_ PCSTR Format, ...) const;
+	void WINAPIV DmlErr(_In_ PCSTR Format, ...) const;
+	void WINAPIV DmlVerb(_In_ PCSTR Format, ...) const;
+	void WINAPIV Dml(_In_ PCWSTR Format, ...) const;
+	void WINAPIV DmlWarn(_In_ PCWSTR Format, ...) const;
+	void WINAPIV DmlErr(_In_ PCWSTR Format,	...) const;
+	void WINAPIV DmlVerb(_In_ PCWSTR Format, ...) const;
 
-	void DmlCmdLink(_In_ PCSTR Text,
-		_In_ PCSTR Cmd) const
+	void DmlCmdLink(_In_ PCSTR Text, _In_ PCSTR Cmd) const
 	{
 		Dml("<link cmd=\"%s\">%s</link>", Cmd, Text);
 	}
-	void DmlCmdExec(_In_ PCSTR Text,
-		_In_ PCSTR Cmd) const
+	void DmlCmdExec(_In_ PCSTR Text, _In_ PCSTR Cmd) const
 	{
 		Dml("<exec cmd=\"%s\">%s</exec>", Cmd, Text);
 	}
@@ -1410,10 +1393,8 @@ public:
 	// Uses all wrapping state and updates m_CurChar.
 	void WINAPI WrapLine(void);
 	void WINAPI OutWrapStr(_In_ PCSTR String);
-	void WINAPIV OutWrapVa(_In_ PCSTR Format,
-		_In_ va_list Args);
-	void WINAPIV OutWrap(_In_ PCSTR Format,
-		...);
+	void WINAPIV OutWrapVa(_In_ PCSTR Format, _In_ va_list Args);
+	void WINAPIV OutWrap(_In_ PCSTR Format, ...);
 
 	void ClearWrap(void)
 	{
@@ -1466,10 +1447,8 @@ public:
 
 	PSTR WINAPI RequestCircleString(_In_ ULONG Chars) const throw(...);
 	PSTR WINAPI CopyCircleString(_In_ PCSTR Str) const throw(...);
-	PSTR WINAPI PrintCircleStringVa(_In_ PCSTR Format,
-		_In_ va_list Args) const throw(...);
-	PSTR WINAPIV PrintCircleString(_In_ PCSTR Format,
-		...) const throw(...);
+	PSTR WINAPI PrintCircleStringVa(_In_ PCSTR Format,	_In_ va_list Args) const throw(...);
+	PSTR WINAPIV PrintCircleString(_In_ PCSTR Format, ...) const throw(...);
 
 	//
 	// String buffer with append support.
@@ -1480,13 +1459,10 @@ public:
 	ULONG m_AppendBufferChars;
 	PSTR m_AppendAt;
 
-	void WINAPI SetAppendBuffer(_In_reads_(BufferChars) PSTR Buffer,
-		_In_ ULONG BufferChars);
+	void WINAPI SetAppendBuffer(_In_reads_(BufferChars) PSTR Buffer, _In_ ULONG BufferChars);
 	void WINAPI AppendBufferString(_In_ PCSTR Str) throw(...);
-	void WINAPI AppendStringVa(_In_ PCSTR Format,
-		_In_ va_list Args) throw(...);
-	void WINAPIV AppendString(_In_ PCSTR Format,
-		...) throw(...);
+	void WINAPI AppendStringVa(_In_ PCSTR Format, _In_ va_list Args) throw(...);
+	void WINAPIV AppendString(_In_ PCSTR Format, ...) throw(...);
 
 	bool IsAppendStart(void) const
 	{
@@ -1516,19 +1492,10 @@ public:
 	// symbol info changes.
 	//
 
-	ULONG WINAPI GetCachedSymbolTypeId(_Inout_ PULONG64 Cookie,
-		_In_ PCSTR Symbol,
-		_Out_ PULONG64 ModBase) const;
-	ULONG WINAPI GetCachedFieldOffset(_Inout_ PULONG64 Cookie,
-		_In_ PCSTR Type,
-		_In_ PCSTR Field,
-		_Out_opt_ PULONG64 ModBase = nullptr,
-		_Out_opt_ PULONG TypeId = nullptr) const;
-	bool WINAPI GetCachedSymbolInfo(_In_ ULONG64 Cookie,
-		_Out_ PDEBUG_CACHED_SYMBOL_INFO Info) const;
-	bool WINAPI AddCachedSymbolInfo(_In_ PDEBUG_CACHED_SYMBOL_INFO Info,
-		_In_ bool ThrowFailure,
-		_Out_ PULONG64 Cookie) const;
+	ULONG WINAPI GetCachedSymbolTypeId(_Inout_ PULONG64 Cookie, _In_ PCSTR Symbol,	_Out_ PULONG64 ModBase) const;
+	ULONG WINAPI GetCachedFieldOffset(_Inout_ PULONG64 Cookie, _In_ PCSTR Type, _In_ PCSTR Field, _Out_opt_ PULONG64 ModBase = nullptr, _Out_opt_ PULONG TypeId = nullptr) const;
+	bool WINAPI GetCachedSymbolInfo(_In_ ULONG64 Cookie, _Out_ PDEBUG_CACHED_SYMBOL_INFO Info) const;
+	bool WINAPI AddCachedSymbolInfo(_In_ PDEBUG_CACHED_SYMBOL_INFO Info, _In_ bool ThrowFailure, _Out_ PULONG64 Cookie) const;
 
 	//
 	// Symbol helpers.
@@ -1537,9 +1504,7 @@ public:
 	void WINAPI FindSymMatchStringA(void) throw(...);
 
 	// Matches patterns using the same code as dbgeng/dbghelp.
-	bool MatchPattern(_In_ PCSTR ArbitraryString,
-		_In_ PCSTR Pattern,
-		_In_ bool CaseSensitive = false)
+	bool MatchPattern(_In_ PCSTR ArbitraryString, _In_ PCSTR Pattern, _In_ bool CaseSensitive = false)
 	{
 		if (!m_SymMatchStringA)
 		{
@@ -1549,9 +1514,7 @@ public:
 			CaseSensitive) != FALSE;
 	}
 
-	bool GetSymbolOffset(_In_ PCSTR Symbol,
-		_In_ bool RetZero,
-		_Out_ ULONG64* Offs) const
+	bool GetSymbolOffset(_In_ PCSTR Symbol, _In_ bool RetZero, _Out_ ULONG64* Offs) const
 	{
 		HRESULT Status;
 
@@ -1578,7 +1541,7 @@ public:
 
 		return true;
 	}
-	bool CanResolveSymbol(_In_ PCSTR Symbol)
+	bool CanResolveSymbol(_In_ PCSTR Symbol) const
 	{
 		ULONG64 Offs;
 		return GetSymbolOffset(Symbol, true, &Offs);
@@ -1587,25 +1550,19 @@ public:
 	// Note that if you're just retrieving the symbol
 	// name to output it it's easier to use %y
 	// or IDebugSymbols3::OutputSymbolByOffset.
-	bool WINAPI GetOffsetSymbol(_In_ ULONG64 Offs,
-		_Inout_ ExtBuffer<char>* Name,
-		_Out_opt_ PULONG64 Displacement = nullptr,
-		_In_ bool AddDisp = false) const throw(...);
+	bool WINAPI GetOffsetSymbol(_In_ ULONG64 Offs, 	_Inout_ ExtBuffer<char>* Name, 	_Out_opt_ PULONG64 Displacement = nullptr, 	_In_ bool AddDisp = false) const throw(...);
 
 	// Returns index of the first module whose name
 	// matches the given pattern.  The scan starts
 	// at the given module list index and only
 	// looks at loaded modules.
-	ULONG WINAPI FindFirstModule(_In_ PCSTR Pattern,
-		_Inout_opt_ ExtBuffer<char>* Name = nullptr,
-		_In_ ULONG StartIndex = 0) throw(...);
+	ULONG WINAPI FindFirstModule(_In_ PCSTR Pattern, _Inout_opt_ ExtBuffer<char>* Name = nullptr, _In_ ULONG StartIndex = 0) throw(...);
 
 	//
 	// Module information helpers.
 	//
 
-	void WINAPI GetModuleImagehlpInfo(_In_ ULONG64 ModBase,
-		_Out_ struct _IMAGEHLP_MODULEW64* Info) const;
+	void WINAPI GetModuleImagehlpInfo(_In_ ULONG64 ModBase,	_Out_ struct _IMAGEHLP_MODULEW64* Info) const;
 	bool WINAPI ModuleHasGlobalSymbols(_In_ ULONG64 ModBase) const;
 	bool WINAPI ModuleHasTypeInfo(_In_ ULONG64 ModBase) const;
 
@@ -1614,24 +1571,17 @@ public:
 	//
 
 	// Uses a circle string.
-	void ExecuteVa(_In_ ULONG OutCtl,
-		_In_ ULONG ExecFlags,
-		_In_ PCSTR Format,
-		_In_ va_list Args) const throw(...)
+	void ExecuteVa(_In_ ULONG OutCtl, _In_ ULONG ExecFlags, _In_ PCSTR Format, _In_ va_list Args) const throw(...)
 	{
 		HRESULT Status;
 		PSTR Cmd = PrintCircleStringVa(Format, Args);
 
-		if (FAILED(Status = m_Control->
-			Execute(OutCtl, Cmd, ExecFlags)))
+		if (FAILED(Status = m_Control->Execute(OutCtl, Cmd, ExecFlags)))
 		{
 			ThrowStatus(Status, "Unable to execute '%s'", Cmd);
 		}
 	}
-	void Execute(_In_ ULONG OutCtl,
-		_In_ ULONG ExecFlags,
-		_In_ PCSTR Format,
-		...) const throw(...)
+	void Execute(_In_ ULONG OutCtl, _In_ ULONG ExecFlags, _In_ PCSTR Format, ...) const throw(...)
 	{
 		va_list Args;
 
@@ -1639,8 +1589,7 @@ public:
 		ExecuteVa(OutCtl, ExecFlags, Format, Args);
 		va_end(Args);
 	}
-	void Execute(_In_ PCSTR Format,
-		...) const throw(...)
+	void Execute(_In_ PCSTR Format, ...) const throw(...)
 	{
 		va_list Args;
 
@@ -1648,17 +1597,12 @@ public:
 		ExecuteVa(DEBUG_OUTCTL_AMBIENT, DEBUG_EXECUTE_DEFAULT, Format, Args);
 		va_end(Args);
 	}
-	void ExecuteSilent(_In_ PCSTR Format,
-		...) const throw(...)
+	void ExecuteSilent(_In_ PCSTR Format, ...) const throw(...)
 	{
 		va_list Args;
 
 		va_start(Args, Format);
-		ExecuteVa(DEBUG_OUTCTL_IGNORE,
-			DEBUG_EXECUTE_NOT_LOGGED |
-			DEBUG_EXECUTE_NO_REPEAT,
-			Format,
-			Args);
+		ExecuteVa(DEBUG_OUTCTL_IGNORE, DEBUG_EXECUTE_NOT_LOGGED | DEBUG_EXECUTE_NO_REPEAT, Format, Args);
 		va_end(Args);
 	}
 
@@ -1679,18 +1623,13 @@ public:
 	// It also means that this will fail on non-executable targets.
 	//
 
-	ULONG64 WINAPI CallDebuggeeBase(_In_ PCSTR CommandString,
-		_In_ ULONG TimeoutMilliseconds) const;
+	ULONG64 WINAPI CallDebuggeeBase(_In_ PCSTR CommandString, _In_ ULONG TimeoutMilliseconds) const;
 	// Uses a circle string.
-	ULONG64 CallDebuggeeVa(_In_ PCSTR Format,
-		_In_ va_list Args,
-		_In_ ULONG TimeoutMilliseconds = 60000)
+	ULONG64 CallDebuggeeVa(_In_ PCSTR Format, _In_ va_list Args, _In_ ULONG TimeoutMilliseconds = 60000) const
 	{
-		return CallDebuggeeBase(PrintCircleStringVa(Format, Args),
-			TimeoutMilliseconds);
+		return CallDebuggeeBase(PrintCircleStringVa(Format, Args), TimeoutMilliseconds);
 	}
-	ULONG64 CallDebuggee(_In_ PCSTR Format,
-		...)
+	ULONG64 CallDebuggee(_In_ PCSTR Format, ...) const
 	{
 		va_list Args;
 		ULONG64 Ret;
@@ -1707,21 +1646,13 @@ public:
 	// to DEBUG_ANY_ID.
 	//
 
-	ULONG WINAPI FindRegister(_In_ PCSTR Name,
-		_Inout_opt_ PULONG IndexCache = nullptr) const;
-	ULONG64 WINAPI GetRegisterU64(_In_ PCSTR Name,
-		_Inout_opt_ PULONG IndexCache = nullptr) const;
-	void WINAPI SetRegisterU64(_In_ PCSTR Name,
-		_In_ ULONG64 Val,
-		_Inout_opt_ PULONG IndexCache = nullptr) const;
+	ULONG WINAPI FindRegister(_In_ PCSTR Name, _Inout_opt_ PULONG IndexCache = nullptr) const;
+	ULONG64 WINAPI GetRegisterU64(_In_ PCSTR Name, _Inout_opt_ PULONG IndexCache = nullptr) const;
+	void WINAPI SetRegisterU64(_In_ PCSTR Name, _In_ ULONG64 Val, _Inout_opt_ PULONG IndexCache = nullptr) const;
 
-	ULONG WINAPI FindPseudoRegister(_In_ PCSTR Name,
-		_Inout_opt_ PULONG IndexCache = nullptr) const;
-	ULONG64 WINAPI GetPseudoRegisterU64(_In_ PCSTR Name,
-		_Inout_opt_ PULONG IndexCache = nullptr) const;
-	void WINAPI SetPseudoRegisterU64(_In_ PCSTR Name,
-		_In_ ULONG64 Val,
-		_Inout_opt_ PULONG IndexCache = nullptr) const;
+	ULONG WINAPI FindPseudoRegister(_In_ PCSTR Name, _Inout_opt_ PULONG IndexCache = nullptr) const;
+	ULONG64 WINAPI GetPseudoRegisterU64(_In_ PCSTR Name, _Inout_opt_ PULONG IndexCache = nullptr) const;
+	void WINAPI SetPseudoRegisterU64(_In_ PCSTR Name, _In_ ULONG64 Val, _Inout_opt_ PULONG IndexCache = nullptr) const;
 
 	ULONG64 GetExtRetU64(void)
 	{
@@ -1732,9 +1663,7 @@ public:
 		return SetPseudoRegisterU64("$extret", Val, &m_ExtRetIndex);
 	}
 
-	PSTR GetTempRegName(_In_ ULONG Index,
-		_Out_writes_(NameChars) PSTR Name,
-		_In_ ULONG NameChars) const
+	PSTR GetTempRegName(_In_ ULONG Index, _Out_writes_(NameChars) PSTR Name, _In_ ULONG NameChars) const
 	{
 		if (NameChars < 5)
 		{
@@ -1797,10 +1726,8 @@ public:
 		return Index < m_NumUnnamedArgs;
 	}
 
-	PCSTR WINAPI GetArgStr(_In_ PCSTR Name,
-		_In_ bool Required = true) throw(...);
-	ULONG64 WINAPI GetArgU64(_In_ PCSTR Name,
-		_In_ bool Required = true) throw(...);
+	PCSTR WINAPI GetArgStr(_In_ PCSTR Name, _In_ bool Required = true) throw(...);
+	ULONG64 WINAPI GetArgU64(_In_ PCSTR Name, _In_ bool Required = true) throw(...);
 	bool HasArg(_In_ PCSTR Name)
 	{
 		return FindArg(Name, false) != nullptr;
@@ -1811,36 +1738,22 @@ public:
 		return FindArg(NameStr, false) != nullptr;
 	}
 
-	bool WINAPI SetUnnamedArg(_In_ ULONG Index,
-		_In_opt_ PCSTR StrArg,
-		_In_ ULONG64 NumArg,
-		_In_ bool OnlyIfUnset = false) throw(...);
-	bool SetUnnamedArgStr(_In_ ULONG Index,
-		_In_ PCSTR Arg,
-		_In_ bool OnlyIfUnset = false) throw(...)
+	bool WINAPI SetUnnamedArg(_In_ ULONG Index,_In_opt_ PCSTR StrArg, _In_ ULONG64 NumArg, _In_ bool OnlyIfUnset = false) throw(...);
+	bool SetUnnamedArgStr(_In_ ULONG Index, _In_ PCSTR Arg, _In_ bool OnlyIfUnset = false) throw(...)
 	{
 		return SetUnnamedArg(Index, Arg, 0, OnlyIfUnset);
 	}
-	bool SetUnnamedArgU64(_In_ ULONG Index,
-		_In_ ULONG64 Arg,
-		_In_ bool OnlyIfUnset = false) throw(...)
+	bool SetUnnamedArgU64(_In_ ULONG Index, _In_ ULONG64 Arg, _In_ bool OnlyIfUnset = false) throw(...)
 	{
 		return SetUnnamedArg(Index, nullptr, Arg, OnlyIfUnset);
 	}
 
-	bool WINAPI SetArg(_In_ PCSTR Name,
-		_In_opt_ PCSTR StrArg,
-		_In_ ULONG64 NumArg,
-		_In_ bool OnlyIfUnset = false) throw(...);
-	bool SetArgStr(_In_ PCSTR Name,
-		_In_ PCSTR Arg,
-		_In_ bool OnlyIfUnset = false) throw(...)
+	bool WINAPI SetArg(_In_ PCSTR Name,_In_opt_ PCSTR StrArg, _In_ ULONG64 NumArg, _In_ bool OnlyIfUnset = false) throw(...);
+	bool SetArgStr(_In_ PCSTR Name, _In_ PCSTR Arg, _In_ bool OnlyIfUnset = false) throw(...)
 	{
 		return SetArg(Name, Arg, 0, OnlyIfUnset);
 	}
-	bool SetArgU64(_In_ PCSTR Name,
-		_In_ ULONG64 Arg,
-		_In_ bool OnlyIfUnset = false) throw(...)
+	bool SetArgU64(_In_ PCSTR Name, _In_ ULONG64 Arg, _In_ bool OnlyIfUnset = false) throw(...)
 	{
 		return SetArg(Name, nullptr, Arg, OnlyIfUnset);
 	}
@@ -1856,19 +1769,12 @@ public:
 		return m_ArgCopy;
 	}
 
-	PCSTR WINAPI GetExpr64(_In_ PCSTR Str,
-		_In_ bool Signed,
-		_In_ ULONG64 Limit,
-		_Out_ PULONG64 Val) const throw(...);
-	PCSTR GetExprU64(_In_ PCSTR Str,
-		_In_ ULONG64 Limit,
-		_Out_ PULONG64 Val) const throw(...)
+	PCSTR WINAPI GetExpr64(_In_ PCSTR Str,_In_ bool Signed, _In_ ULONG64 Limit, _Out_ PULONG64 Val) const throw(...);
+	PCSTR GetExprU64(_In_ PCSTR Str, _In_ ULONG64 Limit, _Out_ PULONG64 Val) const throw(...)
 	{
 		return GetExpr64(Str, false, Limit, Val);
 	}
-	PCSTR GetExprS64(_In_ PCSTR Str,
-		_In_ LONG64 Limit,
-		_Out_ PLONG64 Val) const throw(...)
+	PCSTR GetExprS64(_In_ PCSTR Str, _In_ LONG64 Limit, _Out_ PLONG64 Val) const throw(...)
 	{
 		return GetExpr64(Str, true, static_cast<ULONG64>(Limit), reinterpret_cast<PULONG64>(Val));
 	}
@@ -1917,20 +1823,14 @@ public:
 	{
 		throw ExtStatusException(DEBUG_EXTENSION_RELOAD_EXTENSION);
 	}
-	void DECLSPEC_NORETURN WINAPIV ThrowInvalidArg(_In_ PCSTR Format,
-		...) const throw(...);
-	void DECLSPEC_NORETURN WINAPIV ThrowRemote(_In_ HRESULT Status,
-		_In_ PCSTR Format,
-		...) const throw(...);
-	void DECLSPEC_NORETURN WINAPIV ThrowStatus(_In_ HRESULT Status,
-		_In_ PCSTR Format,
-		...) const throw(...);
+	void DECLSPEC_NORETURN WINAPIV ThrowInvalidArg(_In_ PCSTR Format,...) const throw(...);
+	void DECLSPEC_NORETURN WINAPIV ThrowRemote(_In_ HRESULT Status, _In_ PCSTR Format, ...) const throw(...);
+	void DECLSPEC_NORETURN WINAPIV ThrowStatus(_In_ HRESULT Status, _In_ PCSTR Format, ...) const throw(...);
 
 	static void DECLSPEC_NORETURN WINAPIV
 		ThrowLastError(_In_opt_ PCSTR Message = nullptr) throw(...)
 	{
-		ExtStatusException Ex(HRESULT_FROM_WIN32(GetLastError()),
-			Message);
+		ExtStatusException Ex(HRESULT_FROM_WIN32(GetLastError()), Message);
 		throw Ex;
 	}
 
@@ -1941,8 +1841,7 @@ public:
 		_In_ PDEBUG_CLIENT Client,
 		_In_opt_ PCSTR Args)
 	{
-		return CallExtCodeSEH(Desc, Client, Args,
-			nullptr, nullptr, nullptr, nullptr);
+		return CallExtCodeSEH(Desc, Client, Args, nullptr, nullptr, nullptr, nullptr);
 	}
 	// If you're doing a hybrid dbgeng/EngExtCpp extension
 	// and you have plain dbgeng code that wants to
@@ -1953,23 +1852,15 @@ public:
 	// If a name is provided then normal failure/exception
 	// error messages will be produced, just as
 	// is done for a full extension method.
-	HRESULT CallRawMethod(_In_ PDEBUG_CLIENT Client,
-		_In_ ExtRawMethod Method,
-		_In_opt_ PVOID Context,
-		_In_opt_ PCSTR Name = nullptr)
+	HRESULT CallRawMethod(_In_ PDEBUG_CLIENT Client, _In_ ExtRawMethod Method, _In_opt_ PVOID Context, _In_opt_ PCSTR Name = nullptr)
 	{
-		return CallExtCodeSEH(nullptr, Client, nullptr,
-			Method, nullptr, Context, Name);
+		return CallExtCodeSEH(nullptr, Client, nullptr, Method, nullptr, Context, Name);
 	}
 	// Similar to CallRawMethod except that the
 	// code invoked is a plain function.
-	HRESULT CallRawFunction(_In_ PDEBUG_CLIENT Client,
-		_In_ ExtRawFunction Function,
-		_In_opt_ PVOID Context,
-		_In_opt_ PCSTR Name = nullptr)
+	HRESULT CallRawFunction(_In_ PDEBUG_CLIENT Client, _In_ ExtRawFunction Function, _In_opt_ PVOID Context, _In_opt_ PCSTR Name = nullptr)
 	{
-		return CallExtCodeSEH(nullptr, Client, nullptr,
-			nullptr, Function, Context, Name);
+		return CallExtCodeSEH(nullptr, Client, nullptr, nullptr, Function, Context, Name);
 	}
 
 	//
@@ -1986,9 +1877,7 @@ public:
 	HRESULT m_CallStatus;
 	HRESULT m_MacroStatus;
 
-	typedef BOOL(WINAPI *PFN_SymMatchStringA)(_In_ PCSTR string,
-		_In_ PCSTR expression,
-		_In_ BOOL fCase);
+	typedef BOOL(WINAPI *PFN_SymMatchStringA)(_In_ PCSTR string, _In_ PCSTR expression, _In_ BOOL fCase);
 	HMODULE m_DbgHelp;
 	PFN_SymMatchStringA m_SymMatchStringA;
 
@@ -2616,11 +2505,7 @@ public:
 		m_Release = false;
 		Set(Expr, Offset);
 	}
-	ExtRemoteTyped(_In_ PCSTR Type,
-		_In_ ULONG64 Offset,
-		_In_ bool PtrTo,
-		_Inout_opt_ PULONG64 CacheCookie = nullptr,
-		_In_opt_ PCSTR LinkField = nullptr) throw(...)
+	ExtRemoteTyped(_In_ PCSTR Type, _In_ ULONG64 Offset, _In_ bool PtrTo, _Inout_opt_ PULONG64 CacheCookie = nullptr, _In_opt_ PCSTR LinkField = nullptr) throw(...)
 	{
 		m_Release = false;
 		Set(Type, Offset, PtrTo, CacheCookie, LinkField);
@@ -2657,33 +2542,22 @@ public:
 	void WINAPI Set(_In_ PCSTR Expr) throw(...);
 	void WINAPI Set(_In_ PCSTR Expr,
 		_In_ ULONG64 Offset) throw(...);
-	void WINAPI Set(_In_ bool PtrTo,
-		_In_ ULONG64 TypeModBase,
-		_In_ ULONG TypeId,
-		_In_ ULONG64 Offset) throw(...);
-	void WINAPI Set(_In_ PCSTR Type,
-		_In_ ULONG64 Offset,
-		_In_ bool PtrTo,
-		_Inout_opt_ PULONG64 CacheCookie = nullptr,
-		_In_opt_ PCSTR LinkField = nullptr) throw(...);
+	void WINAPI Set(_In_ bool PtrTo, _In_ ULONG64 TypeModBase, _In_ ULONG TypeId, _In_ ULONG64 Offset) throw(...);
+	void WINAPI Set(_In_ PCSTR Type, _In_ ULONG64 Offset, _In_ bool PtrTo, _Inout_opt_ PULONG64 CacheCookie = nullptr, _In_opt_ PCSTR LinkField = nullptr) throw(...);
 
 	// Uses a circle string.
 	void WINAPIV SetPrint(_In_ PCSTR Format, ...) throw(...);
 
 	bool HasField(_In_ PCSTR Field)
 	{
-		return ErtIoctl("HasField",
-			EXT_TDOP_HAS_FIELD,
-			ErtIn | ErtIgnoreError,
-			Field) == S_OK;
+		return ErtIoctl("HasField", EXT_TDOP_HAS_FIELD, ErtIn | ErtIgnoreError, Field) == S_OK;
 	}
 
 	ULONG GetTypeSize(void) throw(...)
 	{
 		ULONG Size;
 
-		ErtIoctl("GetTypeSize", EXT_TDOP_GET_TYPE_SIZE, ErtIn,
-			nullptr, 0, nullptr, nullptr, 0, &Size);
+		ErtIoctl("GetTypeSize", EXT_TDOP_GET_TYPE_SIZE, ErtIn, nullptr, 0, nullptr, nullptr, 0, &Size);
 		return Size;
 	}
 
@@ -2804,8 +2678,7 @@ public:
 	{
 		if (!m_Double)
 		{
-			g_Ext->ThrowRemote(E_INVALIDARG,
-				"ExtRemoteList is singly-linked");
+			g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteList is singly-linked");
 		}
 
 		m_Node.Set(m_Head + g_Ext->m_PtrSize, g_Ext->m_PtrSize);
@@ -2825,8 +2698,7 @@ public:
 	{
 		if (++m_CurIter > m_MaxIter)
 		{
-			g_Ext->ThrowRemote(E_INVALIDARG,
-				"List iteration count exceeded, loop assumed");
+			g_Ext->ThrowRemote(E_INVALIDARG, "List iteration count exceeded, loop assumed");
 		}
 
 		m_Node.Set(m_Node.GetPtr(), g_Ext->m_PtrSize);
@@ -2837,14 +2709,12 @@ public:
 
 		if (!m_Double)
 		{
-			g_Ext->ThrowRemote(E_INVALIDARG,
-				"ExtRemoteList is singly-linked");
+			g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteList is singly-linked");
 		}
 
 		if (++m_CurIter > m_MaxIter)
 		{
-			g_Ext->ThrowRemote(E_INVALIDARG,
-				"List iteration count exceeded, loop assumed");
+			g_Ext->ThrowRemote(E_INVALIDARG, "List iteration count exceeded, loop assumed");
 		}
 
 		m_Node.Set(m_Node.GetPtr() + g_Ext->m_PtrSize, g_Ext->m_PtrSize);
@@ -2995,8 +2865,7 @@ public:
 	static ULONG64 WINAPI GetUserLoadedModuleListHead(_In_ bool NativeOnly = false);
 	static ExtRemoteTypedList
 		WINAPI GetUserLoadedModuleList(_In_ bool NativeOnly = false);
-	static ExtRemoteTyped WINAPI GetUserLoadedModule(_In_ ULONG64 Offset,
-		_In_ bool NativeOnly = false);
+	static ExtRemoteTyped WINAPI GetUserLoadedModule(_In_ ULONG64 Offset, _In_ bool NativeOnly = false);
 
 	//
 	// PEB and TEB.

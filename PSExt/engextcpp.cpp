@@ -892,6 +892,7 @@ ExtExtension::ExtExtension(void)
 	m_Control4("The extension requires IDebugControl4."),
 	m_Control5("The extension requires IDebugControl5."),
 	m_Control6("The extension requires IDebugControl6."),
+	m_Control7("The extension requires IDebugControl7."),
 	m_Data2("The extension requires IDebugDataSpaces2."),
 	m_Data3("The extension requires IDebugDataSpaces3."),
 	m_Data4("The extension requires IDebugDataSpaces4."),
@@ -1599,10 +1600,7 @@ ExtExtension::FindSymMatchStringA(void)
 }
 
 bool WINAPI
-ExtExtension::GetOffsetSymbol(_In_ ULONG64 Offs,
-	_Inout_ ExtBuffer<char>* Name,
-	_Out_opt_ PULONG64 Displacement,
-	_In_ bool AddDisp) const throw(...)
+ExtExtension::GetOffsetSymbol(_In_ ULONG64 Offs, _Inout_ ExtBuffer<char>* Name, _Out_opt_ PULONG64 Displacement, _In_ bool AddDisp) const throw(...)
 {
 	HRESULT Status;
 	ULONG Need;
@@ -1610,11 +1608,7 @@ ExtExtension::GetOffsetSymbol(_In_ ULONG64 Offs,
 
 	for (UINT i = 0; i < 2; i++)
 	{
-		Status = m_Symbols->GetNameByOffset(Offs,
-			Name->GetRawBuffer(),
-			Name->GetEltsAlloc(),
-			&Need,
-			&LocalDisp);
+		Status = m_Symbols->GetNameByOffset(Offs, Name->GetRawBuffer(), Name->GetEltsAlloc(), &Need, &LocalDisp);
 		if (Status == E_NOINTERFACE)
 		{
 			return false;
@@ -1632,10 +1626,7 @@ ExtExtension::GetOffsetSymbol(_In_ ULONG64 Offs,
 				const ULONG DispChars = 19;
 
 				Name->Require(Need, DispChars);
-				StringCchPrintf(Name->GetBuffer() + (Need - 1),
-					DispChars,
-					"+0x%I64x",
-					LocalDisp);
+				StringCchPrintf(Name->GetBuffer() + (Need - 1), DispChars, "+0x%I64x", LocalDisp);
 			}
 			return true;
 		}
@@ -1653,9 +1644,7 @@ ExtExtension::GetOffsetSymbol(_In_ ULONG64 Offs,
 }
 
 ULONG WINAPI
-ExtExtension::FindFirstModule(_In_ PCSTR Pattern,
-	_Inout_opt_ ExtBuffer<char>* Name,
-	_In_ ULONG StartIndex) throw(...)
+ExtExtension::FindFirstModule(_In_ PCSTR Pattern, 	_Inout_opt_ ExtBuffer<char>* Name,	_In_ ULONG StartIndex) throw(...)
 {
 	HRESULT Status;
 	ULONG Need;
@@ -1663,17 +1652,7 @@ ExtExtension::FindFirstModule(_In_ PCSTR Pattern,
 
 	for (;;)
 	{
-		Status = m_Symbols->GetModuleNames(StartIndex,
-			0,
-			nullptr,
-			0,
-			nullptr,
-			LocalName.GetRawBuffer(),
-			LocalName.GetEltsAlloc(),
-			&Need,
-			nullptr,
-			0,
-			nullptr);
+		Status = m_Symbols->GetModuleNames(StartIndex,0, nullptr, 0, nullptr, LocalName.GetRawBuffer(), LocalName.GetEltsAlloc(), &Need, nullptr, 0, nullptr);
 		if (Status == S_OK)
 		{
 			if (!MatchPattern(LocalName, Pattern))
@@ -1691,9 +1670,7 @@ ExtExtension::FindFirstModule(_In_ PCSTR Pattern,
 		}
 		else if (Status != S_FALSE)
 		{
-			ThrowStatus(Status,
-				"Unable to find any module matches for '%s'",
-				Pattern);
+			ThrowStatus(Status, "Unable to find any module matches for '%s'", Pattern);
 		}
 
 		LocalName.RequireRounded(Need, 20);
@@ -1701,24 +1678,14 @@ ExtExtension::FindFirstModule(_In_ PCSTR Pattern,
 }
 
 void WINAPI
-ExtExtension::GetModuleImagehlpInfo(_In_ ULONG64 ModBase,
-	_Out_ struct _IMAGEHLP_MODULEW64* Info) const
+ExtExtension::GetModuleImagehlpInfo(_In_ ULONG64 ModBase,	_Out_ struct _IMAGEHLP_MODULEW64* Info) const
 {
 	HRESULT Status;
 
 	ZeroMemory(Info, sizeof(*Info));
 	Info->SizeOfStruct = sizeof(*Info);
 
-	if ((Status = m_Advanced2->
-		GetSymbolInformation(DEBUG_SYMINFO_IMAGEHLP_MODULEW64,
-			ModBase,
-			0,
-			Info,
-			Info->SizeOfStruct,
-			nullptr,
-			nullptr,
-			0,
-			nullptr)) != S_OK)
+	if ((Status = m_Advanced2->GetSymbolInformation(DEBUG_SYMINFO_IMAGEHLP_MODULEW64, ModBase, 0, Info, Info->SizeOfStruct,	nullptr, nullptr, 0, nullptr)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to retrieve module info");
 	}
@@ -1743,8 +1710,7 @@ ExtExtension::ModuleHasTypeInfo(_In_ ULONG64 ModBase) const
 }
 
 ULONG64 WINAPI
-ExtExtension::CallDebuggeeBase(_In_ PCSTR CommandString,
-	_In_ ULONG TimeoutMilliseconds) const
+ExtExtension::CallDebuggeeBase(_In_ PCSTR CommandString, _In_ ULONG TimeoutMilliseconds) const
 {
 	HRESULT Status;
 	ExtDeclBuffer<char, 300> Cmd;
@@ -1753,11 +1719,7 @@ ExtExtension::CallDebuggeeBase(_In_ PCSTR CommandString,
 	Cmd.Copy(".call ", 6);
 	Cmd.Append(CommandString, static_cast<ULONG>(strlen(CommandString)) + 1);
 
-	if (FAILED(Status = m_Control->
-		Execute(DEBUG_OUTCTL_IGNORE,
-			Cmd,
-			DEBUG_EXECUTE_NOT_LOGGED |
-			DEBUG_EXECUTE_NO_REPEAT)))
+	if (FAILED(Status = m_Control->Execute(DEBUG_OUTCTL_IGNORE,	Cmd, DEBUG_EXECUTE_NOT_LOGGED | DEBUG_EXECUTE_NO_REPEAT)))
 	{
 		ThrowStatus(Status, "Unable to execute '%s'", Cmd);
 	}
@@ -1772,8 +1734,7 @@ ExtExtension::CallDebuggeeBase(_In_ PCSTR CommandString,
 
 	if ((Status = m_Control->SetExecutionStatus(DEBUG_STATUS_GO)) == S_OK)
 	{
-		Status = m_Control->WaitForEvent(DEBUG_WAIT_DEFAULT,
-			TimeoutMilliseconds);
+		Status = m_Control->WaitForEvent(DEBUG_WAIT_DEFAULT, TimeoutMilliseconds);
 	}
 
 	IgnoreOut.Delete();
@@ -1781,10 +1742,7 @@ ExtExtension::CallDebuggeeBase(_In_ PCSTR CommandString,
 	if (FAILED(Status))
 	{
 		// Try and revert our .call setup.
-		m_Control->Execute(DEBUG_OUTCTL_IGNORE,
-			".call -c",
-			DEBUG_EXECUTE_NOT_LOGGED |
-			DEBUG_EXECUTE_NO_REPEAT);
+		m_Control->Execute(DEBUG_OUTCTL_IGNORE,	".call -c",	DEBUG_EXECUTE_NOT_LOGGED | DEBUG_EXECUTE_NO_REPEAT);
 
 		ThrowStatus(Status, "Unable to wait for debuggee to run");
 	}
@@ -1811,8 +1769,7 @@ ExtExtension::CallDebuggeeBase(_In_ PCSTR CommandString,
 }
 
 ULONG WINAPI
-ExtExtension::FindRegister(_In_ PCSTR Name,
-	_Inout_opt_ PULONG IndexCache) const
+ExtExtension::FindRegister(_In_ PCSTR Name,	_Inout_opt_ PULONG IndexCache) const
 {
 	HRESULT Status;
 	ULONG Index;
@@ -1823,8 +1780,7 @@ ExtExtension::FindRegister(_In_ PCSTR Name,
 		return *IndexCache;
 	}
 
-	if ((Status = m_Registers->GetIndexByName(Name,
-		&Index)) != S_OK)
+	if ((Status = m_Registers->GetIndexByName(Name,	&Index)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to find register '%s'", Name);
 	}
@@ -1838,18 +1794,14 @@ ExtExtension::FindRegister(_In_ PCSTR Name,
 }
 
 ULONG64 WINAPI
-ExtExtension::GetRegisterU64(_In_ PCSTR Name,
-	_Inout_opt_ PULONG IndexCache) const
+ExtExtension::GetRegisterU64(_In_ PCSTR Name, _Inout_opt_ PULONG IndexCache) const
 {
 	HRESULT Status;
 	ULONG Index = FindRegister(Name, IndexCache);
 	DEBUG_VALUE RegVal, RegVal64;
 
-	if ((Status = m_Registers->GetValue(Index,
-		&RegVal)) != S_OK ||
-		(Status = m_Control->CoerceValue(&RegVal,
-			DEBUG_VALUE_INT64,
-			&RegVal64)) != S_OK)
+	if ((Status = m_Registers->GetValue(Index,	&RegVal)) != S_OK ||
+		(Status = m_Control->CoerceValue(&RegVal, DEBUG_VALUE_INT64, &RegVal64)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to get value for '%s'", Name);
 	}
@@ -1858,9 +1810,7 @@ ExtExtension::GetRegisterU64(_In_ PCSTR Name,
 }
 
 void WINAPI
-ExtExtension::SetRegisterU64(_In_ PCSTR Name,
-	_In_ ULONG64 Val,
-	_Inout_opt_ PULONG IndexCache) const
+ExtExtension::SetRegisterU64(_In_ PCSTR Name, _In_ ULONG64 Val, _Inout_opt_ PULONG IndexCache) const
 {
 	HRESULT Status;
 	ULONG Index = FindRegister(Name, IndexCache);
@@ -1868,16 +1818,14 @@ ExtExtension::SetRegisterU64(_In_ PCSTR Name,
 
 	RegVal64.Type = DEBUG_VALUE_INT64;
 	RegVal64.I64 = Val;
-	if ((Status = m_Registers->SetValue(Index,
-		&RegVal64)) != S_OK)
+	if ((Status = m_Registers->SetValue(Index,	&RegVal64)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to set value for '%s'", Name);
 	}
 }
 
 ULONG WINAPI
-ExtExtension::FindPseudoRegister(_In_ PCSTR Name,
-	_Inout_opt_ PULONG IndexCache) const
+ExtExtension::FindPseudoRegister(_In_ PCSTR Name, _Inout_opt_ PULONG IndexCache) const
 {
 	HRESULT Status;
 	ULONG Index;
@@ -1888,8 +1836,7 @@ ExtExtension::FindPseudoRegister(_In_ PCSTR Name,
 		return *IndexCache;
 	}
 
-	if ((Status = m_Registers2->GetPseudoIndexByName(Name,
-		&Index)) != S_OK)
+	if ((Status = m_Registers2->GetPseudoIndexByName(Name, &Index)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to find pseudo-register '%s'", Name);
 	}
@@ -1903,21 +1850,14 @@ ExtExtension::FindPseudoRegister(_In_ PCSTR Name,
 }
 
 ULONG64 WINAPI
-ExtExtension::GetPseudoRegisterU64(_In_ PCSTR Name,
-	_Inout_opt_ PULONG IndexCache) const
+ExtExtension::GetPseudoRegisterU64(_In_ PCSTR Name,	_Inout_opt_ PULONG IndexCache) const
 {
 	HRESULT Status;
 	ULONG Index = FindPseudoRegister(Name, IndexCache);
 	DEBUG_VALUE RegVal, RegVal64;
 
-	if ((Status = m_Registers2->GetPseudoValues(DEBUG_REGSRC_DEBUGGEE,
-		1,
-		&Index,
-		0,
-		&RegVal)) != S_OK ||
-		(Status = m_Control->CoerceValue(&RegVal,
-			DEBUG_VALUE_INT64,
-			&RegVal64)) != S_OK)
+	if ((Status = m_Registers2->GetPseudoValues(DEBUG_REGSRC_DEBUGGEE,	1,	&Index,	0,	&RegVal)) != S_OK ||
+		(Status = m_Control->CoerceValue(&RegVal, DEBUG_VALUE_INT64, &RegVal64)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to get value for '%s'", Name);
 	}
@@ -1926,9 +1866,7 @@ ExtExtension::GetPseudoRegisterU64(_In_ PCSTR Name,
 }
 
 void WINAPI
-ExtExtension::SetPseudoRegisterU64(_In_ PCSTR Name,
-	_In_ ULONG64 Val,
-	_Inout_opt_ PULONG IndexCache) const
+ExtExtension::SetPseudoRegisterU64(_In_ PCSTR Name, _In_ ULONG64 Val,	_Inout_opt_ PULONG IndexCache) const
 {
 	HRESULT Status;
 	ULONG Index = FindPseudoRegister(Name, IndexCache);
@@ -1936,11 +1874,7 @@ ExtExtension::SetPseudoRegisterU64(_In_ PCSTR Name,
 
 	RegVal64.Type = DEBUG_VALUE_INT64;
 	RegVal64.I64 = Val;
-	if ((Status = m_Registers2->SetPseudoValues(DEBUG_REGSRC_DEBUGGEE,
-		1,
-		&Index,
-		0,
-		&RegVal64)) != S_OK)
+	if ((Status = m_Registers2->SetPseudoValues(DEBUG_REGSRC_DEBUGGEE,	1,	&Index,	0,	&RegVal64)) != S_OK)
 	{
 		ThrowStatus(Status, "Unable to set value for '%s'", Name);
 	}
@@ -1981,8 +1915,7 @@ ExtExtension::GetUnnamedArgU64(_In_ ULONG Index) const
 }
 
 PCSTR WINAPI
-ExtExtension::GetArgStr(_In_ PCSTR Name,
-	_In_ bool Required)
+ExtExtension::GetArgStr(_In_ PCSTR Name, _In_ bool Required)
 {
 	ArgVal* Arg = FindArg(Name, Required);
 	if (!Arg)
@@ -1998,8 +1931,7 @@ ExtExtension::GetArgStr(_In_ PCSTR Name,
 }
 
 ULONG64 WINAPI
-ExtExtension::GetArgU64(_In_ PCSTR Name,
-	_In_ bool Required)
+ExtExtension::GetArgU64(_In_ PCSTR Name, _In_ bool Required)
 {
 	ArgVal* Arg = FindArg(Name, Required);
 	if (!Arg)
@@ -2015,10 +1947,7 @@ ExtExtension::GetArgU64(_In_ PCSTR Name,
 }
 
 bool WINAPI
-ExtExtension::SetUnnamedArg(_In_ ULONG Index,
-	_In_opt_ PCSTR StrArg,
-	_In_ ULONG64 NumArg,
-	_In_ bool OnlyIfUnset)
+ExtExtension::SetUnnamedArg(_In_ ULONG Index, _In_opt_ PCSTR StrArg, _In_ ULONG64 NumArg, _In_ bool OnlyIfUnset)
 {
 	ExtCommandDesc::ArgDesc* Check = m_CurCommand->FindUnnamedArg(Index);
 	if (!Check)
@@ -2043,10 +1972,7 @@ ExtExtension::SetUnnamedArg(_In_ ULONG Index,
 }
 
 bool WINAPI
-ExtExtension::SetArg(_In_ PCSTR Name,
-	_In_opt_ PCSTR StrArg,
-	_In_ ULONG64 NumArg,
-	_In_ bool OnlyIfUnset)
+ExtExtension::SetArg(_In_ PCSTR Name, _In_opt_ PCSTR StrArg, _In_ ULONG64 NumArg, _In_ bool OnlyIfUnset)
 {
 	ExtCommandDesc::ArgDesc* Check = m_CurCommand->FindArg(Name);
 	if (!Check)
@@ -2069,17 +1995,13 @@ ExtExtension::SetArg(_In_ PCSTR Name,
 }
 
 PCSTR WINAPI
-ExtExtension::GetExpr64(_In_ PCSTR Str,
-	_In_ bool Signed,
-	_In_ ULONG64 Limit,
-	_Out_ PULONG64 Val) const
+ExtExtension::GetExpr64(_In_ PCSTR Str,	_In_ bool Signed, _In_ ULONG64 Limit,	_Out_ PULONG64 Val) const
 {
 	HRESULT Status;
 	DEBUG_VALUE FullVal;
 	ULONG EndIdx;
 
-	if ((Status = m_Control->
-		Evaluate(Str, DEBUG_VALUE_INT64, &FullVal, &EndIdx)) != S_OK)
+	if ((Status = m_Control->Evaluate(Str, DEBUG_VALUE_INT64, &FullVal, &EndIdx)) != S_OK)
 	{
 		ExtStatusException Ex(Status);
 
@@ -2108,15 +2030,13 @@ ExtExtension::GetExpr64(_In_ PCSTR Str,
 }
 
 void WINAPIV
-ExtExtension::ThrowInvalidArg(_In_ PCSTR Format,
-	...) const
+ExtExtension::ThrowInvalidArg(_In_ PCSTR Format, ...) const
 {
 	ExtInvalidArgumentException Ex("");
 	va_list Args;
 
 	va_start(Args, Format);
-	Ex.PrintMessageVa(s_String, EXT_DIMA(s_String),
-		Format, Args);
+	Ex.PrintMessageVa(s_String, EXT_DIMA(s_String),	Format, Args);
 	va_end(Args);
 	throw Ex;
 }
@@ -2300,9 +2220,7 @@ Exit:
 	{
 		if (*&m_Control != nullptr)
 		{
-			m_Control->Output(DEBUG_OUTPUT_ERROR,
-				"ERROR: Unable to query interfaces, 0x%08x\n",
-				Status);
+			m_Control->Output(DEBUG_OUTPUT_ERROR, "ERROR: Unable to query interfaces, 0x%08x\n", Status);
 		}
 		Release();
 	}
@@ -2410,8 +2328,7 @@ ExtExtension::CallExtCodeCEH(_In_opt_ ExtCommandDesc* Desc,
 	{
 		if (Name)
 		{
-			m_Control->Output(DEBUG_OUTPUT_ERROR, "%s%s: %s.\n",
-				PreName, Name, Ex.GetMessage());
+			m_Control->Output(DEBUG_OUTPUT_ERROR, "%s%s: %s.\n", PreName, Name, Ex.GetMessage());
 		}
 		Status = Ex.GetStatus();
 	}
@@ -2523,8 +2440,7 @@ ExtExtension::CallKnownStruct(_In_ PDEBUG_CLIENT Client,
 	// Release always occurs.
 	__try
 	{
-		Status = CallKnownStructMethod(Struct, Flags, Offset,
-			Buffer, BufferChars);
+		Status = CallKnownStructMethod(Struct, Flags, Offset, Buffer, BufferChars);
 	}
 	__finally
 	{
@@ -2701,8 +2617,7 @@ ExtExtension::CallProvideValueMethod(_In_ ExtProvidedValue* ExtVal,
 
 		m_CallStatus = S_OK;
 
-		(this->*ExtVal->Method)(Flags, ExtVal->ValueName,
-			Value, TypeModBase, TypeId, TypeFlags);
+		(this->*ExtVal->Method)(Flags, ExtVal->ValueName, Value, TypeModBase, TypeId, TypeFlags);
 
 		Status = m_CallStatus;
 	}
@@ -2906,9 +2821,7 @@ ExtExtension::SetRawArgVal(_In_ ExtCommandDesc::ArgDesc* Check,
 
 			if (Check->ExpressionEvaluator != nullptr)
 			{
-				StrVal = PrintCircleString("@@%s(%s)",
-					Check->ExpressionEvaluator,
-					StrVal);
+				StrVal = PrintCircleString("@@%s(%s)", Check->ExpressionEvaluator, StrVal);
 			}
 
 			StrVal = GetExpr64(StrVal,
@@ -2925,8 +2838,7 @@ ExtExtension::SetRawArgVal(_In_ ExtCommandDesc::ArgDesc* Check,
 	}
 	else if (Check->String)
 	{
-		ThrowInvalidArg("Missing value for argument '%s'",
-			Check->Name);
+		ThrowInvalidArg("Missing value for argument '%s'", Check->Name);
 	}
 	else
 	{
@@ -2937,8 +2849,7 @@ ExtExtension::SetRawArgVal(_In_ ExtCommandDesc::ArgDesc* Check,
 }
 
 void WINAPI
-ExtExtension::ParseArgs(_In_ ExtCommandDesc* Desc,
-	_In_opt_ PCSTR Args)
+ExtExtension::ParseArgs(_In_ ExtCommandDesc* Desc, _In_opt_ PCSTR Args)
 {
 	if (!Args)
 	{
@@ -3089,8 +3000,7 @@ ExtExtension::ParseArgs(_In_ ExtCommandDesc* Desc,
 
 			if (Check->Present)
 			{
-				ThrowInvalidArg("Duplicate argument '%s'",
-					Start);
+				ThrowInvalidArg("Duplicate argument '%s'", Start);
 			}
 
 			//
@@ -3115,8 +3025,7 @@ ExtExtension::ParseArgs(_In_ ExtCommandDesc* Desc,
 			Check = Desc->FindUnnamedArg(m_NumUnnamedArgs);
 			if (!Check)
 			{
-				ThrowInvalidArg("Extra unnamed argument at '%s'",
-					Scan);
+				ThrowInvalidArg("Extra unnamed argument at '%s'", Scan);
 			}
 		}
 
@@ -3139,8 +3048,7 @@ ExtExtension::ParseArgs(_In_ ExtCommandDesc* Desc,
 	Check = Desc->m_Args;
 	for (i = 0; i < Desc->m_NumArgs; i++, Check++)
 	{
-		if (!Check->Present &&
-			Check->Default)
+		if (!Check->Present && Check->Default)
 		{
 			SetRawArgVal(Check, nullptr, true, Check->Default, false, 0);
 		}
@@ -3182,8 +3090,7 @@ ExtExtension::ParseArgs(_In_ ExtCommandDesc* Desc,
 }
 
 void WINAPI
-ExtExtension::OutCommandArg(_In_ ExtCommandDesc::ArgDesc* Arg,
-	_In_ bool Separate)
+ExtExtension::OutCommandArg(_In_ ExtCommandDesc::ArgDesc* Arg,	_In_ bool Separate)
 {
 	if (Arg->Name)
 	{
@@ -3681,8 +3588,7 @@ ExtRemoteData::Read(void)
 	if (m_Bytes > sizeof(m_Data) ||
 		m_Bytes > sizeof(NewData))
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData::Read too large");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData::Read too large");
 	}
 
 	ReadBuffer(&NewData, m_Bytes);
@@ -3697,13 +3603,11 @@ ExtRemoteData::Write(void)
 
 	if (m_Bytes > sizeof(m_Data))
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData::Write too large");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData::Write too large");
 	}
 	if (!m_ValidData)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData does not have valid data");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData does not have valid data");
 	}
 
 	WriteBuffer(&m_Data, m_Bytes);
@@ -3716,13 +3620,11 @@ ExtRemoteData::GetData(_In_ ULONG Request) const
 
 	if (m_Bytes != Request)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"Invalid ExtRemoteData size");
+		g_Ext->ThrowRemote(E_INVALIDARG, "Invalid ExtRemoteData size");
 	}
 	if (!m_ValidData)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData does not have valid data");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData does not have valid data");
 	}
 
 	return m_Data;
@@ -3737,8 +3639,7 @@ ExtRemoteData::SetData(_In_ ULONG64 Data,
 
 	if (m_Bytes != Request)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"Invalid ExtRemoteData size");
+		g_Ext->ThrowRemote(E_INVALIDARG, "Invalid ExtRemoteData size");
 	}
 
 	m_Data = Data;
@@ -3762,24 +3663,20 @@ ExtRemoteData::ReadBuffer(_Out_writes_bytes_(Bytes) PVOID Buffer,
 
 	if (!Bytes)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"Zero-sized ExtRemoteData");
+		g_Ext->ThrowRemote(E_INVALIDARG, "Zero-sized ExtRemoteData");
 	}
 	if (!m_ValidOffset)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData does not have a valid address");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData does not have a valid address");
 	}
 
 	if (m_Physical)
 	{
-		Status = g_Ext->m_Data4->
-			ReadPhysical2(m_Offset, m_SpaceFlags, Buffer, Bytes, &Done);
+		Status = g_Ext->m_Data4->ReadPhysical2(m_Offset, m_SpaceFlags, Buffer, Bytes, &Done);
 	}
 	else
 	{
-		Status = g_Ext->m_Data->
-			ReadVirtual(m_Offset, Buffer, Bytes, &Done);
+		Status = g_Ext->m_Data->ReadVirtual(m_Offset, Buffer, Bytes, &Done);
 	}
 	if (Status == S_OK && Done != Bytes && MustReadAll)
 	{
@@ -3789,13 +3686,11 @@ ExtRemoteData::ReadBuffer(_Out_writes_bytes_(Bytes) PVOID Buffer,
 	{
 		if (m_Name)
 		{
-			g_Ext->ThrowRemote(Status, "Unable to read %s at %p",
-				m_Name, m_Offset);
+			g_Ext->ThrowRemote(Status, "Unable to read %s at %p", m_Name, m_Offset);
 		}
 		else
 		{
-			g_Ext->ThrowRemote(Status, "Unable to read 0x%x bytes at %p",
-				Bytes, m_Offset);
+			g_Ext->ThrowRemote(Status, "Unable to read 0x%x bytes at %p", Bytes, m_Offset);
 		}
 	}
 
@@ -3803,9 +3698,7 @@ ExtRemoteData::ReadBuffer(_Out_writes_bytes_(Bytes) PVOID Buffer,
 }
 
 ULONG WINAPI
-ExtRemoteData::WriteBuffer(_In_reads_bytes_(Bytes) PVOID Buffer,
-	_In_ ULONG Bytes,
-	_In_ bool MustWriteAll) const
+ExtRemoteData::WriteBuffer(_In_reads_bytes_(Bytes) PVOID Buffer, _In_ ULONG Bytes,	_In_ bool MustWriteAll) const
 {
 	HRESULT Status;
 	ULONG Done;
@@ -3816,24 +3709,20 @@ ExtRemoteData::WriteBuffer(_In_reads_bytes_(Bytes) PVOID Buffer,
 
 	if (!Bytes)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"Zero-sized ExtRemoteData");
+		g_Ext->ThrowRemote(E_INVALIDARG, "Zero-sized ExtRemoteData");
 	}
 	if (!m_ValidOffset)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData does not have a valid address");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData does not have a valid address");
 	}
 
 	if (m_Physical)
 	{
-		Status = g_Ext->m_Data4->
-			WritePhysical2(m_Offset, m_SpaceFlags, Buffer, Bytes, &Done);
+		Status = g_Ext->m_Data4->WritePhysical2(m_Offset, m_SpaceFlags, Buffer, Bytes, &Done);
 	}
 	else
 	{
-		Status = g_Ext->m_Data->
-			WriteVirtual(m_Offset, Buffer, Bytes, &Done);
+		Status = g_Ext->m_Data->WriteVirtual(m_Offset, Buffer, Bytes, &Done);
 	}
 	if (Status == S_OK && Done != Bytes && MustWriteAll)
 	{
@@ -3843,13 +3732,11 @@ ExtRemoteData::WriteBuffer(_In_reads_bytes_(Bytes) PVOID Buffer,
 	{
 		if (m_Name)
 		{
-			g_Ext->ThrowRemote(Status, "Unable to write %s at %p",
-				m_Name, m_Offset);
+			g_Ext->ThrowRemote(Status, "Unable to write %s at %p", m_Name, m_Offset);
 		}
 		else
 		{
-			g_Ext->ThrowRemote(Status, "Unable to write 0x%x bytes at %p",
-				Bytes, m_Offset);
+			g_Ext->ThrowRemote(Status, "Unable to write 0x%x bytes at %p", Bytes, m_Offset);
 		}
 	}
 
@@ -3869,30 +3756,23 @@ ExtRemoteData::GetString(_Out_writes_opt_(BufferChars) PSTR Buffer,
 
 	if (!m_ValidOffset)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData does not have a valid address");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData does not have a valid address");
 	}
 	if (m_Physical)
 	{
-		g_Ext->ThrowRemote(E_NOTIMPL,
-			"ExtRemoteData cannot read strings "
+		g_Ext->ThrowRemote(E_NOTIMPL, "ExtRemoteData cannot read strings "
 			"from physical memory");
 	}
 
 	ULONG Need;
 
-	if (FAILED(Status = g_Ext->m_Data4->
-		ReadMultiByteStringVirtual(m_Offset, MaxChars * sizeof(*Buffer),
-			Buffer, BufferChars, &Need)))
+	if (FAILED(Status = g_Ext->m_Data4->ReadMultiByteStringVirtual(m_Offset, MaxChars * sizeof(*Buffer), Buffer, BufferChars, &Need)))
 	{
-		g_Ext->ThrowRemote(Status, "Unable to read string at %p",
-			m_Offset);
+		g_Ext->ThrowRemote(Status, "Unable to read string at %p", m_Offset);
 	}
 	if (Status != S_OK && MustFit)
 	{
-		g_Ext->ThrowRemote(HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW),
-			"String at %p overflows buffer, need 0x%x chars",
-			m_Offset, Need);
+		g_Ext->ThrowRemote(HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW), "String at %p overflows buffer, need 0x%x chars", m_Offset, Need);
 	}
 
 	if (NeedChars)
@@ -3915,31 +3795,22 @@ ExtRemoteData::GetString(_Out_writes_opt_(BufferChars) PWSTR Buffer,
 
 	if (!m_ValidOffset)
 	{
-		g_Ext->ThrowRemote(E_INVALIDARG,
-			"ExtRemoteData does not have a valid address");
+		g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteData does not have a valid address");
 	}
 	if (m_Physical)
 	{
-		g_Ext->ThrowRemote(E_NOTIMPL,
-			"ExtRemoteData cannot read strings "
-			"from physical memory");
+		g_Ext->ThrowRemote(E_NOTIMPL, "ExtRemoteData cannot read strings from physical memory");
 	}
 
 	ULONG Need;
 
-	if (FAILED(Status = g_Ext->m_Data4->
-		ReadUnicodeStringVirtualWide(m_Offset,
-			MaxChars * sizeof(*Buffer),
-			Buffer, BufferChars, &Need)))
+	if (FAILED(Status = g_Ext->m_Data4->ReadUnicodeStringVirtualWide(m_Offset, MaxChars * sizeof(*Buffer), Buffer, BufferChars, &Need)))
 	{
-		g_Ext->ThrowRemote(Status, "Unable to read string at %p",
-			m_Offset);
+		g_Ext->ThrowRemote(Status, "Unable to read string at %p", m_Offset);
 	}
 	if (Status != S_OK && MustFit)
 	{
-		g_Ext->ThrowRemote(HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW),
-			"String at %p overflows buffer, need 0x%x chars",
-			m_Offset, Need);
+		g_Ext->ThrowRemote(HRESULT_FROM_WIN32(ERROR_BUFFER_OVERFLOW), "String at %p overflows buffer, need 0x%x chars", m_Offset, Need);
 	}
 
 	if (NeedChars)
@@ -3971,8 +3842,7 @@ ExtRemoteData::GetString(_Inout_ ExtBuffer<char>* Buffer,
 		Buffer->Require(Need);
 	}
 
-	g_Ext->ThrowRemote(E_INVALIDARG, "Unable to read string at %p",
-		m_Offset);
+	g_Ext->ThrowRemote(E_INVALIDARG, "Unable to read string at %p",	m_Offset);
 }
 
 PWSTR WINAPI
@@ -3997,8 +3867,7 @@ ExtRemoteData::GetString(_Inout_ ExtBuffer<WCHAR>* Buffer,
 		Buffer->Require(Need);
 	}
 
-	g_Ext->ThrowRemote(E_INVALIDARG, "Unable to read string at %p",
-		m_Offset);
+	g_Ext->ThrowRemote(E_INVALIDARG, "Unable to read string at %p", m_Offset);
 }
 
 //----------------------------------------------------------------------------
@@ -4068,10 +3937,7 @@ ExtRemoteTyped::Set(_In_ bool PtrTo,
 	ExtData.InData.TypeId = TypeId;
 	ExtData.InData.Offset = Offset;
 
-	Status = g_Ext->m_Advanced2->Request(DEBUG_REQUEST_EXT_TYPED_DATA_ANSI,
-			&ExtData, sizeof(ExtData),
-			&ExtData, sizeof(ExtData),
-			nullptr);
+	Status = g_Ext->m_Advanced2->Request(DEBUG_REQUEST_EXT_TYPED_DATA_ANSI,	&ExtData, sizeof(ExtData),	&ExtData, sizeof(ExtData),	nullptr);
 	if (SUCCEEDED(Status))
 	{
 		Status = ExtData.Status;
@@ -4089,11 +3955,7 @@ ExtRemoteTyped::Set(_In_ bool PtrTo,
 }
 
 void WINAPI
-ExtRemoteTyped::Set(_In_ PCSTR Type,
-	_In_ ULONG64 Offset,
-	_In_ bool PtrTo,
-	_Inout_opt_ PULONG64 CacheCookie,
-	_In_opt_ PCSTR LinkField)
+ExtRemoteTyped::Set(_In_ PCSTR Type, _In_ ULONG64 Offset, _In_ bool PtrTo, _Inout_opt_ PULONG64 CacheCookie,	_In_opt_ PCSTR LinkField)
 {
 	HRESULT Status;
 	ULONG64 TypeModBase;
@@ -4101,13 +3963,9 @@ ExtRemoteTyped::Set(_In_ PCSTR Type,
 
 	if (!CacheCookie)
 	{
-		if ((Status = g_Ext->m_Symbols->
-			GetSymbolTypeId(Type,
-				&TypeId,
-				&TypeModBase)) != S_OK)
+		if ((Status = g_Ext->m_Symbols->GetSymbolTypeId(Type, &TypeId, &TypeModBase)) != S_OK)
 		{
-			g_Ext->ThrowStatus(Status, "Unable to get type ID of '%s'",
-				Type);
+			g_Ext->ThrowStatus(Status, "Unable to get type ID of '%s'", Type);
 		}
 	}
 	else
@@ -4118,17 +3976,11 @@ ExtRemoteTyped::Set(_In_ PCSTR Type,
 			// here but it allows us to use cache
 			// entries that were created for list
 			// usage and so do have it.
-			g_Ext->GetCachedFieldOffset(CacheCookie,
-				Type,
-				LinkField,
-				&TypeModBase,
-				&TypeId);
+			g_Ext->GetCachedFieldOffset(CacheCookie, Type, LinkField, &TypeModBase, &TypeId);
 		}
 		else
 		{
-			TypeId = g_Ext->GetCachedSymbolTypeId(CacheCookie,
-				Type,
-				&TypeModBase);
+			TypeId = g_Ext->GetCachedSymbolTypeId(CacheCookie, Type, &TypeModBase);
 		}
 	}
 
@@ -4142,14 +3994,11 @@ ExtRemoteTyped::SetPrint(_In_ PCSTR Format, ...)
 	va_list Args;
 
 	va_start(Args, Format);
-	Status = StringCbVPrintfA(g_Ext->s_String, sizeof(g_Ext->s_String),
-		Format, Args);
+	Status = StringCbVPrintfA(g_Ext->s_String, sizeof(g_Ext->s_String),	Format, Args);
 	va_end(Args);
 	if (Status != S_OK)
 	{
-		g_Ext->ThrowRemote(Status,
-			"ExtRemoteTyped::SetPrint: overflow on '%s'",
-			Format);
+		g_Ext->ThrowRemote(Status, "ExtRemoteTyped::SetPrint: overflow on '%s'", Format);
 	}
 	Set(g_Ext->CopyCircleString(g_Ext->s_String));
 }
@@ -4159,10 +4008,8 @@ ExtRemoteTyped::GetFieldOffset(_In_ PCSTR Field) throw(...)
 {
 	ULONG Offset;
 	PSTR Msg = g_Ext->
-		PrintCircleString("GetFieldOffset: no field '%s'",
-			Field);
-	ErtIoctl(Msg, EXT_TDOP_GET_FIELD_OFFSET, ErtIn, Field, 0, nullptr,
-		nullptr, 0, &Offset);
+		PrintCircleString("GetFieldOffset: no field '%s'", Field);
+	ErtIoctl(Msg, EXT_TDOP_GET_FIELD_OFFSET, ErtIn, Field, 0, nullptr, nullptr, 0, &Offset);
 	return Offset;
 }
 
@@ -4172,8 +4019,7 @@ ExtRemoteTyped::Field(_In_ PCSTR Field)
 	ExtRemoteTyped Ret;
 
 	PSTR Msg = g_Ext->
-		PrintCircleString("Field: unable to retrieve field '%s' at %I64x",
-			Field, m_Offset);
+		PrintCircleString("Field: unable to retrieve field '%s' at %I64x", Field, m_Offset);
 	ErtIoctl(Msg, EXT_TDOP_GET_FIELD, ErtIn | ErtOut, Field, 0, &Ret);
 	return Ret;
 }
@@ -4183,11 +4029,8 @@ ExtRemoteTyped::ArrayElement(_In_ LONG64 Index)
 {
 	ExtRemoteTyped Ret;
 
-	PSTR Msg = g_Ext->
-		PrintCircleString("ArrayElement: unable to retrieve element %I64d",
-			Index);
-	ErtIoctl(Msg, EXT_TDOP_GET_ARRAY_ELEMENT,
-		ErtIn | ErtOut, nullptr, Index, &Ret);
+	PSTR Msg = g_Ext->PrintCircleString("ArrayElement: unable to retrieve element %I64d", Index);
+	ErtIoctl(Msg, EXT_TDOP_GET_ARRAY_ELEMENT, ErtIn | ErtOut, nullptr, Index, &Ret);
 	return Ret;
 }
 
@@ -4196,8 +4039,7 @@ ExtRemoteTyped::Dereference(void)
 {
 	ExtRemoteTyped Ret;
 
-	ErtIoctl("Dereference", EXT_TDOP_GET_DEREFERENCE,
-		ErtIn | ErtOut, nullptr, 0, &Ret);
+	ErtIoctl("Dereference", EXT_TDOP_GET_DEREFERENCE, ErtIn | ErtOut, nullptr, 0, &Ret);
 	return Ret;
 }
 
@@ -4206,8 +4048,7 @@ ExtRemoteTyped::GetPointerTo(void)
 {
 	ExtRemoteTyped Ret;
 
-	ErtIoctl("GetPointerTo", EXT_TDOP_GET_POINTER_TO,
-		ErtIn | ErtOut, nullptr, 0, &Ret);
+	ErtIoctl("GetPointerTo", EXT_TDOP_GET_POINTER_TO, ErtIn | ErtOut, nullptr, 0, &Ret);
 	return Ret;
 }
 
@@ -4216,9 +4057,7 @@ ExtRemoteTyped::Eval(_In_ PCSTR Expr)
 {
 	ExtRemoteTyped Ret;
 
-	PSTR Msg = g_Ext->
-		PrintCircleString("Eval: unable to evaluate '%s'",
-			Expr);
+	PSTR Msg = g_Ext->PrintCircleString("Eval: unable to evaluate '%s'", Expr);
 	ErtIoctl(Msg, EXT_TDOP_EVALUATE, ErtIn | ErtOut, Expr, 0, &Ret);
 	return Ret;
 }
@@ -4226,8 +4065,7 @@ ExtRemoteTyped::Eval(_In_ PCSTR Expr)
 PSTR WINAPI
 ExtRemoteTyped::GetTypeName(void)
 {
-	ErtIoctl("GetTypeName", EXT_TDOP_GET_TYPE_NAME, ErtIn, nullptr, 0, nullptr,
-		g_Ext->s_String, EXT_DIMA(g_Ext->s_String));
+	ErtIoctl("GetTypeName", EXT_TDOP_GET_TYPE_NAME, ErtIn, nullptr, 0, nullptr, g_Ext->s_String, EXT_DIMA(g_Ext->s_String));
 	return g_Ext->CopyCircleString(g_Ext->s_String);
 }
 
@@ -4252,14 +4090,10 @@ ExtRemoteTyped::GetTypeFieldOffset(_In_ PCSTR Type,
 	DEBUG_VALUE Data;
 	PSTR Expr;
 
-	Expr = g_Ext->PrintCircleString("@@c++(#FIELD_OFFSET(%s, %s))",
-		Type, Field);
-	if (FAILED(Status = g_Ext->m_Control->
-		Evaluate(Expr, DEBUG_VALUE_INT64, &Data, nullptr)))
+	Expr = g_Ext->PrintCircleString("@@c++(#FIELD_OFFSET(%s, %s))", Type, Field);
+	if (FAILED(Status = g_Ext->m_Control->Evaluate(Expr, DEBUG_VALUE_INT64, &Data, nullptr)))
 	{
-		g_Ext->ThrowRemote(Status,
-			"Could not find type field %s.%s",
-			Type, Field);
+		g_Ext->ThrowRemote(Status, "Could not find type field %s.%s", Type, Field);
 	}
 
 	return static_cast<ULONG>(Data.I64);
@@ -4312,8 +4146,7 @@ ExtRemoteTyped::ErtIoctl(_In_ PCSTR Message,
 	if (InStr)
 	{
 		ExtData->InStrIndex = ULONG(ExtraData - PBYTE(ExtData));
-		memcpy(ExtraData, InStr,
-			(strlen(InStr) + 1) * sizeof(*InStr));
+		memcpy(ExtraData, InStr, (strlen(InStr) + 1) * sizeof(*InStr));
 		ExtraData += (strlen(InStr) + 1) * sizeof(*InStr);
 	}
 	ExtData->In64 = In64;
@@ -4328,18 +4161,13 @@ ExtRemoteTyped::ErtIoctl(_In_ PCSTR Message,
 	{
 		if ((Flags & ErtIn) != 0 && !m_Release)
 		{
-			g_Ext->ThrowRemote(E_INVALIDARG,
-				"ExtRemoteTyped::%s", Message);
+			g_Ext->ThrowRemote(E_INVALIDARG, "ExtRemoteTyped::%s", Message);
 		}
 
 		ExtData->InData = m_Typed;
 	}
 
-	Status = g_Ext->m_Advanced2->
-		Request(DEBUG_REQUEST_EXT_TYPED_DATA_ANSI,
-			ExtData, ExtDataBytes,
-			ExtData, ExtDataBytes,
-			nullptr);
+	Status = g_Ext->m_Advanced2->Request(DEBUG_REQUEST_EXT_TYPED_DATA_ANSI, ExtData, ExtDataBytes, ExtData, ExtDataBytes, nullptr);
 	if (SUCCEEDED(Status))
 	{
 		Status = ExtData->Status;
@@ -4348,8 +4176,7 @@ ExtRemoteTyped::ErtIoctl(_In_ PCSTR Message,
 	if ((Flags & ErtIgnoreError) == 0 &&
 		FAILED(Status))
 	{
-		g_Ext->ThrowRemote(Status,
-			"ExtRemoteTyped::%s", Message);
+		g_Ext->ThrowRemote(Status, "ExtRemoteTyped::%s", Message);
 	}
 
 	if ((Flags & ErtOut) != 0)
@@ -4425,21 +4252,13 @@ ULONG64 ExtNtOsInformation::s_AltTebBaseInfoCookie;
 ULONG64 WINAPI
 ExtNtOsInformation::GetKernelLoadedModuleListHead(void)
 {
-	return GetNtDebuggerData(DEBUG_DATA_PsLoadedModuleListAddr,
-		"nt!PsLoadedModuleList",
-		0);
+	return GetNtDebuggerData(DEBUG_DATA_PsLoadedModuleListAddr, "nt!PsLoadedModuleList", 0);
 }
 
 ExtRemoteTypedList WINAPI
 ExtNtOsInformation::GetKernelLoadedModuleList(void)
 {
-	ExtRemoteTypedList List(GetKernelLoadedModuleListHead(),
-		"nt!_KLDR_DATA_TABLE_ENTRY",
-		"InLoadOrderLinks",
-		0,
-		0,
-		&s_KernelLoadedModuleBaseInfoCookie,
-		true);
+	ExtRemoteTypedList List(GetKernelLoadedModuleListHead(), "nt!_KLDR_DATA_TABLE_ENTRY","InLoadOrderLinks",	0, 0, &s_KernelLoadedModuleBaseInfoCookie, true);
 	List.m_MaxIter = 1000;
 	return List;
 }
@@ -4450,31 +4269,19 @@ ExtNtOsInformation::GetKernelLoadedModule(_In_ ULONG64 Offset)
 	// We are caching both type and link information
 	// so provide a link field here to keep the
 	// cache properly filled out.
-	return ExtRemoteTyped("nt!_KLDR_DATA_TABLE_ENTRY",
-		Offset,
-		true,
-		&s_KernelLoadedModuleBaseInfoCookie,
-		"InLoadOrderLinks");
+	return ExtRemoteTyped("nt!_KLDR_DATA_TABLE_ENTRY", Offset, true, &s_KernelLoadedModuleBaseInfoCookie, "InLoadOrderLinks");
 }
 
 ULONG64 WINAPI
 ExtNtOsInformation::GetKernelProcessListHead(void)
 {
-	return GetNtDebuggerData(DEBUG_DATA_PsActiveProcessHeadAddr,
-		"nt!PsActiveProcessHead",
-		0);
+	return GetNtDebuggerData(DEBUG_DATA_PsActiveProcessHeadAddr, "nt!PsActiveProcessHead", 0);
 }
 
 ExtRemoteTypedList WINAPI
 ExtNtOsInformation::GetKernelProcessList(void)
 {
-	ExtRemoteTypedList List(GetKernelProcessListHead(),
-		"nt!_EPROCESS",
-		"ActiveProcessLinks",
-		0,
-		0,
-		&s_KernelProcessBaseInfoCookie,
-		true);
+	ExtRemoteTypedList List(GetKernelProcessListHead(), "nt!_EPROCESS", "ActiveProcessLinks", 0, 0, &s_KernelProcessBaseInfoCookie, true);
 	List.m_MaxIter = 4000;
 	return List;
 }
@@ -4485,32 +4292,20 @@ ExtNtOsInformation::GetKernelProcess(_In_ ULONG64 Offset)
 	// We are caching both type and link information
 	// so provide a link field here to keep the
 	// cache properly filled out.
-	return ExtRemoteTyped("nt!_EPROCESS",
-		Offset,
-		true,
-		&s_KernelProcessBaseInfoCookie,
-		"ActiveProcessLinks");
+	return ExtRemoteTyped("nt!_EPROCESS", Offset, true, &s_KernelProcessBaseInfoCookie, "ActiveProcessLinks");
 }
 
 ULONG64 WINAPI
 ExtNtOsInformation::GetKernelProcessThreadListHead(_In_ ULONG64 Process)
 {
 	return Process +
-		g_Ext->GetCachedFieldOffset(&s_KernelProcessThreadListFieldCookie,
-			"nt!_EPROCESS",
-			"Pcb.ThreadListHead");
+		g_Ext->GetCachedFieldOffset(&s_KernelProcessThreadListFieldCookie, "nt!_EPROCESS", "Pcb.ThreadListHead");
 }
 
 ExtRemoteTypedList WINAPI
 ExtNtOsInformation::GetKernelProcessThreadList(_In_ ULONG64 Process)
 {
-	ExtRemoteTypedList List(GetKernelProcessThreadListHead(Process),
-		"nt!_ETHREAD",
-		"Tcb.ThreadListEntry",
-		0,
-		0,
-		&s_KernelThreadBaseInfoCookie,
-		true);
+	ExtRemoteTypedList List(GetKernelProcessThreadListHead(Process), "nt!_ETHREAD", "Tcb.ThreadListEntry", 0, 0, &s_KernelThreadBaseInfoCookie, true);
 	List.m_MaxIter = 15000;
 	return List;
 }
@@ -4521,11 +4316,7 @@ ExtNtOsInformation::GetKernelThread(_In_ ULONG64 Offset)
 	// We are caching both type and link information
 	// so provide a link field here to keep the
 	// cache properly filled out.
-	return ExtRemoteTyped("nt!_ETHREAD",
-		Offset,
-		true,
-		&s_KernelThreadBaseInfoCookie,
-		"Tcb.ThreadListEntry");
+	return ExtRemoteTyped("nt!_ETHREAD", Offset, true, &s_KernelThreadBaseInfoCookie, "Tcb.ThreadListEntry");
 }
 
 ULONG64 WINAPI
@@ -4538,12 +4329,9 @@ ExtNtOsInformation::GetUserLoadedModuleListHead(_In_ bool NativeOnly)
 	{
 		DEBUG_VALUE Data;
 
-		if (FAILED(Status = g_Ext->m_Control->
-			Evaluate("@@c++(&@$peb->Ldr->InLoadOrderModuleList)",
-				DEBUG_VALUE_INT64, &Data, nullptr)))
+		if (FAILED(Status = g_Ext->m_Control->Evaluate("@@c++(&@$peb->Ldr->InLoadOrderModuleList)", DEBUG_VALUE_INT64, &Data, nullptr)))
 		{
-			g_Ext->ThrowRemote(Status,
-				"Unable to get loader list head from PEB");
+			g_Ext->ThrowRemote(Status, "Unable to get loader list head from PEB");
 		}
 
 		return Data.I64;
@@ -4554,64 +4342,40 @@ ExtNtOsInformation::GetUserLoadedModuleListHead(_In_ bool NativeOnly)
 		// pull out a 32-bit pointer value.  We do
 		// not sign-extend as this is a UM pointer and
 		// should not get sign-extended.
-		return GetAltPeb().
-			Eval("&@$extin->Ldr->InLoadOrderModuleList").GetUlong();
+		return GetAltPeb().Eval("&@$extin->Ldr->InLoadOrderModuleList").GetUlong();
 	}
 }
 
 ExtRemoteTypedList WINAPI
 ExtNtOsInformation::GetUserLoadedModuleList(_In_ bool NativeOnly)
 {
-	if (NativeOnly ||
-		!g_Ext->Is32On64())
+	if (NativeOnly || !g_Ext->Is32On64())
 	{
-		ExtRemoteTypedList List(GetUserLoadedModuleListHead(NativeOnly),
-			"${$ntnsym}!_LDR_DATA_TABLE_ENTRY",
-			"InLoadOrderLinks",
-			0,
-			0,
-			&s_UserOsLoadedModuleBaseInfoCookie,
-			true);
+		ExtRemoteTypedList List(GetUserLoadedModuleListHead(NativeOnly), "${$ntnsym}!_LDR_DATA_TABLE_ENTRY", "InLoadOrderLinks", 0, 0, &s_UserOsLoadedModuleBaseInfoCookie, true);
 		List.m_MaxIter = 1000;
 		return List;
 	}
 	else
 	{
-		ExtRemoteTypedList List(GetUserLoadedModuleListHead(NativeOnly),
-			"${$ntwsym}!_LDR_DATA_TABLE_ENTRY",
-			"InLoadOrderLinks",
-			0,
-			0,
-			&s_UserAltLoadedModuleBaseInfoCookie,
-			true);
+		ExtRemoteTypedList List(GetUserLoadedModuleListHead(NativeOnly), "${$ntwsym}!_LDR_DATA_TABLE_ENTRY", "InLoadOrderLinks", 0, 0, &s_UserAltLoadedModuleBaseInfoCookie, true);
 		List.m_MaxIter = 1000;
 		return List;
 	}
 }
 
 ExtRemoteTyped WINAPI
-ExtNtOsInformation::GetUserLoadedModule(_In_ ULONG64 Offset,
-	_In_ bool NativeOnly)
+ExtNtOsInformation::GetUserLoadedModule(_In_ ULONG64 Offset, _In_ bool NativeOnly)
 {
 	// We are caching both type and link information
 	// so provide a link field here to keep the
 	// cache properly filled out.
-	if (NativeOnly ||
-		!g_Ext->Is32On64())
+	if (NativeOnly || !g_Ext->Is32On64())
 	{
-		return ExtRemoteTyped("${$ntnsym}!_LDR_DATA_TABLE_ENTRY",
-			Offset,
-			true,
-			&s_UserOsLoadedModuleBaseInfoCookie,
-			"InLoadOrderLinks");
+		return ExtRemoteTyped("${$ntnsym}!_LDR_DATA_TABLE_ENTRY", Offset, true, &s_UserOsLoadedModuleBaseInfoCookie, "InLoadOrderLinks");
 	}
 	else
 	{
-		return ExtRemoteTyped("${$ntwsym}!_LDR_DATA_TABLE_ENTRY",
-			Offset,
-			true,
-			&s_UserAltLoadedModuleBaseInfoCookie,
-			"InLoadOrderLinks");
+		return ExtRemoteTyped("${$ntwsym}!_LDR_DATA_TABLE_ENTRY", Offset, true, &s_UserAltLoadedModuleBaseInfoCookie, "InLoadOrderLinks");
 	}
 }
 
@@ -4621,11 +4385,9 @@ ExtNtOsInformation::GetOsPebPtr(void)
 	HRESULT Status;
 	ULONG64 Offset;
 
-	if ((Status = g_Ext->m_System->
-		GetCurrentProcessPeb(&Offset)) != S_OK)
+	if ((Status = g_Ext->m_System->GetCurrentProcessPeb(&Offset)) != S_OK)
 	{
-		g_Ext->ThrowRemote(Status,
-			"Unable to get OS PEB pointer");
+		g_Ext->ThrowRemote(Status, "Unable to get OS PEB pointer");
 	}
 
 	return Offset;
@@ -4634,10 +4396,7 @@ ExtNtOsInformation::GetOsPebPtr(void)
 ExtRemoteTyped WINAPI
 ExtNtOsInformation::GetOsPeb(_In_ ULONG64 Offset)
 {
-	return ExtRemoteTyped("${$ntnsym}!_PEB",
-		Offset,
-		true,
-		&s_OsPebBaseInfoCookie);
+	return ExtRemoteTyped("${$ntnsym}!_PEB", Offset, true, &s_OsPebBaseInfoCookie);
 }
 
 ULONG64 WINAPI
