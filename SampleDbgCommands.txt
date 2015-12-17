@@ -1,4 +1,4 @@
-.load C:\repos\PSExt\x64\Debug\PSExt.dll
+.load D:\repos\PSExt\x64\Debug\PSExt.dll
 
 .symfix c:\sym
 .reload -f

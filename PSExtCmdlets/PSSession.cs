@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -28,7 +29,9 @@ namespace PSExt
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("ShellID", "PSExt", "", ScopedItemOptions.Constant));
 			var location = Assembly.GetExecutingAssembly().Location;
-			initialSessionState.ImportPSModule(new []{location });			
+			initialSessionState.ImportPSModule(new []{location });
+			var formatFile = Path.Combine(Path.GetDirectoryName(location), "PSExtCmdlets.Format.ps1xml");
+			initialSessionState.Formats.Add(new SessionStateFormatEntry(formatFile));		
 			_host = new DbgPsHost(debugger, program);
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
 		}
