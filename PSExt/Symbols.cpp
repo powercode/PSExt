@@ -11,11 +11,10 @@ SymbolSearchResults Symbols::GetMatchingSymbols(PCWSTR pattern){
 	}
 	return retval;
 }
-bool Symbols::GetNameByOffset(ULONG64 offset, OUT DString name){
+bool Symbols::GetNameByOffset(ULONG64 offset, OUT DString& name, OUT ULONG64& displacement){
 	auto buf = const_cast<PWSTR>(name.data());
 	auto buflen = static_cast<ULONG>(name.size());
-	ULONG nameSize;
-	ULONG64 displacement ;
+	ULONG nameSize;	
 	auto res = g_Ext->m_Symbols3->GetNameByOffsetWide(offset, buf, buflen, &nameSize, &displacement);
 	switch (res){
 		case S_OK:
@@ -23,14 +22,14 @@ bool Symbols::GetNameByOffset(ULONG64 offset, OUT DString name){
 			return true;
 		case S_FALSE:
 			name.resize(nameSize);
-			return GetNameByOffset(offset, name);
+			return GetNameByOffset(offset, name, displacement);
 		default:
 			return false;
 	}
 }
-DString Symbols::GetNameByOffset(ULONG64 offset){
+DString Symbols::GetNameByOffset(ULONG64 offset, OUT ULONG64& displacement){
 	DString name(80, L'\0');
-	if (!GetNameByOffset(offset, name)){
+	if (!GetNameByOffset(offset, name, displacement)){
 		throw std::runtime_error("could not get name at offset");
 	}
 	return name;	

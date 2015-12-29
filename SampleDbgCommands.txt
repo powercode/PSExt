@@ -1,7 +1,5 @@
 .load D:\repos\PSExt\x64\Debug\PSExt.dll
-
 .symfix c:\sym
 .reload -f
-!ps get-module
-!ps lm n*,o*
 
+!test

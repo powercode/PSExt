@@ -10,5 +10,6 @@ namespace PSExt
 		IList<BreakpointData> GetBreakpoints();
 		IList<BreakpointData> AddBreakpoints(BreakpointData data);
 		IList<ModuleData> GetModules();
+		IList<StackFrame> GetCallstack();
 	}
 }

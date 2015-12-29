@@ -18,7 +18,7 @@ public:
 		 auto resolveName = gcnew AssemblyName(args->Name);
 		 String^ assemblyName = resolveName->Name + ".dll";
 		 String^  assemblyPath = Path::Combine(path, assemblyName);
-		 if (File::Exists(assemblyPath) == false) return nullptr;
+		 if (!File::Exists(assemblyPath)) return nullptr;
 		 auto assembly = Assembly::LoadFrom(assemblyPath);
 		 return assembly;
 	 }

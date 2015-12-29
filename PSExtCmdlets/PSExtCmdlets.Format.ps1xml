@@ -2,6 +2,54 @@
 <Configuration>
 	<ViewDefinitions>
 		<View>
+			<Name>PSExt.StackFrame</Name>
+			<ViewSelectedBy>
+				<TypeName>PSExt.StackFrame</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>#</Label>
+						<Width>3</Width>
+						<Alignment>Right</Alignment>
+					</TableColumnHeader>					
+					<TableColumnHeader>
+						<Label>Stack</Label>
+						<Width>18</Width>
+						<Alignment>Right</Alignment>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Return</Label>
+						<Width>18</Width>
+						<Alignment>Right</Alignment>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Callsite</Label>												
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>FrameNumber</PropertyName>
+							</TableColumnItem>							
+							<TableColumnItem>
+								<FormatString>0x{0:x16}</FormatString>
+								<PropertyName>FrameOffset</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<FormatString>0x{0:x16}</FormatString>
+								<PropertyName>ReturnOffset</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>								
+								<ScriptBlock>'{0}+0x{1:x}' -f $_.Name, $_.Displacement</ScriptBlock>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+		<View>
 			<Name>PSExt.ModuleData</Name>
 			<ViewSelectedBy>
 				<TypeName>PSExt.ModuleData</TypeName>

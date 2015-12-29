@@ -1,7 +1,6 @@
 #include "Module.h"
-#include "engextcpp.hpp"
+#include "NativeModule.h"
 #include <msclr/marshal.h>
-#include <vector>
 
 
 
@@ -31,35 +30,6 @@ ModuleData^ ToModule(const _IMAGEHLP_MODULEW64& m) {
 	return gcnew ModuleData(moduleName, imageName, loadedImageName, loadedPdbName, m.BaseOfImage, m.ImageSize, m.TimeDateStamp, 
 		m.CheckSum, m.NumSyms, m.SymType, FromGUID(m.PdbSig70), m.PdbAge, m.PdbUnmatched != 0,
 		 m.LineNumbers != 0, m.GlobalSymbols != 0, m.TypeInfo != 0, m.SourceIndexed != 0, m.Publics != 0, m.MachineType);
-}
-
-
-ModuleVector GetNativeModules()
-{
-	ModuleVector retVal;
-	retVal.reserve(40);
-
-	ULONG loaded;
-	ULONG unloaded;
-	auto& sym = g_Ext->m_Symbols;
-	HRESULT status;
-	if ((status = sym->GetNumberModules(&loaded, &unloaded)) != S_OK)
-	{
-		g_Ext->ThrowRemote(status, "Unable to get number of modules");
-	}
-	ULONG64 moduleBase;
-	for (ULONG i = 0; i < loaded; ++i)
-	{
-		if ((status = sym->GetModuleByIndex(i, &moduleBase)) != S_OK)
-		{
-			g_Ext->ThrowRemote(status, "Unable to get module #%d", i);
-		}
-		_IMAGEHLP_MODULEW64 moduleInfo;
-		g_Ext->GetModuleImagehlpInfo(moduleBase, &moduleInfo);
-		retVal.push_back(moduleInfo);
-	}
-
-	return retVal;
 }
 
 

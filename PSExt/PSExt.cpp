@@ -13,6 +13,7 @@
 #include "engextcpp.hpp"
 #include "PowerShellCommands.h"
 #include "CmdletLoader.h"
+#include "NativeCallstack.h"
 //----------------------------------------------------------------------------
 //
 // Base extension class.
@@ -86,8 +87,10 @@ EXT_COMMAND(test,
 	"Test the command under development",
 	"{{custom}}{{s:cmd}}{{l:a your custom args if needed}}")
 {	
-	auto syms= Symbols::GetMatchingSymbols(L"ntdll!mem*");	
-	for (auto& s : syms){
-		g_Ext->Out(L"0x%p: %s\r\n", s.Offset, s.Name.c_str());
+	auto syms= GetNativeStack();	
+	ULONG64 displacement;
+	for (auto& s : syms){		
+		auto name = Symbols::GetNameByOffset(s.InstructionOffset, OUT displacement);
+		g_Ext->Out(L"%d 0x%p: %s + %p\r\n", s.FrameNumber, s.StackOffset, name.c_str(), displacement);
 	}	
 }

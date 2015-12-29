@@ -145,8 +145,10 @@
     <ClInclude Include="DebuggerProxy.h" />
     <ClInclude Include="engextcpp.hpp" />
     <ClInclude Include="Callstack.h" />
+    <ClInclude Include="NativeCallstack.h" />
     <ClInclude Include="NativeDebuggerBreakpoint.h" />
     <ClInclude Include="Module.h" />
+    <ClInclude Include="NativeModule.h" />
     <ClInclude Include="PowerShellCommands.h" />
     <ClInclude Include="Symbols.h" />
     <ClInclude Include="targetver.h" />
@@ -155,7 +157,9 @@
     <ClCompile Include="Breakpoints.cpp">
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
-    <ClCompile Include="CallStack.cpp" />
+    <ClCompile Include="CallStack.cpp">
+      <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</CompileAsManaged>
+    </ClCompile>
     <ClCompile Include="Client.cpp">
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
@@ -171,12 +175,14 @@
     <ClCompile Include="engextcpp.cpp">
       <Optimization>Disabled</Optimization>
     </ClCompile>
+    <ClCompile Include="NativeCallstack.cpp" />
     <ClCompile Include="NativeDebuggerBreakpoint.cpp">
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="Module.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</CompileAsManaged>
     </ClCompile>
+    <ClCompile Include="NativeModule.cpp" />
     <ClCompile Include="PowerShellCommands.cpp">
       <CompileAsManaged>true</CompileAsManaged>
       <DisableSpecificWarnings>4691</DisableSpecificWarnings>

@@ -5,8 +5,6 @@
 
 using DString = std::wstring;
 
-
-
 struct SymbolSearchResult{
 	ULONG64 Offset;
 	DString Name;
@@ -16,10 +14,10 @@ struct SymbolSearchResult{
 using SymbolSearchResults = std::vector < SymbolSearchResult > ;
 
 class Symbols final {
-	static bool GetNameByOffset(ULONG64 offset, OUT DString name);
+	static bool GetNameByOffset(ULONG64 offset, OUT DString& name, OUT ULONG64& displacement);
 public:
 	static SymbolSearchResults GetMatchingSymbols(PCWSTR pattern);
-	static DString GetNameByOffset(ULONG64 offset);
+	static DString GetNameByOffset(ULONG64 offset, OUT ULONG64& displacement);
 };
 
 class SymbolsSearch final{
