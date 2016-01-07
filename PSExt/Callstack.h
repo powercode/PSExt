@@ -7,6 +7,6 @@
 
 ref class Callstack {
 public:
-	static System::Collections::Generic::IList<PSExt::StackFrame^>^ GetCallstacks();
+	static PSExt::Callstack^ GetCallstacks();
 
 };

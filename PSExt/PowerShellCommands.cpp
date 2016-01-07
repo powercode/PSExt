@@ -5,7 +5,6 @@ using namespace System::Threading;
 using namespace System::Management::Automation;
 
 #include <msclr\marshal.h>
-#include "DebuggerDispatcher.h"
 #include "DebuggerProxy.h"
 #include "PowerShellCommands.h"
 
@@ -19,7 +18,7 @@ public:
 	}
 	
 	virtual void ProcessEvents(System::Threading::WaitHandle^ doneEvent) {
-		DebuggerDispatcher::Instance->Start(doneEvent);
+		PSExt::DebuggerDispatcher::Instance->Start(doneEvent);
 	}
 
 	property bool ShouldExit{

@@ -2,7 +2,6 @@
 
 #include <msclr/marshal.h>
 
-ref class DebuggerDispatcher;
 
 ref class Client
 {

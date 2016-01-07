@@ -1,7 +1,6 @@
 
 #include "Client.h"
 #include "engextcpp.hpp"
-#include "DebuggerDispatcher.h"
 
 using namespace System;
 

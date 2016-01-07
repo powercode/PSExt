@@ -1,7 +1,6 @@
 #include "DebuggerProxy.h"
 #include "Client.h"
 #include "Breakpoints.h"
-#include "DebuggerDispatcher.h"
 #include "Module.h"
 #include "Callstack.h"
 
@@ -60,9 +59,9 @@ IList<ModuleData^>^ DebuggerProxy::GetModules() {
 	return Modules::GetModules();
 }
 
-IList<StackFrame^>^ DebuggerProxy::GetCallstack() {
+PSExt::Callstack^ DebuggerProxy::GetCallstack() {
 	if (DebuggerDispatcher::Instance->DispatchRequired()) {
-		return (IList<StackFrame^>^) DebuggerDispatcher::Instance->InvokeFunction(DebuggerProxy::typeid, this,  "GetCallstack");
+		return (PSExt::Callstack^) DebuggerDispatcher::Instance->InvokeFunction(DebuggerProxy::typeid, this,  "GetCallstack");
 	}
-	return Callstack::GetCallstacks();
+	return ::Callstack::GetCallstacks();
 }

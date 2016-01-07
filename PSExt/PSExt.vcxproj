@@ -141,7 +141,6 @@
     <ClInclude Include="Breakpoints.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="CmdletLoader.h" />
-    <ClInclude Include="DebuggerDispatcher.h" />
     <ClInclude Include="DebuggerProxy.h" />
     <ClInclude Include="engextcpp.hpp" />
     <ClInclude Include="Callstack.h" />
@@ -164,9 +163,6 @@
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="CmdletLoader.cpp">
-      <CompileAsManaged>true</CompileAsManaged>
-    </ClCompile>
-    <ClCompile Include="DebuggerDispatcher.cpp">
       <CompileAsManaged>true</CompileAsManaged>
     </ClCompile>
     <ClCompile Include="DebuggerProxy.cpp">

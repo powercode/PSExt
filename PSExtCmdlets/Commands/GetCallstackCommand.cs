@@ -3,7 +3,7 @@
 namespace PSExt.Commands
 {
 	[Cmdlet(VerbsCommon.Get, "Callstack")]
-	[OutputType(typeof(StackFrame))]
+	[OutputType(typeof(Callstack))]
 	[Alias("k")]
 	public class GetCallstackCommand : DbgBaseCmdlet
 	{
