@@ -11,6 +11,10 @@ struct NativeBreakpointData{
 	DString Command;
 	DString OffsetExpression;
 public:
+	NativeBreakpointData()
+	{
+		memset(&Parameters, 0, sizeof(DEBUG_BREAKPOINT_PARAMETERS));
+	}
 	NativeBreakpointData(const DEBUG_BREAKPOINT_PARAMETERS& parameters, DString&& command, DString&& offsetExpression)
 		: Parameters(parameters)
 		, Command(command)

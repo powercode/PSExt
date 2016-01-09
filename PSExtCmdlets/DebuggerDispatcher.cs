@@ -1,15 +1,52 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Dynamic;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 
 namespace PSExt
 {
-	public class MethodInvocationInfo
+	public interface IMethodInvocationInfo
+	{
+		void Invoke();
+		object GetResult();
+	}
+
+	public class MethodInvocationInfo : IMethodInvocationInfo
 	{
 		private readonly MethodInfo _mi;
 		private readonly object _this;
 		private readonly object[] _args;
-		private object _res;		
+		private object _res;
+
+		private static MethodInfo GetMethodInfo(Type type, string methodName)
+		{
+			var retval = type.GetMethod(methodName);
+			if (retval == null)
+			{
+				throw new ArgumentOutOfRangeException(nameof(methodName), methodName, "No method was found with the specified name.");
+			}
+			return retval;
+		}
+
+		public static MethodInvocationInfo GetMethodInvocation(Type type, object instance, string methodName)
+		{
+			return new MethodInvocationInfo(
+				GetMethodInfo(type, methodName),
+				instance,
+				new object[0]);
+		}
+
+		public static MethodInvocationInfo GetMethodInvocation(Type type, object instance, string methodName, object arg1)
+		{
+			return new MethodInvocationInfo(
+				GetMethodInfo(type, methodName),
+				instance,
+				new[] { arg1 });
+		}
+
 
 		public MethodInvocationInfo(MethodInfo mi, object that, object[] args)
 		{
@@ -26,7 +63,7 @@ namespace PSExt
 		{
 			_mi = mi;
 			_this = that;
-			_args = new [] {arg1};
+			_args = new[] { arg1 };
 			if (mi == null)
 			{
 				throw new ArgumentNullException(nameof(mi), "The method was not found");
@@ -56,30 +93,13 @@ namespace PSExt
 	}
 
 	public class DebuggerDispatcher
-	{		
+	{
 		private readonly ManualResetEvent _doCallEvent;
-		private readonly AutoResetEvent _doReturn;		
+		private readonly AutoResetEvent _doReturn;
 		private readonly object _lock;
 		private Thread _dispatchThread;
-		private MethodInvocationInfo _invocationInfo;
+		private IMethodInvocationInfo _invocationInfo;
 
-		private static MethodInvocationInfo GetMethodInvocation(Type type, object instance, string methodName)
-		{
-			return new MethodInvocationInfo(
-				GetMethodInfo(type, methodName),
-				instance,
-				new object[0]);
-
-		}
-
-		private static MethodInvocationInfo GetMethodInvocation(Type type, object instance, string methodName, object arg1)
-		{
-			return new MethodInvocationInfo(
-							GetMethodInfo(type, methodName),
-							instance,
-							new[] {arg1});
-		}
-		
 
 		public DebuggerDispatcher()
 		{
@@ -88,19 +108,12 @@ namespace PSExt
 			_lock = new object();
 		}
 
-		private static MethodInfo GetMethodInfo(Type type, string methodName)
-		{
-			var retval = type.GetMethod(methodName);
-			if (retval == null)
-			{
-				throw new ArgumentOutOfRangeException(nameof(methodName), methodName, "No method was found with the specified name.");
-			}
-			return retval;
-		}
 
-		private object InvokeFunction(MethodInvocationInfo invocationInfo)
+
+		public object InvokeFunction(MethodInvocationInfo invocationInfo)
 		{
-			lock (_lock) {
+			lock (_lock)
+			{
 				_invocationInfo = invocationInfo;
 				_doCallEvent.Set();
 				_doReturn.WaitOne();
@@ -109,13 +122,7 @@ namespace PSExt
 				_invocationInfo = null;
 				return res;
 			}
-
 		}
-		public object InvokeFunction(Type type, string methodName) { return InvokeFunction(GetMethodInvocation(type, null, methodName)); }
-		public object InvokeFunction(Type type, string methodName, object arg1) { return InvokeFunction(GetMethodInvocation(type, null, methodName, arg1)); }
-		public object InvokeFunction(Type type, object instance, string methodName) { return InvokeFunction(GetMethodInvocation(type, instance, methodName)); }
-		public object InvokeFunction(Type type, object instance, string methodName, object arg1) { return InvokeFunction(GetMethodInvocation(type, instance, methodName, arg1)); }
-
 
 		public void Start(WaitHandle pipelineCompleted)
 		{
@@ -123,7 +130,7 @@ namespace PSExt
 			var handles = new WaitHandle[2];
 			handles[0] = _doCallEvent;
 			handles[1] = pipelineCompleted;
-			int res = 0;
+			var res = 0;
 
 			do
 			{
@@ -144,6 +151,83 @@ namespace PSExt
 
 		private static DebuggerDispatcher _instance;
 		public static DebuggerDispatcher Instance => _instance ?? (_instance = new DebuggerDispatcher());
+	}
+
+	public class DebuggerProxy : IDebugger
+	{		
+		private readonly dynamic _proxy;
+		public DebuggerProxy(IDebugger debugger)
+		{
+			_proxy = new DynamicDebuggerProxy(debugger);
+		}
+
+		public string ExecuteCommand(string command)
+		{
+			return _proxy.ExecuteCommand(command);
+		}
+
+		public string ReadLine()
+		{
+			return _proxy.ReadLine();
+		}
+
+		public void Write(string value)
+		{
+			_proxy.Write(value);
+		}
+
+		public IList<BreakpointData> GetBreakpoints()
+		{
+			return _proxy.GetBreakpoints();
+		}
+
+		public IList<BreakpointData> AddBreakpoints(BreakpointData data)
+		{
+			return _proxy.AddBreakpoints(data);
+		}
+
+		public IList<ModuleData> GetModules()
+		{
+			return _proxy.GetModules();
+		}
+
+		public Callstack GetCallstack()
+		{
+			return _proxy.GetCallstack();
+		}
+	
+	}
+
+	class DynamicDebuggerProxy: DynamicObject
+	{
+		private readonly IDebugger _proxy;
+		private readonly DebuggerDispatcher _dispatcher;
+
+		public DynamicDebuggerProxy(IDebugger proxy)
+		{
+			_proxy = proxy;
+			_dispatcher = DebuggerDispatcher.Instance;
+		}
+
+		public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
+		{
+			try
+			{
+				var mi = typeof(IDebugger).GetMethod(binder.Name);
+				if (_dispatcher.DispatchRequired())
+				{
+					result = _dispatcher.InvokeFunction(new MethodInvocationInfo(mi, _proxy, args));
+					return true;
+				}
+				result = mi.Invoke(_proxy, args);
+				return true;
+			}
+			catch
+			{
+				result = null;
+				return false;
+			}
+		}
 	}
 
 }

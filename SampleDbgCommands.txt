@@ -2,4 +2,4 @@
 .symfix c:\sym
 .reload -f
 
-!test
+!ps k

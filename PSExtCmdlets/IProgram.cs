@@ -8,4 +8,24 @@ namespace PSExt
 		int ExitCode { get; set; }
 		void ProcessEvents(WaitHandle waitHandle);
 	}
+
+	public interface IBreakpoints
+	{
+		
+	}
+
+	public interface IDebuggerClient
+	{
+		
+	}
+
+	public interface ICallstack
+	{
+		
+	}
+
+	public interface IModule
+	{
+		
+	}
 }

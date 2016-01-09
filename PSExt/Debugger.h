@@ -1,13 +1,13 @@
 #pragma once
 #using <PSExtCmdlets.dll>
+#include <msclr/marshal.h>
 
-ref class Client;
+namespace PSExt { namespace Native {
 
-ref class DebuggerProxy : public PSExt::IDebugger
+ref class Debugger : public PSExt::IDebugger
 {
-	Client^ _client;	
-public:
-	DebuggerProxy();
+	msclr::interop::marshal_context _marshal_context;
+public:	
 	virtual System::String^ ExecuteCommand(System::String^ command);	
 	virtual System::String^ ReadLine();
 	virtual void Write(System::String^ output);
@@ -17,3 +17,4 @@ public:
 	virtual PSExt::Callstack^ GetCallstack();
 };
 
+}}

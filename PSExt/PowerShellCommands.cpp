@@ -5,16 +5,17 @@ using namespace System::Threading;
 using namespace System::Management::Automation;
 
 #include <msclr\marshal.h>
-#include "DebuggerProxy.h"
+#include "Debugger.h"
 #include "PowerShellCommands.h"
 
 
 ref class Program : PSExt::IProgram{
-	DebuggerProxy^ _debugger = gcnew DebuggerProxy();	
+	PSExt::IDebugger^ _debugger;	
 	static Program^ TheProgram;
 public:	
 	Program(){
-
+		PSExt::Native::Debugger^ debugger = gcnew PSExt::Native::Debugger();
+		_debugger = gcnew PSExt::DebuggerProxy(debugger);
 	}
 	
 	virtual void ProcessEvents(System::Threading::WaitHandle^ doneEvent) {

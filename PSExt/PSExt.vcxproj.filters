@@ -30,31 +30,19 @@
     <ClInclude Include="NativeDebuggerBreakpoint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Breakpoints.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DebuggerProxy.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Client.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CmdletLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Symbols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Callstack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Module.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NativeCallstack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NativeModule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Debugger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -65,19 +53,10 @@
     <ClCompile Include="engextcpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebuggerProxy.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PowerShellCommands.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NativeDebuggerBreakpoint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Breakpoints.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CmdletLoader.cpp">
@@ -86,16 +65,13 @@
     <ClCompile Include="Symbols.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CallStack.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Module.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NativeCallstack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="NativeModule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Debugger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
