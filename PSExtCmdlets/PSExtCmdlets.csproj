@@ -57,6 +57,8 @@
     <Compile Include="BreakType.cs" />
     <Compile Include="Commands\GetCallstackCommand.cs" />
     <Compile Include="DebuggerDispatcher.cs" />
+    <Compile Include="DebuggerProxy.cs" />
+    <Compile Include="DynamicDebuggerProxy.cs" />
     <Compile Include="StackFrame.cs" />
     <Compile Include="Commands\NewBreakpointCommand.cs" />
     <Compile Include="DataBreakpointAccessTypes.cs" />
