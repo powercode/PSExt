@@ -1,21 +1,21 @@
-﻿using System;
-
-namespace PSExt
+﻿namespace PSExt
 {
-	public class SimpleDbgModule{
-
-		public UInt64 Start{ get; private set; }
-		public UInt64 End{ get; private set; }
-		public String ModuleName { get; private set; }
-		public SimpleDbgModule(UInt64 start, UInt64 end, String moduleName)		
-		{		
+	public class SimpleDbgModule
+	{
+		public SimpleDbgModule(ulong start, ulong end, string moduleName)
+		{
 			Start = start;
 			End = end;
 			ModuleName = moduleName;
 		}
 
-		public override String ToString(){
+		public ulong Start { get; private set; }
+		public ulong End { get; private set; }
+		public string ModuleName { get; }
+
+		public override string ToString()
+		{
 			return ModuleName;
 		}
-	};
+	}
 }

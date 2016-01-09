@@ -26,6 +26,6 @@ namespace PSExt
 		AdderOnly = 1 << 3,
 		// One-shot breakpoints varmatically clear themselves
 		// the first time they are hit.
-		OneShot = 1 << 4,
-	};
+		OneShot = 1 << 4
+	}
 }

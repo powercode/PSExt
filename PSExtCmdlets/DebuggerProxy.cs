@@ -4,15 +4,15 @@ using System.Dynamic;
 namespace PSExt
 {
 	/// <summary>
-	/// Proxy to debugger responsible for invoking the calls from PowerShell on the debugger thread.
-	/// DynamicDebuggerProxy helper does this and delegates to the real debugger.
+	///     Proxy to debugger responsible for invoking the calls from PowerShell on the debugger thread.
+	///     DynamicDebuggerProxy helper does this and delegates to the real debugger.
 	/// </summary>
 	public class DebuggerProxy : IDebugger
-	{		
+	{
 		private readonly dynamic _proxy;
 
 		/// <summary>
-		/// Creates a new instance of the debugger proxy
+		///     Creates a new instance of the debugger proxy
 		/// </summary>
 		/// <param name="debugger">the real native debugger to delegate calls to</param>
 		public DebuggerProxy(IDebugger debugger)
@@ -55,10 +55,10 @@ namespace PSExt
 			return _proxy.GetCallstack();
 		}
 
-		class DynamicDebuggerProxy : DynamicObject
+		private class DynamicDebuggerProxy : DynamicObject
 		{
-			private readonly IDebugger _proxy;
 			private readonly DebuggerDispatcher _dispatcher;
+			private readonly IDebugger _proxy;
 
 			public DynamicDebuggerProxy(IDebugger proxy)
 			{
@@ -70,7 +70,7 @@ namespace PSExt
 			{
 				try
 				{
-					var mi = typeof(IDebugger).GetMethod(binder.Name);
+					var mi = typeof (IDebugger).GetMethod(binder.Name);
 					if (_dispatcher.DispatchRequired())
 					{
 						result = _dispatcher.InvokeFunction(new MethodInvocationInfo(mi, _proxy, args));
@@ -86,6 +86,5 @@ namespace PSExt
 				}
 			}
 		}
-
 	}
 }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 
 namespace PSExt
@@ -14,10 +12,54 @@ namespace PSExt
 
 	public class MethodInvocationInfo : IMethodInvocationInfo
 	{
+		private readonly object[] _args;
 		private readonly MethodInfo _mi;
 		private readonly object _this;
-		private readonly object[] _args;
 		private object _res;
+
+
+		public MethodInvocationInfo(MethodInfo mi, object that, object[] args)
+		{
+			_mi = mi;
+			_this = that;
+			_args = args;
+			if (mi == null)
+			{
+				throw new ArgumentNullException(nameof(mi), "The method was not found");
+			}
+		}
+
+		public MethodInvocationInfo(MethodInfo mi, object that, object arg1)
+		{
+			_mi = mi;
+			_this = that;
+			_args = new[] {arg1};
+			if (mi == null)
+			{
+				throw new ArgumentNullException(nameof(mi), "The method was not found");
+			}
+		}
+
+		public MethodInvocationInfo(MethodInfo mi, object that, object arg1, object arg2)
+		{
+			_mi = mi;
+			_this = that;
+			_args = new[] {arg1, arg2};
+			if (mi == null)
+			{
+				throw new ArgumentNullException(nameof(mi), "The method was not found");
+			}
+		}
+
+		public void Invoke()
+		{
+			_res = _mi.Invoke(_this, _args);
+		}
+
+		public object GetResult()
+		{
+			return _res;
+		}
 
 		private static MethodInfo GetMethodInfo(Type type, string methodName)
 		{
@@ -42,56 +84,13 @@ namespace PSExt
 			return new MethodInvocationInfo(
 				GetMethodInfo(type, methodName),
 				instance,
-				new[] { arg1 });
-		}
-
-
-		public MethodInvocationInfo(MethodInfo mi, object that, object[] args)
-		{
-			_mi = mi;
-			_this = that;
-			_args = args;
-			if (mi == null)
-			{
-				throw new ArgumentNullException(nameof(mi), "The method was not found");
-			}
-		}
-
-		public MethodInvocationInfo(MethodInfo mi, object that, object arg1)
-		{
-			_mi = mi;
-			_this = that;
-			_args = new[] { arg1 };
-			if (mi == null)
-			{
-				throw new ArgumentNullException(nameof(mi), "The method was not found");
-			}
-		}
-
-		public MethodInvocationInfo(MethodInfo mi, object that, object arg1, object arg2)
-		{
-			_mi = mi;
-			_this = that;
-			_args = new[] { arg1, arg2 };
-			if (mi == null)
-			{
-				throw new ArgumentNullException(nameof(mi), "The method was not found");
-			}
-		}
-
-		public void Invoke()
-		{
-			_res = _mi.Invoke(_this, _args);
-		}
-
-		public object GetResult()
-		{
-			return _res;
+				new[] {arg1});
 		}
 	}
 
 	public class DebuggerDispatcher
 	{
+		private static DebuggerDispatcher _instance;
 		private readonly ManualResetEvent _doCallEvent;
 		private readonly AutoResetEvent _doReturn;
 		private readonly object _lock;
@@ -106,6 +105,7 @@ namespace PSExt
 			_lock = new object();
 		}
 
+		public static DebuggerDispatcher Instance => _instance ?? (_instance = new DebuggerDispatcher());
 
 
 		public object InvokeFunction(MethodInvocationInfo invocationInfo)
@@ -146,8 +146,5 @@ namespace PSExt
 		{
 			return Thread.CurrentThread != _dispatchThread;
 		}
-
-		private static DebuggerDispatcher _instance;
-		public static DebuggerDispatcher Instance => _instance ?? (_instance = new DebuggerDispatcher());
 	}
 }

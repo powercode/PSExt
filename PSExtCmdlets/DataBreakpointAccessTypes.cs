@@ -10,8 +10,6 @@ namespace PSExt
 		Write,
 		ReadWrite = Read | Write,
 		Execute,
-		IO,
-	};
-
-
+		IO
+	}
 }

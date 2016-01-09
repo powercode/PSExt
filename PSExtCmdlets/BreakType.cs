@@ -3,6 +3,6 @@
 	public enum BreakType
 	{
 		Code,
-		Data,		
-	};
+		Data
+	}
 }

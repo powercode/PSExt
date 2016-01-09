@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using PSExt.Commands;
 using PSExt.Host;
 
 namespace PSExt
@@ -14,24 +12,24 @@ namespace PSExt
 	public sealed class PSSession : IDisposable
 	{
 		private static PSSession _theSession;
-		private PowerShell _currentPowerShell;
 		private readonly DbgPsHost _host;
 		private readonly object _instanceLock = new object();
 		private readonly AutoResetEvent _pipelineDoneEvent = new AutoResetEvent(false);
 		private readonly IProgram _program;
 		private readonly Runspace _runspace;
+		private PowerShell _currentPowerShell;
 
 		public PSSession(IDebugger debugger, IProgram program)
 		{
 			_program = program;
-			var initialSessionState = InitialSessionState.CreateDefault();			
+			var initialSessionState = InitialSessionState.CreateDefault();
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger,
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("ShellID", "PSExt", "", ScopedItemOptions.Constant));
 			var location = Assembly.GetExecutingAssembly().Location;
-			initialSessionState.ImportPSModule(new []{location });
+			initialSessionState.ImportPSModule(new[] {location});
 			var formatFile = Path.Combine(Path.GetDirectoryName(location), "PSExtCmdlets.Format.ps1xml");
-			initialSessionState.Formats.Add(new SessionStateFormatEntry(formatFile));		
+			initialSessionState.Formats.Add(new SessionStateFormatEntry(formatFile));
 			_host = new DbgPsHost(debugger, program);
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
 		}
@@ -106,7 +104,7 @@ namespace PSExt
 			finally
 			{
 				_pipelineDoneEvent.Set();
-				ps.Dispose();				
+				ps.Dispose();
 			}
 		}
 
@@ -124,7 +122,7 @@ namespace PSExt
 		private void ExecuteHelper(string cmd, object input)
 		{
 			// Ignore empty command lines.
-			if (String.IsNullOrEmpty(cmd))
+			if (string.IsNullOrEmpty(cmd))
 			{
 				return;
 			}
@@ -191,7 +189,9 @@ namespace PSExt
 		{
 			if (e == null) return;
 			var icer = e as IContainsErrorRecord;
-			object error = icer != null ? icer.ErrorRecord : new ErrorRecord(e, "Host.ReportException", ErrorCategory.NotSpecified, null);
+			object error = icer != null
+				? icer.ErrorRecord
+				: new ErrorRecord(e, "Host.ReportException", ErrorCategory.NotSpecified, null);
 
 			lock (_instanceLock)
 			{
@@ -248,6 +248,6 @@ namespace PSExt
 			{
 				ReportException(rte);
 			}
-		}	
+		}
 	}
 }

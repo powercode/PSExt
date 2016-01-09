@@ -11,21 +11,17 @@ namespace PSExt
 
 	public interface IBreakpoints
 	{
-		
 	}
 
 	public interface IDebuggerClient
 	{
-		
 	}
 
 	public interface ICallstack
 	{
-		
 	}
 
 	public interface IModule
 	{
-		
 	}
 }

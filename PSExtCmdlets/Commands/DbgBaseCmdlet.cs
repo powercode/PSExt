@@ -7,9 +7,5 @@ namespace PSExt.Commands
 		private IDebugger _debugger;
 
 		protected IDebugger Debugger => _debugger ?? (_debugger = (IDebugger) SessionState.PSVariable.Get("Debugger").Value);
-
-		protected DbgBaseCmdlet()
-		{			
-		}
 	}
 }

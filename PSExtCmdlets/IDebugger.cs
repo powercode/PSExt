@@ -4,7 +4,7 @@ namespace PSExt
 {
 	public interface IDebugger
 	{
-		string ExecuteCommand(string command);		
+		string ExecuteCommand(string command);
 		string ReadLine();
 		void Write(string value);
 		IList<BreakpointData> GetBreakpoints();
