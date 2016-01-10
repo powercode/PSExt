@@ -1,6 +1,6 @@
 
 $$.load  D:\repos\PSExt\x64\Debug\PSExt.dll
-.load D:\repos\PSExt\PSExtCmdlets\bin\x64\Debug\PSExtCmdlets.dll
+.load D:\repos\PSExt\src\bin\x64\Debug\PSExt.dll
 .symfix c:\sym
 .reload -f
 
