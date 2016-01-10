@@ -28,16 +28,6 @@ namespace PSExt
 		private readonly HostUserInterface _hostUserInterface;
 
 		/// <summary>
-		///     The culture information of the thread that created this object.
-		/// </summary>
-		private readonly CultureInfo _originalCultureInfo = Thread.CurrentThread.CurrentCulture;
-
-		/// <summary>
-		///     The UI culture information of the thread that created this object.
-		/// </summary>
-		private readonly CultureInfo _originalUiCultureInfo = Thread.CurrentThread.CurrentUICulture;
-
-		/// <summary>
 		///     A reference to the listener.
 		/// </summary>
 		private readonly IProgram _program;
@@ -60,58 +50,40 @@ namespace PSExt
 		///     snapshot of the culture information of the thread that created
 		///     this object.
 		/// </summary>
-		public override CultureInfo CurrentCulture
-		{
-			get { return _originalCultureInfo; }
-		}
+		public override CultureInfo CurrentCulture { get; } = Thread.CurrentThread.CurrentCulture;
 
 		/// <summary>
 		///     Gets the UI culture information to use. This implementation takes
 		///     snapshot of the UI culture information of the thread that created
 		///     this object.
 		/// </summary>
-		public override CultureInfo CurrentUICulture
-		{
-			get { return _originalUiCultureInfo; }
-		}
+		public override CultureInfo CurrentUICulture { get; } = Thread.CurrentThread.CurrentUICulture;
 
 		/// <summary>
 		///     Gets the identifier of this instance of the host implementation.
 		///     This implementation always returns the GUID allocated at
 		///     instantiation time.
 		/// </summary>
-		public override Guid InstanceId
-		{
-			get { return instanceId; }
-		}
+		public override Guid InstanceId => instanceId;
 
 		/// <summary>
 		///     Gets the name of the host implementation. This string may be used
 		///     by script writers to identify when this host is being used.
 		/// </summary>
-		public override string Name
-		{
-			get { return "MySampleConsoleHostImplementation"; }
-		}
+		public override string Name { get; } = "MySampleConsoleHostImplementation";
 
 		/// <summary>
 		///     Gets an instance of the implementation of the PSHostUserInterface class
 		///     for this application. This instance is allocated once at startup time
 		///     and returned every time thereafter.
 		/// </summary>
-		public override PSHostUserInterface UI
-		{
-			get { return _hostUserInterface; }
-		}
+		public override PSHostUserInterface UI => _hostUserInterface;
 
 		/// <summary>
 		///     Gets the version object for this host application. Typically
 		///     this should match the version resource in the application.
 		/// </summary>
-		public override Version Version
-		{
-			get { return new Version(1, 0, 0, 0); }
-		}
+		public override Version Version => new Version(1, 0, 0, 0);
 
 		/// <summary>
 		///     Instructs the host to interrupt the currently running pipeline
@@ -176,10 +148,7 @@ namespace PSExt
 		///     Gets a value indicating whether a request
 		///     to open a PSSession has been made.
 		/// </summary>
-		public bool IsRunspacePushed
-		{
-			get { return PushedRunspace != null; }
-		}
+		public bool IsRunspacePushed => PushedRunspace != null;
 
 		/// <summary>
 		///     Gets or sets the runspace used by the PSSession.

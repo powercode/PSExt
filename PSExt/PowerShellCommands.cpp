@@ -31,7 +31,7 @@ public:
 	}
 	property int ExitCode{
 		virtual int get() {
-			return false;
+			return 0;
 		}
 		virtual void set(int) {
 		}

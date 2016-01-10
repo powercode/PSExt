@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -15,9 +16,10 @@ namespace PSExt
 		///     Creates a new instance of the debugger proxy
 		/// </summary>
 		/// <param name="debugger">the real native debugger to delegate calls to</param>
-		public DebuggerProxy(IDebugger debugger)
+		/// <param name="debugFunctionDispatch"></param>
+		public DebuggerProxy(IDebugger debugger, IDebugFunctionDispatch debugFunctionDispatch)
 		{
-			_proxy = new DynamicDebuggerProxy(debugger);
+			_proxy = new DynamicDebuggerProxy(debugger, debugFunctionDispatch);
 		}
 
 		public string ExecuteCommand(string command)
@@ -56,34 +58,26 @@ namespace PSExt
 		}
 
 		private class DynamicDebuggerProxy : DynamicObject
-		{
-			private readonly DebuggerDispatcher _dispatcher;
+		{			
 			private readonly IDebugger _proxy;
+			private readonly IDebugFunctionDispatch _debugFunctionDispatch;
 
-			public DynamicDebuggerProxy(IDebugger proxy)
+			public DynamicDebuggerProxy(IDebugger proxy, IDebugFunctionDispatch debugFunctionDispatch)
 			{
 				_proxy = proxy;
-				_dispatcher = DebuggerDispatcher.Instance;
+				_debugFunctionDispatch = debugFunctionDispatch;				
 			}
 
 			public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-			{
-				try
-				{
-					var mi = typeof (IDebugger).GetMethod(binder.Name);
-					if (_dispatcher.DispatchRequired())
-					{
-						result = _dispatcher.InvokeFunction(new MethodInvocationInfo(mi, _proxy, args));
-						return true;
-					}
-					result = mi.Invoke(_proxy, args);
+			{									
+				var mi = typeof (IDebugger).GetMethod(binder.Name);
+				if (_debugFunctionDispatch.DispatchRequired())
+				{						
+					result = _debugFunctionDispatch.InvokeFunction(new MethodInvocationInfo(mi, _proxy, args));
 					return true;
 				}
-				catch
-				{
-					result = null;
-					return false;
-				}
+				result = mi.Invoke(_proxy, args);
+				return true;			
 			}
 		}
 	}

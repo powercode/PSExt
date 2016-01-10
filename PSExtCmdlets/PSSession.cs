@@ -40,9 +40,9 @@ namespace PSExt
 			_runspace.Close();
 		}
 
-		public static int Initialize(IDebugger debugger, IProgram program)
+		public static int Initialize(IDebugger debugger, IProgram eventProcessor)
 		{
-			_theSession = new PSSession(debugger, program);
+			_theSession = new PSSession(debugger, eventProcessor);
 			return 0;
 		}
 
@@ -56,7 +56,7 @@ namespace PSExt
 			_theSession.Invoke(command);
 		}
 
-		private void Invoke(string command)
+		public  void Invoke(string command)
 		{
 			if (!IsRunspaceOpen())
 			{
