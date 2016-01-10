@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Diagnostics.Runtime.Interop;
@@ -13,12 +14,14 @@ namespace PSExt
 		private readonly IDebugClient6 _client;
 		private readonly IDebugControl5 _control5;
 		private readonly IDebugAdvanced2 _advanced2;
+		private readonly IDebugSymbols3 _symbols3;
 
 		public Debugger(IDebugClient client)
 		{
 			_client = (IDebugClient6) client;
 			_control5 = (IDebugControl5) client;
 			_advanced2 = (IDebugAdvanced2) client;
+			_symbols3 = (IDebugSymbols3)client;
 		}
 
 		public string ExecuteCommand(string command)
@@ -111,10 +114,55 @@ namespace PSExt
 			throw new Win32Exception(status, message);
 		}
 
+		private IList<DEBUG_STACK_FRAME_EX> GetNativeStack()
+		{
+			var frames = new DEBUG_STACK_FRAME_EX[100];
+			uint filled;			
+			int status;
+						
+			if ((status = _control5.GetStackTraceEx(0, 0, 0, frames, frames.Length, out filled)) != 0)
+			{
+				ThrowRemote(status, "Unable to get callstack.");
+			}
+			return new List<DEBUG_STACK_FRAME_EX>(frames.Take((int)filled));
+		}
+
 		public DebugThread GetCallstack()
 		{
-			throw new System.NotImplementedException();
+			var nativeFrames = GetNativeStack();
+			var stackFrames = new List<StackFrame>(nativeFrames.Count);
+			var retVal = new DebugThread(stackFrames);
+			stackFrames.AddRange(nativeFrames.Select(frame => ToStackFrame(frame, retVal)));
+			return retVal;
 		}
+
+		private StackFrame ToStackFrame(DEBUG_STACK_FRAME_EX frame, DebugThread thread)
+		{
+			UInt64 displacement = 0;
+			var builder = new StringBuilder(256);
+			GetSymbolNameByOffset(frame.InstructionOffset, ref builder, out displacement);
+			var name = builder.ToString();
+			return new StackFrame(frame.ReturnOffset, frame.InstructionOffset, frame.FrameOffset, (ushort)frame.FrameNumber, name, displacement, thread);
+		}
+
+		private void GetSymbolNameByOffset(ulong offset, ref StringBuilder builder,  out ulong displacement)
+		{							
+			uint nameSize;			
+			var res = _symbols3.GetNameByOffsetWide(offset, builder, builder.Capacity, out nameSize, out displacement);
+			switch (res)
+			{
+				case 0: // S_OK					
+					return;
+				case 1: // S_FALSE					
+					builder = new StringBuilder((int) nameSize);
+					GetSymbolNameByOffset(offset, ref builder, out displacement);
+					return;
+				default:
+					ThrowRemote(res, "Failed to lookup symbol");
+					return;
+			}
+		}
+		
 
 		class DebugOutput : IDebugOutputCallbacksWide
 		{
