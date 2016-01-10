@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Diagnostics.Runtime.Interop;
@@ -54,6 +53,7 @@ namespace PSExt.Extension
 		public DbgEngStream(IDebugClient client)
 		{
 			_client = client;
+			// ReSharper disable once SuspiciousTypeConversion.Global
 			_control = (IDebugControl) client;
 		}
 

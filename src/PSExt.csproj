@@ -82,10 +82,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BreakpointData.cs" />
-    <Compile Include="BreakpointFlags.cs" />
+    <Compile Include="Module\BreakpointData.cs" />
+    <Compile Include="Module\BreakpointFlags.cs" />
     <Compile Include="BreakpointManager.cs" />
-    <Compile Include="BreakType.cs" />
+    <Compile Include="Module\BreakType.cs" />
     <Compile Include="Debugger.cs" />
     <Compile Include="DebuggerException.cs" />
     <Compile Include="ExceptionHelper.cs" />
@@ -133,32 +133,31 @@
     <Compile Include="Debugger\IDebugSystemObjects2.cs" />
     <Compile Include="Debugger\IDebugSystemObjects3.cs" />
     <Compile Include="Debugger\Structs.cs" />
-    <Compile Include="DebugThread.cs" />
-    <Compile Include="Commands\GetCallstackCommand.cs" />
+    <Compile Include="Module\DebugThread.cs" />
+    <Compile Include="Module\GetCallstackCommand.cs" />
     <Compile Include="DebuggerDispatcher.cs" />
     <Compile Include="DebuggerProxy.cs" />
     <Compile Include="Extension\PSExt.cs" />
-    <Compile Include="StackFrame.cs" />
-    <Compile Include="Commands\NewBreakpointCommand.cs" />
-    <Compile Include="DataBreakpointAccessTypes.cs" />
-    <Compile Include="Commands\DbgBaseCmdlet.cs" />
-    <Compile Include="Commands\GetDbgBreakpointCommand.cs" />
-    <Compile Include="Commands\GetDebuggerModuleCommand.cs" />
+    <Compile Include="Module\StackFrame.cs" />
+    <Compile Include="Module\NewBreakpointCommand.cs" />
+    <Compile Include="Module\DataBreakpointAccessTypes.cs" />
+    <Compile Include="Module\DbgBaseCmdlet.cs" />
+    <Compile Include="Module\GetDbgBreakpointCommand.cs" />
+    <Compile Include="Module\GetDebuggerModuleCommand.cs" />
     <Compile Include="Host\HostUtilities.cs" />
     <Compile Include="IDebugger.cs" />
     <Compile Include="Host\HostUserInterface.cs" />
-    <Compile Include="Commands\InvokeDbgCommand.cs" />
-    <Compile Include="ImageFileMachineType.cs" />
+    <Compile Include="Module\InvokeDbgCommand.cs" />
+    <Compile Include="Module\ImageFileMachineType.cs" />
     <Compile Include="IProgram.cs" />
-    <Compile Include="ModuleData.cs" />
+    <Compile Include="Module\ModuleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Host\PsHost.cs" />
     <Compile Include="PSSession.cs" />
     <Compile Include="Host\RawUserInterface.cs" />
-    <Compile Include="SimpleDbgModule.cs" />
     <Compile Include="Symbols.cs" />
     <Compile Include="SymbolSearchResult.cs" />
-    <Compile Include="SymType.cs" />
+    <Compile Include="Module\SymType.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
