@@ -84,8 +84,11 @@
   <ItemGroup>
     <Compile Include="BreakpointData.cs" />
     <Compile Include="BreakpointFlags.cs" />
+    <Compile Include="BreakpointManager.cs" />
     <Compile Include="BreakType.cs" />
     <Compile Include="Debugger.cs" />
+    <Compile Include="DebuggerException.cs" />
+    <Compile Include="ExceptionHelper.cs" />
     <Compile Include="Extension\DebuggerExtension.cs" />
     <Compile Include="Debugger\Enums.cs" />
     <Compile Include="Debugger\IDebugAdvanced.cs" />
@@ -153,6 +156,8 @@
     <Compile Include="PSSession.cs" />
     <Compile Include="Host\RawUserInterface.cs" />
     <Compile Include="SimpleDbgModule.cs" />
+    <Compile Include="Symbols.cs" />
+    <Compile Include="SymbolSearchResult.cs" />
     <Compile Include="SymType.cs" />
   </ItemGroup>
   <ItemGroup>
