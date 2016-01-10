@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 namespace Microsoft.Diagnostics.Runtime.Interop
 {
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct IMAGEHLP_MODULE64
+    public unsafe struct IMAGEHLP_MODULEW64
     {
         private const int MAX_PATH = 260;
 
@@ -20,12 +20,12 @@ namespace Microsoft.Diagnostics.Runtime.Interop
         public UInt32 CheckSum;
         public UInt32 NumSyms;
         public DEBUG_SYMTYPE SymType;
-        private fixed char _ModuleName[32];
-        private fixed char _ImageName[256];
-        private fixed char _LoadedImageName[256];
-        private fixed char _LoadedPdbName[256];
+        private fixed short _ModuleName[32];
+        private fixed short _ImageName[256];
+        private fixed short _LoadedImageName[256];
+        private fixed short _LoadedPdbName[256];
         public UInt32 CVSig;
-        public fixed char CVData[MAX_PATH * 3];
+        public fixed short CVData[MAX_PATH * 3];
         public UInt32 PdbSig;
         public Guid PdbSig70;
         public UInt32 PdbAge;
@@ -85,9 +85,9 @@ namespace Microsoft.Diagnostics.Runtime.Interop
         {
             get
             {
-                fixed (char* moduleNamePtr = _ModuleName)
+                fixed (short* moduleNamePtr = _ModuleName)
                 {
-                    return Marshal.PtrToStringUni((IntPtr)moduleNamePtr, 32);
+                    return Marshal.PtrToStringUni((IntPtr)moduleNamePtr);
                 }
             }
         }
@@ -96,9 +96,9 @@ namespace Microsoft.Diagnostics.Runtime.Interop
         {
             get
             {
-                fixed (char* imageNamePtr = _ImageName)
+                fixed (short* imageNamePtr = _ImageName)
                 {
-                    return Marshal.PtrToStringUni((IntPtr)imageNamePtr, 256);
+                    return Marshal.PtrToStringUni((IntPtr)imageNamePtr);
                 }
             }
         }
@@ -107,9 +107,9 @@ namespace Microsoft.Diagnostics.Runtime.Interop
         {
             get
             {
-                fixed (char* loadedImageNamePtr = _LoadedImageName)
+                fixed (short* loadedImageNamePtr = _LoadedImageName)
                 {
-                    return Marshal.PtrToStringUni((IntPtr)loadedImageNamePtr, 256);
+                    return Marshal.PtrToStringUni((IntPtr)loadedImageNamePtr);
                 }
             }
         }
@@ -118,9 +118,9 @@ namespace Microsoft.Diagnostics.Runtime.Interop
         {
             get
             {
-                fixed (char* loadedPdbNamePtr = _LoadedPdbName)
+                fixed (short* loadedPdbNamePtr = _LoadedPdbName)
                 {
-                    return Marshal.PtrToStringUni((IntPtr)loadedPdbNamePtr, 256);
+                    return Marshal.PtrToStringUni((IntPtr)loadedPdbNamePtr);
                 }
             }
         }		
