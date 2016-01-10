@@ -9,30 +9,9 @@ using RGiesecke.DllExport;
 namespace PSExt.Extension
 {
 	public partial class DebuggerExtension
-	{
-		private static readonly string PSExtDll = "PSExtCmdlets";
-
-		static DebuggerExtension()
-		{
-			AppDomain.CurrentDomain.AssemblyResolve += ResolveAssembly;
-		}
-
+	{		
 		public static IDebugClient DebugClient { get; private set; }
-
-		private static Assembly ResolveAssembly(object sender, ResolveEventArgs args)
-		{
-			if (!args.Name.Contains(PSExtDll)) return null;
-
-			var codebase = Assembly.GetExecutingAssembly().CodeBase;
-
-			if (codebase.StartsWith("file://"))
-				codebase = codebase.Substring(8).Replace('/', '\\');
-
-			var directory = Path.GetDirectoryName(codebase);
-			var path = Path.Combine(directory, PSExtDll) + ".dll";
-			return Assembly.LoadFile(path);
-		}
-
+		
 		private static bool InitApi(IntPtr ptrClient)
 		{
 			// On our first call to the API:
@@ -52,7 +31,7 @@ namespace PSExt.Extension
 		}
 
 		[DllExport("DebugExtensionInitialize")]
-		public static int DebugExtensionInitialize(ref uint version, ref uint flags)
+		public static int DebugExtensionInitialize(out uint version, out uint flags)
 		{
 			// Set the extension version to 1, which expects exports with this signature:
 			//      void _stdcall function(IDebugClient *client, const char *args)
@@ -61,9 +40,9 @@ namespace PSExt.Extension
 			return 0;
 		}
 
-		private static uint DEBUG_EXTENSION_VERSION(uint Major, uint Minor)
+		private static uint DEBUG_EXTENSION_VERSION(uint major, uint minor)
 		{
-			return ((Major & 0xffff) << 16) | (Minor & 0xffff);
+			return ((major & 0xffff) << 16) | (minor & 0xffff);
 		}
 	}
 
