@@ -5,3 +5,4 @@ $$.load  D:\repos\PSExt\x64\Debug\PSExt.dll
 .reload -f
 
 !ps k
+!ps lm
