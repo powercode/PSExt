@@ -79,7 +79,7 @@ namespace PSExt
 					ThrowRemote(status, $"Unable to get module #{i}");
 				}
 												
-				var buffer = new byte[Marshal.SizeOf<IMAGEHLP_MODULE64>()];
+				var buffer = new byte[Marshal.SizeOf<IMAGEHLP_MODULEW64>()];
 				var sizeAsBytes = BitConverter.GetBytes(buffer.Length);
 				Array.Copy(sizeAsBytes, buffer,sizeAsBytes.Length);
 				int infoSize;				
@@ -98,10 +98,11 @@ namespace PSExt
 		private unsafe ModuleData ToModuleData(byte[] moduleInfoBuffer)
 		{
 			fixed (byte* buf = moduleInfoBuffer)
-			{
-				IntPtr ptr = new IntPtr(buf);
-				IMAGEHLP_MODULE64 mi = Marshal.PtrToStructure<IMAGEHLP_MODULE64>(ptr);
-				return new ModuleData(mi.ModuleName, mi.ImageName, mi.LoadedImageName, mi.LoadedPdbName, mi.BaseOfImage, mi.ImageSize, mi.TimeDateStamp, mi.CheckSum, mi.NumSyms, (uint)mi.SymType, mi.PdbSig70, mi.PdbAge, mi.PdbUnmatched, mi.LineNumbers, mi.GlobalSymbols, mi.TypeInfo, mi.SourceIndexed, mi.Publics, mi.MachineType);
+			{			
+				IMAGEHLP_MODULEW64 mi = Marshal.PtrToStructure<IMAGEHLP_MODULEW64>(new IntPtr(buf));
+				return new ModuleData(mi.ModuleName, mi.ImageName, mi.LoadedImageName, mi.LoadedPdbName, mi.BaseOfImage, mi.ImageSize,
+					 mi.TimeDateStamp, mi.CheckSum, mi.NumSyms, (uint)mi.SymType, mi.PdbSig70, mi.PdbAge, mi.PdbUnmatched, mi.LineNumbers, mi.GlobalSymbols, 
+					 mi.TypeInfo, mi.SourceIndexed, mi.Publics, mi.MachineType);
 			}
 		}
 
