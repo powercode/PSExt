@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSExtCmdlets", "PSExtCmdlets\PSExtCmdlets.csproj", "{789E85CB-0A34-4175-9EBE-3F1E0661F483}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PSExt", "src\PSExt.csproj", "{789E85CB-0A34-4175-9EBE-3F1E0661F483}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F6BE2B1-5491-498F-8F17-C3950A44A2E6}"
 	ProjectSection(SolutionItems) = preProject

@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>PSExt</RootNamespace>
-    <AssemblyName>PSExtCmdlets</AssemblyName>
+    <AssemblyName>PSExt</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -163,7 +163,7 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="PSExt.snk" />
-    <Content Include="PSExtCmdlets.Format.ps1xml">
+    <Content Include="PSExt.Format.ps1xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <SubType>Designer</SubType>
     </Content>
