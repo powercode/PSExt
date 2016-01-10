@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace PSExt
@@ -16,6 +17,7 @@ namespace PSExt
 		private readonly MethodInfo _mi;
 		private readonly object _this;
 		private object _res;
+		private Exception _exception;
 
 
 		public MethodInvocationInfo(MethodInfo mi, object that, object[] args)
@@ -53,11 +55,26 @@ namespace PSExt
 
 		public void Invoke()
 		{
-			_res = _mi.Invoke(_this, _args);
+			try
+			{
+				_res = _mi.Invoke(_this, _args);
+			}
+			catch (TargetInvocationException te)
+			{
+				_exception = te.InnerException;
+			}
+			catch (Exception exception)
+			{
+				_exception = exception;	
+			}
 		}
 
 		public object GetResult()
 		{
+			if (_exception != null)
+			{
+				throw _exception;
+			}
 			return _res;
 		}
 
@@ -88,7 +105,18 @@ namespace PSExt
 		}
 	}
 
-	public class DebuggerDispatcher
+	public interface IEventProcessor
+	{
+		void ProcessEvents(WaitHandle pipelineCompleted);
+	}
+
+	public interface IDebugFunctionDispatch
+	{
+		bool DispatchRequired();
+		object InvokeFunction(MethodInvocationInfo invocationInfo);
+	}
+
+	public class DebuggerDispatcher : IEventProcessor, IDebugFunctionDispatch
 	{
 		private static DebuggerDispatcher _instance;
 		private readonly ManualResetEvent _doCallEvent;
@@ -122,7 +150,7 @@ namespace PSExt
 			}
 		}
 
-		public void Start(WaitHandle pipelineCompleted)
+		public void ProcessEvents(WaitHandle pipelineCompleted)
 		{
 			_dispatchThread = Thread.CurrentThread;
 			var handles = new WaitHandle[2];
@@ -135,7 +163,9 @@ namespace PSExt
 				res = WaitHandle.WaitAny(handles);
 				if (res == 0)
 				{
+					
 					_invocationInfo.Invoke();
+					
 					_doCallEvent.Reset();
 					_doReturn.Set();
 				}

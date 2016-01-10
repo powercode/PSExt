@@ -24,6 +24,7 @@
     <NoWarn>1684</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -35,6 +36,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>1684</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -42,7 +44,35 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>PSExt.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1684</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1684</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="RGiesecke.DllExport.Metadata, Version=1.0.0.0, Culture=neutral, PublicKeyToken=8f52d83c1a22df51, processorArchitecture=MSIL">
+      <HintPath>..\packages\UnmanagedExports.1.2.7\lib\net\RGiesecke.DllExport.Metadata.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -55,10 +85,56 @@
     <Compile Include="BreakpointData.cs" />
     <Compile Include="BreakpointFlags.cs" />
     <Compile Include="BreakType.cs" />
+    <Compile Include="Debugger.cs" />
+    <Compile Include="Extension\DebuggerExtension.cs" />
+    <Compile Include="Debugger\Enums.cs" />
+    <Compile Include="Debugger\IDebugAdvanced.cs" />
+    <Compile Include="Debugger\IDebugAdvanced2.cs" />
+    <Compile Include="Debugger\IDebugAdvanced3.cs" />
+    <Compile Include="Debugger\IDebugBreakpoint.cs" />
+    <Compile Include="Debugger\IDebugBreakpoint2.cs" />
+    <Compile Include="Debugger\IDebugBreakpoint3.cs" />
+    <Compile Include="Debugger\IDebugClient.cs" />
+    <Compile Include="Debugger\IDebugClient2.cs" />
+    <Compile Include="Debugger\IDebugClient3.cs" />
+    <Compile Include="Debugger\IDebugClient4.cs" />
+    <Compile Include="Debugger\IDebugClient5.cs" />
+    <Compile Include="Debugger\IDebugClient6.cs" />
+    <Compile Include="Debugger\IDebugControl.cs" />
+    <Compile Include="Debugger\IDebugControl2.cs" />
+    <Compile Include="Debugger\IDebugControl3.cs" />
+    <Compile Include="Debugger\IDebugControl4.cs" />
+    <Compile Include="Debugger\IDebugControl5.cs" />
+    <Compile Include="Debugger\IDebugControl6.cs" />
+    <Compile Include="Debugger\IDebugDataSpaces.cs" />
+    <Compile Include="Debugger\IDebugDataSpaces2.cs" />
+    <Compile Include="Debugger\IDebugDataSpaces3.cs" />
+    <Compile Include="Debugger\IDebugDataSpaces4.cs" />
+    <Compile Include="Debugger\IDebugEventCallbacks.cs" />
+    <Compile Include="Debugger\IDebugEventCallbacksWide.cs" />
+    <Compile Include="Debugger\IDebugEventContextCallbacks.cs" />
+    <Compile Include="Debugger\IDebugInputCallbacks.cs" />
+    <Compile Include="Debugger\IDebugOutputCallbacks.cs" />
+    <Compile Include="Debugger\IDebugOutputCallbacks2.cs" />
+    <Compile Include="Debugger\IDebugOutputCallbacksWide.cs" />
+    <Compile Include="Debugger\IDebugRegisters.cs" />
+    <Compile Include="Debugger\IDebugRegisters2.cs" />
+    <Compile Include="Debugger\IDebugSymbolGroup.cs" />
+    <Compile Include="Debugger\IDebugSymbolGroup2.cs" />
+    <Compile Include="Debugger\IDebugSymbols.cs" />
+    <Compile Include="Debugger\IDebugSymbols2.cs" />
+    <Compile Include="Debugger\IDebugSymbols3.cs" />
+    <Compile Include="Debugger\IDebugSymbols4.cs" />
+    <Compile Include="Debugger\IDebugSymbols5.cs" />
+    <Compile Include="Debugger\IDebugSystemObjects.cs" />
+    <Compile Include="Debugger\IDebugSystemObjects2.cs" />
+    <Compile Include="Debugger\IDebugSystemObjects3.cs" />
+    <Compile Include="Debugger\Structs.cs" />
     <Compile Include="DebugThread.cs" />
     <Compile Include="Commands\GetCallstackCommand.cs" />
     <Compile Include="DebuggerDispatcher.cs" />
     <Compile Include="DebuggerProxy.cs" />
+    <Compile Include="Extension\PSExt.cs" />
     <Compile Include="StackFrame.cs" />
     <Compile Include="Commands\NewBreakpointCommand.cs" />
     <Compile Include="DataBreakpointAccessTypes.cs" />
@@ -87,7 +163,9 @@
       <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="../packages/UnmanagedExports.1.2.7/tools/RGiesecke.DllExport.targets" Condition="Exists('../packages/UnmanagedExports.1.2.7/tools/RGiesecke.DllExport.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
