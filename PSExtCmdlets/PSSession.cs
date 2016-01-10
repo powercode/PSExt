@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Runspaces;
@@ -27,7 +28,7 @@ namespace PSExt
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("ShellID", "PSExt", "", ScopedItemOptions.Constant));
 			var location = Assembly.GetExecutingAssembly().Location;
-			initialSessionState.ImportPSModule(new[] {location});
+			initialSessionState.ImportPSModule(new[] { location });
 			var formatFile = Path.Combine(Path.GetDirectoryName(location), "PSExtCmdlets.Format.ps1xml");
 			initialSessionState.Formats.Add(new SessionStateFormatEntry(formatFile));
 			_host = new DbgPsHost(debugger, program);
@@ -76,7 +77,6 @@ namespace PSExt
 
 		private void InitializePowerShell()
 		{
-			_runspace.Open();
 			LoadProfile();
 		}
 
@@ -90,6 +90,7 @@ namespace PSExt
 
 		private void InvokeProfileScripts()
 		{
+			_runspace.Open();
 			var ps = PowerShell.Create();
 			try
 			{
@@ -156,7 +157,7 @@ namespace PSExt
 				// the pipeline.
 				if (input != null)
 				{
-					_currentPowerShell.Invoke(new[] {input});
+					_currentPowerShell.Invoke(new[] { input });
 				}
 				else
 				{
@@ -205,7 +206,7 @@ namespace PSExt
 				_currentPowerShell.AddScript("$input").AddCommand("out-string");
 
 				// Do not merge errors, this function will swallow errors.
-				var inputCollection = new PSDataCollection<object> {error};
+				var inputCollection = new PSDataCollection<object> { error };
 				inputCollection.Complete();
 				var result = _currentPowerShell.Invoke(inputCollection);
 

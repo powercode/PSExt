@@ -89,7 +89,7 @@ namespace PSExt {
 				return newId;
 			}
 		
-			StackFrame^ ToStackFrame(const DEBUG_STACK_FRAME_EX& frame, PSExt::Callstack^ stack)
+			StackFrame^ ToStackFrame(const DEBUG_STACK_FRAME_EX& frame, PSExt::DebugThread^ stack)
 			{
 				UNREFERENCED_PARAMETER(frame);
 				ULONG64 displacement = 0;
@@ -175,10 +175,10 @@ namespace PSExt {
 			return res;
 		}
 
-		PSExt::Callstack^ Debugger::GetCallstack() {
+		PSExt::DebugThread^ Debugger::GetCallstack() {
 			auto stackFrames = GetNativeStack();
 			List<StackFrame^>^ res = gcnew List<StackFrame^>((int)stackFrames.size());
-			auto retVal = gcnew PSExt::Callstack(res);
+			auto retVal = gcnew PSExt::DebugThread(res);
 			for (auto& frame : stackFrames)
 			{
 				res->Add(helpers::ToStackFrame(frame, retVal));

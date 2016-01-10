@@ -55,6 +55,7 @@
     <Compile Include="BreakpointData.cs" />
     <Compile Include="BreakpointFlags.cs" />
     <Compile Include="BreakType.cs" />
+    <Compile Include="DebugThread.cs" />
     <Compile Include="Commands\GetCallstackCommand.cs" />
     <Compile Include="DebuggerDispatcher.cs" />
     <Compile Include="DebuggerProxy.cs" />
@@ -83,6 +84,7 @@
     <None Include="PSExt.snk" />
     <Content Include="PSExtCmdlets.Format.ps1xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

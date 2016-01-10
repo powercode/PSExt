@@ -50,7 +50,7 @@ namespace PSExt
 			return _proxy.GetModules();
 		}
 
-		public Callstack GetCallstack()
+		public DebugThread GetCallstack()
 		{
 			return _proxy.GetCallstack();
 		}

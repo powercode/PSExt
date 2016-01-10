@@ -1,30 +1,54 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
+	<Controls>
+		<Control>
+			<Name>Callstack-GroupingFormat</Name>
+			<CustomControl>
+				<CustomEntries>
+					<CustomEntry>
+						<CustomItem>
+							<Frame>								
+								<CustomItem>
+									<ExpressionBinding>
+										<ScriptBlock>$_.Thread.ToString()</ScriptBlock>
+									</ExpressionBinding>									
+								</CustomItem>
+							</Frame>
+						</CustomItem>
+					</CustomEntry>
+				</CustomEntries>
+			</CustomControl>
+		</Control>
+	</Controls>
 	<ViewDefinitions>
 		<View>
 			<Name>PSExt.StackFrame</Name>
 			<ViewSelectedBy>
 				<TypeName>PSExt.StackFrame</TypeName>
 			</ViewSelectedBy>
+			<GroupBy>
+				<PropertyName>Thread</PropertyName>
+				<CustomControlName>Callstack-GroupingFormat</CustomControlName>
+			</GroupBy>
 			<TableControl>
 				<TableHeaders>
 					<TableColumnHeader>
 						<Label>#</Label>
 						<Width>3</Width>
 						<Alignment>Right</Alignment>
-					</TableColumnHeader>					
+					</TableColumnHeader>
 					<TableColumnHeader>
-						<Label>Stack</Label>
+						<Label>ChildStackFrame</Label>
 						<Width>18</Width>
 						<Alignment>Right</Alignment>
 					</TableColumnHeader>
 					<TableColumnHeader>
-						<Label>Return</Label>
+						<Label>ReturnAddress</Label>
 						<Width>18</Width>
 						<Alignment>Right</Alignment>
 					</TableColumnHeader>
 					<TableColumnHeader>
-						<Label>Callsite</Label>												
+						<Label>Callsite</Label>
 					</TableColumnHeader>
 				</TableHeaders>
 				<TableRowEntries>
@@ -32,7 +56,7 @@
 						<TableColumnItems>
 							<TableColumnItem>
 								<PropertyName>FrameNumber</PropertyName>
-							</TableColumnItem>							
+							</TableColumnItem>
 							<TableColumnItem>
 								<FormatString>0x{0:x16}</FormatString>
 								<PropertyName>FrameOffset</PropertyName>
@@ -41,7 +65,7 @@
 								<FormatString>0x{0:x16}</FormatString>
 								<PropertyName>ReturnOffset</PropertyName>
 							</TableColumnItem>
-							<TableColumnItem>								
+							<TableColumnItem>
 								<ScriptBlock>'{0}+0x{1:x}' -f $_.Name, $_.Displacement</ScriptBlock>
 							</TableColumnItem>
 						</TableColumnItems>
@@ -73,7 +97,7 @@
 					<TableColumnHeader>
 						<Label>Built</Label>
 						<Width>19</Width>
-					</TableColumnHeader>				
+					</TableColumnHeader>
 				</TableHeaders>
 				<TableRowEntries>
 					<TableRowEntry>
