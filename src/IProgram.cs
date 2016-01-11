@@ -8,23 +8,7 @@ namespace PSExt
 		bool ShouldExit { get; set; }
 		int ExitCode { get; set; }		
 	}
-
-	public interface IBreakpoints
-	{
-	}
-
-	public interface IDebuggerClient
-	{
-	}
-
-	public interface ICallstack
-	{
-	}
-
-	public interface IModule
-	{
-	}
-
+	
 	class Program : IProgram
 	{
 		private IDebugger _debugger;		
