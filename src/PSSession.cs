@@ -55,7 +55,7 @@ namespace PSExt
 			_theSession.Invoke(command);
 		}
 
-		public  void Invoke(string command)
+		public void Invoke(string command)
 		{
 			if (!IsRunspaceOpen())
 			{
