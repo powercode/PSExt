@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -33,6 +34,7 @@ namespace PSExt
 			_client = (IDebugClient6)client;
 			_control5 = (IDebugControl5)client;
 			_advanced2 = (IDebugAdvanced2)client;
+			//_client.SetOutputCallbacksWide(new NullDebugOutput());
 		}
 
 		public string ExecuteCommand(string command)
@@ -52,8 +54,29 @@ namespace PSExt
 			}
 		}
 
+		class InputCallbacks : IDebugInputCallbacks
+		{
+			private readonly IDebugControl5 _control;
+			private int _readCount;
+			public InputCallbacks(IDebugControl5 control)
+			{
+				_control = control;
+			}
+
+			public int StartInput(uint bufferSize)
+			{
+				return 0;
+			}
+
+			public int EndInput()
+			{
+				return 0;
+			}
+		}
+
 		public string ReadLine()
 		{
+			_client.SetInputCallbacks(new InputCallbacks(_control5));
 			var builder = new StringBuilder(256);
 			uint inputSize;
 			_control5.InputWide(builder, builder.Length, out inputSize);
@@ -154,6 +177,15 @@ namespace PSExt
 			}
 
 			public string Text => _builder.ToString();
+		}
+
+		class NullDebugOutput : IDebugOutputCallbacksWide
+		{
+			public int Output(DEBUG_OUTPUT mask, string text)
+			{
+				Debug.WriteLine($"{mask}:{text}");
+				return 0;
+			}
 		}
 	}
 

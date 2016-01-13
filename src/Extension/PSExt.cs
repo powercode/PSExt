@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using PSExt.Host;
 using RGiesecke.DllExport;
 
 namespace PSExt.Extension

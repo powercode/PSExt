@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Threading;
-using PSExt.Host;
 
-namespace PSExt
+namespace PSExt.Host
 {
 	/// <summary>
 	///     A sample implementation of the PSHost abstract class for console
@@ -13,13 +13,32 @@ namespace PSExt
 	///     implemented throw a NotImplementedException exception.
 	/// </summary>
 	internal class DbgPsHost : PSHost, IHostSupportsInteractiveSession
-	{
+	{		
+
+		public DbgPsHost(IDebugger debugger, ExitManager exitManager)
+		{
+			_exitManager = exitManager;			
+			var consoleColors = new ConsoleColorProxy
+			{
+				ErrorForegroundColor = ConsoleColor.Red,
+				ErrorBackgroundColor = ConsoleColor.Black,
+				WarningForegroundColor = ConsoleColor.Yellow,
+				WarningBackgroundColor = ConsoleColor.Black,
+				DebugForegroundColor = ConsoleColor.Yellow,
+				DebugBackgroundColor = ConsoleColor.Black,
+				VerboseForegroundColor = ConsoleColor.Yellow,
+				VerboseBackgroundColor = ConsoleColor.Black,
+				ProgressForegroundColor = ConsoleColor.Yellow,
+				ProgressBackgroundColor = ConsoleColor.DarkCyan,
+			};
+			PrivateData = new PSObject(consoleColors);
+			_hostUserInterface = new HostUserInterface(debugger, consoleColors, this);
+		}
+
 		/// <summary>
 		///     The identifier of this instance of the host implementation.
 		/// </summary>
 		private static readonly Guid instanceId = Guid.NewGuid();
-
-		private readonly IDebugger _debugger;
 
 		/// <summary>
 		///     A reference to the implementation of the PSHostUserInterface
@@ -30,7 +49,7 @@ namespace PSExt
 		/// <summary>
 		///     A reference to the listener.
 		/// </summary>
-		private readonly ExitManager exitManager;
+		private readonly ExitManager _exitManager;
 
 
 		/// <summary>
@@ -38,12 +57,8 @@ namespace PSExt
 		/// </summary>
 		public Runspace PushedRunspace;
 
-		public DbgPsHost(IDebugger debugger, ExitManager exitManager)
-		{
-			_debugger = debugger;
-			this.exitManager = exitManager;
-			_hostUserInterface = new HostUserInterface(_debugger);
-		}
+
+		public override PSObject PrivateData { get; }
 
 		/// <summary>
 		///     Gets the culture information to use. This implementation takes a
@@ -70,7 +85,7 @@ namespace PSExt
 		///     Gets the name of the host implementation. This string may be used
 		///     by script writers to identify when this host is being used.
 		/// </summary>
-		public override string Name { get; } = "MySampleConsoleHostImplementation";
+		public override string Name { get; } = "PSExtHost";
 
 		/// <summary>
 		///     Gets an instance of the implementation of the PSHostUserInterface class
@@ -138,8 +153,8 @@ namespace PSExt
 		/// </param>
 		public override void SetShouldExit(int exitCode)
 		{
-			exitManager.ShouldExit = true;
-			exitManager.ExitCode = exitCode;
+			_exitManager.ShouldExit = true;
+			_exitManager.ExitCode = exitCode;
 		}
 
 		#region IHostSupportsInteractiveSession Properties
@@ -179,5 +194,6 @@ namespace PSExt
 		}
 
 		#endregion IHostSupportsInteractiveSession Methods
+
 	}
 }

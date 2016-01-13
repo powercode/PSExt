@@ -32,8 +32,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override Coordinates CursorPosition
 		{
-			get { throw new NotImplementedException("The CursorPosition property is not implemented by MyRawUserInterface."); }
-			set { throw new NotImplementedException("The CursorPosition property is not implemented by MyRawUserInterface."); }
+			get { return new Coordinates(Console.CursorTop, Console.CursorLeft); }
+			set { Console.SetCursorPosition(value.X, value.Y); }
 		}
 
 		/// <summary>
@@ -61,30 +61,21 @@ namespace PSExt.Host
 		///     Gets a value that indicates whether a key is available.
 		///     This implementation maps to the Console.KeyAvailable property.
 		/// </summary>
-		public override bool KeyAvailable
-		{
-			get { return Console.KeyAvailable; }
-		}
+		public override bool KeyAvailable => Console.KeyAvailable;
 
 		/// <summary>
 		///     Gets the maximum physical size of the window. This implementation is
 		///     adapted from the Console.LargestWindowWidth and
 		///     Console.LargestWindowHeight properties.
 		/// </summary>
-		public override Size MaxPhysicalWindowSize
-		{
-			get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
-		}
+		public override Size MaxPhysicalWindowSize => new Size(Console.LargestWindowWidth, Console.LargestWindowHeight);
 
 		/// <summary>
 		///     Gets the maximum window size. This implementation is adapted from
 		///     the Console.LargestWindowWidth and Console.LargestWindowHeight
 		///     properties.
 		/// </summary>
-		public override Size MaxWindowSize
-		{
-			get { return new Size(Console.LargestWindowWidth, Console.LargestWindowHeight); }
-		}
+		public override Size MaxWindowSize => new Size(Console.LargestWindowWidth, Console.LargestWindowHeight);
 
 		/// <summary>
 		///     Gets or sets the window position. This implementation is adapted from

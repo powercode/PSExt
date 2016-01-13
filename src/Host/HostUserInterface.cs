@@ -13,15 +13,19 @@ namespace PSExt.Host
 	internal class HostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
 	{
 		private readonly IDebugger _debugger;
+		private readonly ConsoleColorProxy _consoleColors;
+		private readonly PSHost _host;
 
 		/// <summary>
 		///     A reference to the MyRawUserInterface implementation.
 		/// </summary>
 		private readonly RawUserInterface _rawUi;
 
-		public HostUserInterface(IDebugger debugger)
+		public HostUserInterface(IDebugger debugger, ConsoleColorProxy consoleColors, PSHost host)
 		{
 			_debugger = debugger;
+			_consoleColors = consoleColors;
+			_host = host;
 			_rawUi = new RawUserInterface();
 		}
 
@@ -29,10 +33,7 @@ namespace PSExt.Host
 		///     Gets an instance of the PSRawUserInterface object for this host
 		///     application.
 		/// </summary>
-		public override PSHostRawUserInterface RawUI
-		{
-			get { return _rawUi; }
-		}
+		public override PSHostRawUserInterface RawUI => _rawUi;
 
 		#region IHostUISupportsMultipleChoiceSelection Members
 
@@ -62,9 +63,9 @@ namespace PSExt.Host
 			IEnumerable<int> defaultChoices)
 		{
 			// Write the caption and message strings in Blue.
-			WriteLine(
-				ConsoleColor.Blue,
-				ConsoleColor.Black,
+			WriteLine(				
+				RawUI.ForegroundColor,
+				RawUI.BackgroundColor,
 				caption + "\n" + message + "\n");
 
 			// Convert the choice collection into something that's a
@@ -110,7 +111,7 @@ namespace PSExt.Host
 				}
 			}
 
-			WriteLine(ConsoleColor.Cyan, ConsoleColor.Black, sb.ToString());
+			WriteLine(RawUI.ForegroundColor, RawUI.BackgroundColor, sb.ToString());
 
 			// loop reading prompts until a match is made, the default is
 			// chosen or the loop is interrupted with ctrl-C.
@@ -119,7 +120,7 @@ namespace PSExt.Host
 			{
 				ReadNext:
 				var prompt = string.Format(CultureInfo.CurrentCulture, "Choice[{0}]:", results.Count);
-				Write(ConsoleColor.Cyan, ConsoleColor.Black, prompt);
+				Write(RawUI.ForegroundColor, RawUI.BackgroundColor, prompt);
 				var data = _debugger.ReadLine().Trim().ToUpper(CultureInfo.CurrentCulture);
 
 				// if the choice string was empty, no more choices have been made.
@@ -162,16 +163,16 @@ namespace PSExt.Host
 			Collection<FieldDescription> descriptions)
 		{
 			Write(
-				ConsoleColor.Blue,
-				ConsoleColor.Black,
+				RawUI.ForegroundColor,
+				RawUI.BackgroundColor,
 				caption + "\n" + message + " ");
 			var results =
 				new Dictionary<string, PSObject>();
 			foreach (var fd in descriptions)
 			{
 				var label = GetHotkeyAndLabel(fd.Label);
-				WriteLine(label[1]);
-				var userData = Console.ReadLine();
+				Write(label[1] + ": ");
+				var userData = _debugger.ReadLine();
 				if (userData == null)
 				{
 					return null;
@@ -213,8 +214,8 @@ namespace PSExt.Host
 		{
 			// Write the caption and message strings in Blue.
 			WriteLine(
-				ConsoleColor.Blue,
-				ConsoleColor.Black,
+				RawUI.ForegroundColor,
+				RawUI.BackgroundColor,
 				caption + "\n" + message + "\n");
 
 			// Convert the choice collection into something that's a
@@ -242,7 +243,7 @@ namespace PSExt.Host
 			// chosen or the loop is interrupted with ctrl-C.
 			while (true)
 			{
-				WriteLine(ConsoleColor.Cyan, ConsoleColor.Black, sb.ToString());
+				WriteLine(RawUI.ForegroundColor, RawUI.BackgroundColor, sb.ToString());
 				var data = _debugger.ReadLine().Trim().ToUpper(CultureInfo.CurrentCulture);
 
 				// if the choice string was empty, use the default selection
@@ -402,7 +403,7 @@ namespace PSExt.Host
 		/// <param name="value">The error message that is displayed.</param>
 		public override void WriteErrorLine(string value)
 		{
-			WriteLine(ConsoleColor.Red, ConsoleColor.Black, value);
+			WriteLine(_consoleColors.ErrorForegroundColor, _consoleColors.ErrorBackgroundColor, value);
 		}
 
 		/// <summary>
@@ -431,8 +432,8 @@ namespace PSExt.Host
 		public override void WriteVerboseLine(string message)
 		{
 			WriteLine(
-				ConsoleColor.Green,
-				ConsoleColor.Black,
+				_consoleColors.VerboseForegroundColor,
+				_consoleColors.VerboseBackgroundColor,
 				string.Format(CultureInfo.CurrentCulture, "VERBOSE: {0}", message));
 		}
 
@@ -443,8 +444,8 @@ namespace PSExt.Host
 		public override void WriteWarningLine(string message)
 		{
 			WriteLine(
-				ConsoleColor.Yellow,
-				ConsoleColor.Black,
+				_consoleColors.WarningForegroundColor,
+				_consoleColors.WarningBackgroundColor,
 				string.Format(CultureInfo.CurrentCulture, "WARNING: {0}", message));
 		}
 
