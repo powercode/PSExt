@@ -88,7 +88,7 @@
     <Compile Include="Module\BreakType.cs" />
     <Compile Include="Debugger.cs" />
     <Compile Include="DebuggerException.cs" />
-    <Compile Include="ExceptionHelper.cs" />
+    <Compile Include="ErrorHelper.cs" />
     <Compile Include="Extension\DebuggerExtension.cs" />
     <Compile Include="Debugger\Enums.cs" />
     <Compile Include="Debugger\IDebugAdvanced.cs" />

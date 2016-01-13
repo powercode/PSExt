@@ -25,7 +25,7 @@ namespace PSExt
 			var res = _control5.GetNumberBreakpoints(out number);
 			if (res != 0)
 			{
-				ExceptionHelper.ThrowDebuggerException(res, "IDebugControl5::GetNumberBreakpoints");
+				ErrorHelper.ThrowDebuggerException(res, "IDebugControl5::GetNumberBreakpoints");
 			}
 			return number;
 		}
@@ -39,7 +39,7 @@ namespace PSExt
 				out pBp);
 			if (res != 0)
 			{
-				ExceptionHelper.ThrowDebuggerException(res, "IDebugControl5.AddBreakpoint2");
+				ErrorHelper.ThrowDebuggerException(res, "IDebugControl5.AddBreakpoint2");
 			}
 			pBp.SetOffset(offset);
 			{				
@@ -69,7 +69,7 @@ namespace PSExt
 			res = pBp.GetId( out newId);
 			if (res != 0)
 			{
-				ExceptionHelper.ThrowDebuggerException(res, "IDebugBreakpoint2.GetId");
+				ErrorHelper.ThrowDebuggerException(res, "IDebugBreakpoint2.GetId");
 			}
 			return newId;
 		}
@@ -85,7 +85,7 @@ namespace PSExt
 				var res = _control5.GetBreakpointParameters(count, null, 0, bps);
 				if (res != 0)
 				{
-					ExceptionHelper.ThrowDebuggerException(res, "_control5.GetBreakpointParameters");
+					ErrorHelper.ThrowDebuggerException(res, "_control5.GetBreakpointParameters");
 				}
 
 				
@@ -125,7 +125,7 @@ namespace PSExt
 				var res = bp.GetCommandWide(_builder, _builder.Capacity, out size);
 				if (res!=0)
 				{
-					ExceptionHelper.ThrowDebuggerException(res, "IDebugBreakpoint2.GetCommandWide");
+					ErrorHelper.ThrowDebuggerException(res, "IDebugBreakpoint2.GetCommandWide");
 				}
 			}
 			return _builder.ToString();
@@ -140,7 +140,7 @@ namespace PSExt
 				var res = bp.GetOffsetExpressionWide(_builder,_builder.Capacity, out expressionSize);
 				if (res != 0)
 				{
-					ExceptionHelper.ThrowDebuggerException(res, "IDebugBreakpoint2.GetOffsetExpressionWide");
+					ErrorHelper.ThrowDebuggerException(res, "IDebugBreakpoint2.GetOffsetExpressionWide");
 				}
 			}
 			return _builder.ToString();
