@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Dynamic;
 
@@ -52,11 +51,11 @@ namespace PSExt
 			return _proxy.GetModules();
 		}
 
-		public DebugThread GetCallstack()
+		public IList<DebugThread> GetCallstack(bool all)
 		{
-			return _proxy.GetCallstack();
+			return _proxy.GetCallstack(all);
 		}
-
+		
 		private class DynamicDebuggerProxy : DynamicObject
 		{			
 			private readonly IDebugger _proxy;

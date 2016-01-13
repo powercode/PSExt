@@ -1,15 +1,18 @@
-﻿using System.Management.Automation;
+﻿using System.Linq;
+using System.Management.Automation;
 
 namespace PSExt.Commands
 {
-	[Cmdlet(VerbsCommon.Get, "Callstack")]
-	[OutputType(typeof (DebugThread))]
+	[Cmdlet(VerbsCommon.Get, "Thread")]
+	[OutputType(typeof (StackFrame))]
 	[Alias("k")]
 	public class GetCallstackCommand : DbgBaseCmdlet
 	{
+		[Parameter]
+		public SwitchParameter All { get; set; }
 		protected override void ProcessRecord()
 		{
-			WriteObject(Debugger.GetCallstack().Frames, true);
+			WriteObject(Debugger.GetCallstack(All).SelectMany(c=>c.Frames), true);
 		}
 	}
 }

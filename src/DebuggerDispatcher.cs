@@ -122,7 +122,7 @@ namespace PSExt
 		private readonly ManualResetEvent _doCallEvent;
 		private readonly AutoResetEvent _doReturn;
 		private readonly object _lock;
-		private Thread _dispatchThread;
+		private System.Threading.Thread _dispatchThread;
 		private IMethodInvocationInfo _invocationInfo;
 
 
@@ -152,7 +152,7 @@ namespace PSExt
 
 		public void ProcessEvents(WaitHandle pipelineCompleted)
 		{
-			_dispatchThread = Thread.CurrentThread;
+			_dispatchThread = System.Threading.Thread.CurrentThread;
 			var handles = new WaitHandle[2];
 			handles[0] = _doCallEvent;
 			handles[1] = pipelineCompleted;
@@ -174,7 +174,7 @@ namespace PSExt
 
 		public bool DispatchRequired()
 		{
-			return Thread.CurrentThread != _dispatchThread;
+			return System.Threading.Thread.CurrentThread != _dispatchThread;
 		}
 	}
 }

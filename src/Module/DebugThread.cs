@@ -5,18 +5,19 @@ using System.Text.RegularExpressions;
 
 namespace PSExt
 {
-	public class DebugThread
+	public class DebugThread : IComparable<DebugThread>, IComparable
 	{
-		public DebugThread(List<StackFrame> frames)
+		internal DebugThread(List<StackFrame> frames, ThreadInfo threadInfo)
 		{
 			Frames = frames;
-			ThreadId = 4711;
-			ThreadNumber = 1;
+			ThreadId = threadInfo.SystemThreadId;
+			ThreadNumber = threadInfo.ThreadId;
 		}
 
-		public int ThreadId { get; }
-		public int ThreadNumber { get; }
+		public uint ThreadId { get; }
+		public uint ThreadNumber { get; }
 
+		
 		public override string ToString()
 		{
 			return $"#{ThreadNumber} ThreadId:{ThreadId}";
@@ -26,7 +27,7 @@ namespace PSExt
 
 		public bool Matches(string pattern)
 		{
-			return Frames.Any(f => Regex.IsMatch(f.Name, pattern));
+			return Frames.Any(f => f.Matches(pattern));
 		}
 
 		public bool MatchesAll(string[] patterns)
@@ -41,7 +42,7 @@ namespace PSExt
 
 		public bool Contains(string pattern)
 		{
-			return Frames.Any(f => f.Name.IndexOf(pattern, StringComparison.Ordinal) != -1);
+			return Frames.Any(f => f.Contains(pattern));
 		}
 
 		public bool ContainsAll(string[] patterns)
@@ -53,5 +54,18 @@ namespace PSExt
 		{
 			return patterns.Any(Contains);
 		}
+
+		int IComparable<DebugThread>.CompareTo(DebugThread other)
+		{
+			return ThreadId.CompareTo(other.ThreadId);
+		}
+
+
+		int IComparable.CompareTo(object obj)
+		{
+			return ((IComparable<DebugThread>)this).CompareTo((DebugThread)obj);
+		}
+
+
 	}
 }

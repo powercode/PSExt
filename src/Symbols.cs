@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Diagnostics.Runtime.Interop;
+using static PSExt.ErrorHelper;
 
 namespace PSExt
 {
@@ -40,7 +41,7 @@ namespace PSExt
 					GetSymbolNameByOffset(offset, ref builder, out displacement);
 					return;
 				default:
-					ExceptionHelper.ThrowDebuggerException(res, "IDebugSymbols3.GetNameByOffsetWide");
+					ErrorHelper.ThrowDebuggerException(res, "IDebugSymbols3.GetNameByOffsetWide");
 					return;
 			}
 		}
@@ -49,9 +50,7 @@ namespace PSExt
 		{
 			private readonly IDebugSymbols3 _symbols;
 			private readonly UInt64 _searchHandle;
-			private readonly StringBuilder _builder = new StringBuilder(256);
-
-			const int E_NOINTERFACE = unchecked ((int) 0x80004002);
+			private readonly StringBuilder _builder = new StringBuilder(256);			
 
 			public SymbolsSearch(IDebugSymbols3 symbols, string pattern)
 			{
@@ -72,7 +71,7 @@ namespace PSExt
 					case 1: // S_FALSE
 						_builder.EnsureCapacity((int) matchSize);
 						return GetNextMatch(out nextMatch);
-					case E_NOINTERFACE:
+					case NoInterface:
 						nextMatch = null;
 						return false;
 					default:
