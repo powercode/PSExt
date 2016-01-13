@@ -41,7 +41,8 @@ namespace PSExt
 					GetSymbolNameByOffset(offset, ref builder, out displacement);
 					return;
 				default:
-					ErrorHelper.ThrowDebuggerException(res, "IDebugSymbols3.GetNameByOffsetWide");
+					builder.AppendFormat($"0x{offset:x}");
+					//ErrorHelper.ThrowDebuggerException(res, "IDebugSymbols3.GetNameByOffsetWide");
 					return;
 			}
 		}

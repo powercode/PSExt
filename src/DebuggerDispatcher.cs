@@ -72,7 +72,7 @@ namespace PSExt
 		{
 			if (_exception != null)
 			{
-				throw _exception;
+				throw new DebuggerInvocationException(_exception);
 			}
 			return _res;
 		}

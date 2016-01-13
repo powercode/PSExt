@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 
 namespace PSExt
 {
@@ -10,6 +11,15 @@ namespace PSExt
 		public DebuggerException(int statusCode, string failingMethod) : base(statusCode)
 		{
 			FailingMethod = failingMethod;
+		}		
+	}
+
+	internal class DebuggerInvocationException : Exception
+	{	
+		public DebuggerInvocationException(Exception exception) : base(exception.Message, exception)
+		{			
 		}
+
+		public override string StackTrace => InnerException?.StackTrace ?? base.StackTrace;
 	}
 }
