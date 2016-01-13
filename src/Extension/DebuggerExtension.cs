@@ -39,6 +39,12 @@ namespace PSExt.Extension
 			return 0;
 		}
 
+		[DllExport("DebugExtensionUninitialize")]
+		public static int DebugExtensionUninitialize()
+		{			
+			return 0;
+		}
+
 		private static uint DEBUG_EXTENSION_VERSION(uint major, uint minor)
 		{
 			return ((major & 0xffff) << 16) | (minor & 0xffff);

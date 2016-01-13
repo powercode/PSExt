@@ -30,7 +30,7 @@ namespace PSExt
 		/// <summary>
 		///     A reference to the listener.
 		/// </summary>
-		private readonly IProgram _program;
+		private readonly ExitManager exitManager;
 
 
 		/// <summary>
@@ -38,10 +38,10 @@ namespace PSExt
 		/// </summary>
 		public Runspace PushedRunspace;
 
-		public DbgPsHost(IDebugger debugger, IProgram progam)
+		public DbgPsHost(IDebugger debugger, ExitManager exitManager)
 		{
 			_debugger = debugger;
-			_program = progam;
+			this.exitManager = exitManager;
 			_hostUserInterface = new HostUserInterface(_debugger);
 		}
 
@@ -138,8 +138,8 @@ namespace PSExt
 		/// </param>
 		public override void SetShouldExit(int exitCode)
 		{
-			_program.ShouldExit = true;
-			_program.ExitCode = exitCode;
+			exitManager.ShouldExit = true;
+			exitManager.ExitCode = exitCode;
 		}
 
 		#region IHostSupportsInteractiveSession Properties

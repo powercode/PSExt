@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Threading;
 
 namespace PSExt
@@ -105,9 +104,9 @@ namespace PSExt
 		}
 	}
 
-	public interface IEventProcessor
+	public interface IMethodCallDispatch
 	{
-		void ProcessEvents(WaitHandle pipelineCompleted);
+		void DispatchMethodCalls(WaitHandle pipelineCompleted);
 	}
 
 	public interface IDebugFunctionDispatch
@@ -116,13 +115,13 @@ namespace PSExt
 		object InvokeFunction(MethodInvocationInfo invocationInfo);
 	}
 
-	public class DebuggerDispatcher : IEventProcessor, IDebugFunctionDispatch
+	public class DebuggerDispatcher : IMethodCallDispatch, IDebugFunctionDispatch
 	{
 		private static DebuggerDispatcher _instance;
 		private readonly ManualResetEvent _doCallEvent;
 		private readonly AutoResetEvent _doReturn;
 		private readonly object _lock;
-		private System.Threading.Thread _dispatchThread;
+		private Thread _dispatchThread;
 		private IMethodInvocationInfo _invocationInfo;
 
 
@@ -150,22 +149,20 @@ namespace PSExt
 			}
 		}
 
-		public void ProcessEvents(WaitHandle pipelineCompleted)
+		public void DispatchMethodCalls(WaitHandle pipelineCompleted)
 		{
-			_dispatchThread = System.Threading.Thread.CurrentThread;
+			_dispatchThread = Thread.CurrentThread;
 			var handles = new WaitHandle[2];
 			handles[0] = _doCallEvent;
 			handles[1] = pipelineCompleted;
-			var res = 0;
+			int res;
 
 			do
 			{
 				res = WaitHandle.WaitAny(handles);
 				if (res == 0)
-				{
-					
-					_invocationInfo.Invoke();
-					
+				{					
+					_invocationInfo.Invoke();					
 					_doCallEvent.Reset();
 					_doReturn.Set();
 				}
@@ -174,7 +171,7 @@ namespace PSExt
 
 		public bool DispatchRequired()
 		{
-			return System.Threading.Thread.CurrentThread != _dispatchThread;
+			return Thread.CurrentThread != _dispatchThread;
 		}
 	}
 }

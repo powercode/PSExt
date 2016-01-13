@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Host;
 using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
@@ -10,18 +11,17 @@ using PSExt.Host;
 namespace PSExt
 {
 	public sealed class PSSession : IDisposable
-	{
-		private static PSSession _theSession;
-		private readonly DbgPsHost _host;
+	{		
+		private readonly PSHost _host;
 		private readonly object _instanceLock = new object();
 		private readonly AutoResetEvent _pipelineDoneEvent = new AutoResetEvent(false);
-		private readonly IProgram _program;
+		private readonly IMethodCallDispatch _methodCallDispatch;
 		private readonly Runspace _runspace;
 		private PowerShell _currentPowerShell;
 
-		public PSSession(IDebugger debugger, IProgram program)
+		public PSSession(IDebugger debugger, PSHost host, IMethodCallDispatch methodCallDispatcher)
 		{
-			_program = program;
+			_methodCallDispatch = methodCallDispatcher;
 			var initialSessionState = InitialSessionState.CreateDefault();
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger,
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
@@ -30,7 +30,7 @@ namespace PSExt
 			initialSessionState.ImportPSModule(new[] { location });
 			var formatFile = Path.Combine(Path.GetDirectoryName(location), "PSExt.Format.ps1xml");
 			initialSessionState.Formats.Add(new SessionStateFormatEntry(formatFile));
-			_host = new DbgPsHost(debugger, program);
+			_host = host;
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
 		}
 
@@ -38,22 +38,7 @@ namespace PSExt
 		{
 			_runspace.Close();
 		}
-
-		public static int Initialize(IDebugger debugger, IProgram eventProcessor)
-		{
-			_theSession = new PSSession(debugger, eventProcessor);
-			return 0;
-		}
-
-		public static void Uninitialize()
-		{
-			_theSession.Dispose();
-		}
-
-		public static void InvokeCommand(string command)
-		{
-			_theSession.Invoke(command);
-		}
+			
 
 		public void Invoke(string command)
 		{
@@ -65,7 +50,7 @@ namespace PSExt
 			_pipelineDoneEvent.Reset();
 			var pipeTask = Task.Factory.StartNew(() => Execute(command));
 			pipeTask.ContinueWith(t => { _pipelineDoneEvent.Set(); }, TaskContinuationOptions.ExecuteSynchronously);
-			_program.ProcessEvents(_pipelineDoneEvent);
+			_methodCallDispatch.DispatchMethodCalls(_pipelineDoneEvent);
 			pipeTask.Wait();
 		}
 
@@ -83,7 +68,7 @@ namespace PSExt
 		{
 			_pipelineDoneEvent.Reset();
 			var profileTask = Task.Factory.StartNew(InvokeProfileScripts);
-			_program.ProcessEvents(_pipelineDoneEvent);
+			_methodCallDispatch.DispatchMethodCalls(_pipelineDoneEvent);
 			profileTask.Wait();
 		}
 

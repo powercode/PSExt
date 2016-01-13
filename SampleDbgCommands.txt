@@ -4,5 +4,5 @@ $$.load  D:\repos\PSExt\x64\Debug\PSExt.dll
 .symfix c:\sym
 .reload -f
 
-!ps k
+!ps k -all
 !ps lm

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using Microsoft.Diagnostics.Runtime.Interop;
-using PSExt.Commands;
 using RGiesecke.DllExport;
 
 namespace PSExt.Extension
@@ -14,13 +12,12 @@ namespace PSExt.Extension
 		private static DebuggerDispatcher _dispatcher;
 		private static DebuggerDispatcher Dispatcher => _dispatcher ?? (_dispatcher = new DebuggerDispatcher());
 		
-		private static Program _program;
-		private static Program Program => _program ?? (_program = new Program(Debugger, Dispatcher));
+		private static ExitManager _exitManager;
+		private static ExitManager ExitManager => _exitManager ?? (_exitManager = new ExitManager());
 
 		private static PSSession _powerShellSession;
-
 		private static PSSession PowerShellSession => _powerShellSession ??
-		                                             (_powerShellSession = new PSSession(Debugger, Program));
+		                                             (_powerShellSession = new PSSession(Debugger, new DbgPsHost(Debugger, ExitManager), Dispatcher));
 
 		[DllExport("ps")]
 		public static void PS(IntPtr client, [MarshalAs(UnmanagedType.LPStr)] string args)

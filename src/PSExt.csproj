@@ -149,7 +149,7 @@
     <Compile Include="Host\HostUserInterface.cs" />
     <Compile Include="Module\InvokeDbgCommand.cs" />
     <Compile Include="Module\ImageFileMachineType.cs" />
-    <Compile Include="IProgram.cs" />
+    <Compile Include="ExitManager.cs" />
     <Compile Include="Module\ModuleData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Host\PsHost.cs" />
