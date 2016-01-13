@@ -24,8 +24,8 @@ Global
 		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Debug|x64.Build.0 = Debug|x64
 		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Release|Win32.ActiveCfg = Release|Any CPU
 		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Release|Win32.Build.0 = Release|Any CPU
-		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Release|x64.ActiveCfg = Release|Any CPU
-		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Release|x64.Build.0 = Release|Any CPU
+		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Release|x64.ActiveCfg = Release|x64
+		{789E85CB-0A34-4175-9EBE-3F1E0661F483}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
