@@ -170,7 +170,7 @@ namespace PSExt.Host
 				new Dictionary<string, PSObject>();
 			foreach (var fd in descriptions)
 			{
-				var label = GetHotkeyAndLabel(fd.Label);
+				var label = GetHotkeyAndLabel(fd.Name);
 				Write(label[1] + ": ");
 				var userData = _debugger.ReadLine();
 				if (userData == null)

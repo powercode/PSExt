@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using PSExt.Host;
 
-namespace PSExt
+namespace PSExt.Extension
 {
 	public sealed class PSSession : IDisposable
 	{		
