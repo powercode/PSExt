@@ -82,6 +82,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extension\DebugStructs_x64.cs" />
+    <Compile Include="Extension\DebugStructs_x86.cs" />
     <Compile Include="Host\ConsoleColorProxy.cs" />
     <Compile Include="Module\BreakpointData.cs" />
     <Compile Include="Module\BreakpointFlags.cs" />

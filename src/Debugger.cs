@@ -1,20 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Management.Automation.Host;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using Microsoft.Diagnostics.Runtime.Interop;
-
 using static PSExt.ErrorHelper;
 
 namespace PSExt
 {
 	// ReSharper disable SuspiciousTypeConversion.Global
 	internal class Debugger : IDebugger
-	{
-
+	{				
 		private readonly IDebugClient6 _client;
 		private readonly IDebugControl5 _control5;
 		private readonly IDebugAdvanced2 _advanced2;
@@ -34,7 +31,7 @@ namespace PSExt
 			_client = (IDebugClient6)client;
 			_control5 = (IDebugControl5)client;
 			_advanced2 = (IDebugAdvanced2)client;
-			//_client.SetOutputCallbacksWide(new NullDebugOutput());
+			//_client.SetOutputCallbacksWide(new NullDebugOutput());	
 		}
 
 		public string ExecuteCommand(string command)
@@ -57,7 +54,7 @@ namespace PSExt
 		class InputCallbacks : IDebugInputCallbacks
 		{
 			private readonly IDebugControl5 _control;
-			private int _readCount;
+			
 			public InputCallbacks(IDebugControl5 control)
 			{
 				_control = control;
@@ -75,11 +72,14 @@ namespace PSExt
 		}
 
 		public string ReadLine()
-		{
-			_client.SetInputCallbacks(new InputCallbacks(_control5));
-			var builder = new StringBuilder(256);
-			uint inputSize;
-			_control5.InputWide(builder, builder.Length, out inputSize);
+		{					
+			var builder = new StringBuilder(1024);
+			uint inputSize;			
+			var res =_control5.InputWide(builder, builder.Capacity, out inputSize);
+			if (res != 0)
+			{
+				ThrowDebuggerException(res, "IDebugControl5.InputWide");
+			}
 			return builder.ToString();
 		}
 
@@ -179,34 +179,68 @@ namespace PSExt
 			public string Text => _builder.ToString();
 		}
 
-		class NullDebugOutput : IDebugOutputCallbacksWide
+	}
+	
+	class ThreadContext : IDisposable
+	{
+		public IMAGE_FILE_MACHINE Machine { get; }
+		private IntPtr _context;
+		public IntPtr Context => _context;
+		
+		public ThreadContext(IMAGE_FILE_MACHINE machine)
+		{			
+			Machine = machine;
+			_context = Marshal.AllocHGlobal((int) Size);
+		}		
+
+		public uint Size => GetSize(Machine);
+
+		public static uint GetSize(IMAGE_FILE_MACHINE machine)
 		{
-			public int Output(DEBUG_OUTPUT mask, string text)
+			switch (machine)
 			{
-				Debug.WriteLine($"{mask}:{text}");
-				return 0;
+				case IMAGE_FILE_MACHINE.AMD64: return (uint)Marshal.SizeOf(typeof(Extension.x64.CONTEXT));
+				case IMAGE_FILE_MACHINE.I386:  return (uint)Marshal.SizeOf(typeof(Extension.x86.CONTEXT));
+				default:
+					throw new DebuggerException(-1, "Unsupported machine type");
 			}
 		}
-	}
 
-	struct ThreadContext
-	{
-		public byte[] Context;
-
-		public ThreadContext(byte[] context)
+		public static explicit operator IntPtr(ThreadContext context)
 		{
-			Context = context;
+			return context.Context;
 		}
+
+		public Extension.x86.CONTEXT AsX86Context => Marshal.PtrToStructure<Extension.x86.CONTEXT>(Context);
+		public Extension.x64.CONTEXT AsX64Context => Marshal.PtrToStructure<Extension.x64.CONTEXT>(Context);
+
+		public void Dispose()
+		{
+			Marshal.FreeHGlobal(Context);
+			_context = IntPtr.Zero;
+		}
+
+		~ThreadContext()
+		{
+			Dispose();
+		}
+
 	}
+
 
 	class DebuggerThread
-	{
-		private const int ContextSizeX64 = 0x4d0;
+	{		
 		private readonly Symbols _symbols;
 		private readonly IDebugControl5 _control5;
 		private readonly IDebugAdvanced2 _advanced2;
 		private readonly IDebugSystemObjects _systemObjects;
-		
+
+		IMAGE_FILE_MACHINE GetEffectiveMachine()
+		{
+			IMAGE_FILE_MACHINE procType;
+			_control5.GetEffectiveProcessorType(out procType);
+			return procType;
+		}
 
 		public DebuggerThread(IDebugClient client, Symbols symbols)
 		{
@@ -216,61 +250,56 @@ namespace PSExt
 			_systemObjects = (IDebugSystemObjects)client;		
 		}
 
-		public unsafe ThreadContext GetThreadContext(ThreadInfo threadInfo)
-		{
-			
+		public ThreadContext GetThreadContext(ThreadInfo threadInfo)
+		{			
 			var res = _systemObjects.SetCurrentThreadId(threadInfo.ThreadId);
 			if (res != 0)
 			{
 				ThrowDebuggerException(res, "IDebugSystemObjects.SetCurrentThreadId");
-			}
+			}			
+			var imageFileMachine = GetEffectiveMachine();
+			var context = new ThreadContext(imageFileMachine);
 
-			uint size = ContextSizeX64;
-			byte[] context;
-			do
-			{
-				context = new byte[size];
-				fixed (byte* buffer = context)
-				{
-					res = _advanced2.GetThreadContext(new IntPtr(buffer), size);
-				}
-				if (res == InvalidParameter)
-				{
-					size *= 2;
-				}
-			} while (res == InvalidParameter);
-			if(res != 0) {
-				ThrowDebuggerException(res, "IDebugAdvanced2.GetThreadContext");
-			}
-			return new ThreadContext(context);
-		}
-
-		private unsafe  List<FrameInfo> GetCallstackFrames(ThreadContext context)
-		{
-			const uint maxFrames = 1024;
-			var frames = new DEBUG_STACK_FRAME_EX[maxFrames];			
-			byte[] framesBuf = new byte[maxFrames * ContextSizeX64];
-			int res = -1;
-			uint filled = 0;
-			var contextBuffer = context.Context;
-			
-			fixed (byte* buf = contextBuffer)
-			fixed (byte* framesContext = framesBuf)
-			{												
-				res = _control5.GetContextStackTraceEx(new IntPtr(buf), (uint) contextBuffer.Length, frames, frames.Length,
-					(IntPtr)framesContext, (uint)framesBuf.Length, ContextSizeX64, out filled);													
-			}
-			
+			res = _advanced2.GetThreadContext((IntPtr) context, context.Size);
 			if (res != 0)
 			{
-				ThrowDebuggerException(res, "IDebugControl5.GetContextStackTraceEx");
+				ThrowDebuggerException(res, "IDebugAdvanced2.GetThreadContext");
 			}
-			var retVal = new List<FrameInfo>((int) filled);
-			for (int i = 0; i < filled; ++i)
+			return context;
+
+		}
+		
+
+		private unsafe  List<FrameInfo> GetCallstackFrames(ThreadContext threadContext)
+		{
+			const uint maxFrames = 1024;
+			var frames = new DEBUG_STACK_FRAME_EX[maxFrames];
+			var contextSize = threadContext.Size;
+			byte[] framesBuf = new byte[maxFrames * contextSize];
+			var machine = GetEffectiveMachine();
+
+			uint filled;
+			List<FrameInfo> retVal;			
+			fixed (byte* framesContext = framesBuf)
 			{
-				var frameContext = new ArraySegment<byte>(framesBuf, i * ContextSizeX64, ContextSizeX64);
-				retVal.Add(new FrameInfo(frames[i], frameContext));
+				int res = _control5.GetContextStackTraceEx((IntPtr) threadContext, contextSize, frames, frames.Length,
+					(IntPtr)framesContext, (uint)framesBuf.Length, contextSize, out filled);
+				if (res != 0)
+				{
+					ThrowDebuggerException(res, "IDebugControl5.GetContextStackTraceEx");
+				}
+				retVal = new List<FrameInfo>((int)filled);
+				
 			}
+			var intContextSize = (int)contextSize;
+			for (var i = 0; i < filled; ++i)
+			{
+				
+				var frameCtx = new ThreadContext(machine);
+				Marshal.Copy(framesBuf,i * intContextSize, (IntPtr) frameCtx, intContextSize);
+				retVal.Add(new FrameInfo(frames[i], frameCtx));
+			}			
+
 			return retVal;
 		}
 
@@ -308,12 +337,12 @@ namespace PSExt
 		}
 	}
 
-	internal struct FrameInfo
+	internal class FrameInfo
 	{
 		public DEBUG_STACK_FRAME_EX StackFrame { get; }
-		public ArraySegment<byte> FrameContext { get; }
-
-		public FrameInfo(DEBUG_STACK_FRAME_EX stackFrame, ArraySegment<byte> frameContext)
+		public ThreadContext FrameContext { get; }
+	
+		public FrameInfo(DEBUG_STACK_FRAME_EX stackFrame, ThreadContext frameContext)
 		{
 			StackFrame = stackFrame;
 			FrameContext = frameContext;
