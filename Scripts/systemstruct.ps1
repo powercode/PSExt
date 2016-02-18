@@ -82,6 +82,7 @@ class DbgType
 {
     $TypeName
     $Size
+    $ISPod = $true
 
     DbgType([string] $name, [int] $size)
     {
@@ -93,7 +94,7 @@ class DbgType
     {
         return $this.TypeName
     }
-    $ISPod = $true
+    
 }
 
 class PointerDbgType : DbgType
