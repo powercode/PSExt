@@ -116,8 +116,7 @@ namespace PSExt
 	}
 
 	public class DebuggerDispatcher : IMethodCallDispatch, IDebugFunctionDispatch
-	{
-		private static DebuggerDispatcher _instance;
+	{		
 		private readonly ManualResetEvent _doCallEvent;
 		private readonly AutoResetEvent _doReturn;
 		private readonly object _lock;
@@ -131,9 +130,7 @@ namespace PSExt
 			_doReturn = new AutoResetEvent(false);
 			_lock = new object();
 		}
-
-		public static DebuggerDispatcher Instance => _instance ?? (_instance = new DebuggerDispatcher());
-
+		
 
 		public object InvokeFunction(MethodInvocationInfo invocationInfo)
 		{
