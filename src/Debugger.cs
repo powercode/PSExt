@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -106,7 +107,11 @@ namespace PSExt
 			UInt32 loaded;
 			UInt32 unloaded;
 			var symbols = (IDebugSymbols)_client;
-			symbols.GetNumberModules(out loaded, out unloaded);
+			int res = symbols.GetNumberModules(out loaded, out unloaded);
+			if (res != 0)
+			{
+				ThrowDebuggerException(res, "IDebugSymbols.GetNumberModules");
+			}
 
 			for (UInt32 i = 0; i < loaded; ++i)
 			{
@@ -163,7 +168,6 @@ namespace PSExt
 			}			
 			return retVal;
 		}
-
 	
 
 		class DebugOutput : IDebugOutputCallbacksWide
@@ -179,6 +183,14 @@ namespace PSExt
 			public string Text => _builder.ToString();
 		}
 
+		public IList<SymbolValue> GetVariables(StackFrame frame, int levels)
+		{
+			_systemObjects.SetCurrentThreadId(frame.Thread.ThreadNumber);
+			_symbols.SetScopeFrameByIndex(frame.FrameNumber);
+
+			var scope =_symbols.GetScopeSymbolGroup();
+			return scope.GetSymbolGroup(levels).Symbols;
+		}
 	}
 	
 	class ThreadContext : IDisposable
@@ -404,6 +416,15 @@ namespace PSExt
 				_systemObjects2.GetCurrentThreadSystemId(out sysId);
 
 				return new ThreadInfo(threadId, sysId);
+			}
+		}
+
+		public void SetCurrentThreadId(uint threadNumber)
+		{
+			int res = _systemObjects2.SetCurrentThreadId(threadNumber);
+			if (res != 0)
+			{
+				ThrowDebuggerException(res, "IDebugSystemObjects.SetCurrentThreadId");
 			}
 		}
 	}

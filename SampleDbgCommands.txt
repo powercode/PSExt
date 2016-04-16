@@ -1,7 +1,7 @@
 
 $$.load  D:\repos\PSExt\x64\Debug\PSExt.dll
 .load D:\repos\PSExt\src\bin\x64\Debug\PSExt.dll
-.symfix c:\sym
+.sympath srv*c:\sym;http://msdl.microsoft.com/download/symbols
 .reload -f
 
 $$!ps $name = Read-Host -prompt 'Enter your name'
