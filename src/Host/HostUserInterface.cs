@@ -7,6 +7,7 @@ using System.Management.Automation;
 using System.Management.Automation.Host;
 using System.Security;
 using System.Text;
+using Microsoft.PowerShell.Commands;
 
 namespace PSExt.Host
 {
@@ -329,6 +330,20 @@ namespace PSExt.Host
 		/// <returns>A secure string of the characters entered by the user.</returns>
 		public override SecureString ReadLineAsSecureString()
 		{
+			if(String.Compare(System.Diagnostics.Process.GetCurrentProcess().ProcessName, "cdb", StringComparison.OrdinalIgnoreCase) == 0) {
+				var ss = new SecureString();
+				int ci = 0;
+				while((ci = Console.Read()) != -1)
+				{
+					char c = (char) ci;
+					if (c == '\n')
+					{
+						return ss;
+					}
+					ss.AppendChar((char) c);						
+				}
+				return null;
+			}
 			throw new NotImplementedException(
 				"The method ReadLineAsSecureString() is not implemented by MyHost.");
 		}

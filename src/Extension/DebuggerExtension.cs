@@ -1,16 +1,31 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Remoting.Messaging;
 using System.Text;
 using Microsoft.Diagnostics.Runtime.Interop;
+using PSExt.Host;
 using RGiesecke.DllExport;
 
 namespace PSExt.Extension
 {
-	public partial class DebuggerExtension
+	public class DebuggerExtension
 	{		
 		public static IDebugClient DebugClient { get; private set; }
-		
+
+		private static IDebugger _debugger;
+		private static IDebugger Debugger => _debugger ?? (_debugger = new DebuggerProxy(new Debugger(DebugClient), Dispatcher));
+
+		private static DebuggerDispatcher _dispatcher;
+		private static DebuggerDispatcher Dispatcher => _dispatcher ?? (_dispatcher = new DebuggerDispatcher());
+
+		private static ExitManager _exitManager;
+		private static ExitManager ExitManager => _exitManager ?? (_exitManager = new ExitManager());
+
+		private static PSSession _powerShellSession;
+		private static PSSession PowerShellSession => _powerShellSession ??
+													 (_powerShellSession = new PSSession(Debugger, new DbgPsHost(Debugger, ExitManager), Dispatcher));
+
 		private static bool InitApi(IntPtr ptrClient)
 		{
 			// On our first call to the API:
@@ -39,16 +54,32 @@ namespace PSExt.Extension
 			return 0;
 		}
 
-		[DllExport("DebugExtensionUninitialize")]
+		[DllExport("DebugExtensionUninitialize")]		
 		public static int DebugExtensionUninitialize()
-		{			
+		{
+			PowerShellSession.Dispose();
+			Marshal.ReleaseComObject(DebugClient);
+			DebugClient = null;			
 			return 0;
 		}
+
+
+		[DllExport("ps")]
+		public static void PS(IntPtr client, [MarshalAs(UnmanagedType.LPStr)] string args)
+		{
+			// Must be the first thing in our extension.
+			if (!InitApi(client))
+				return;
+
+			PowerShellSession.Invoke(args);
+		}
+
 
 		private static uint DEBUG_EXTENSION_VERSION(uint major, uint minor)
 		{
 			return ((major & 0xffff) << 16) | (minor & 0xffff);
 		}
+
 	}
 
 	internal class DbgEngStream : Stream

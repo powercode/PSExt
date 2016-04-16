@@ -4,6 +4,7 @@ using System.IO;
 
 namespace PSExt
 {
+	[DebuggerDisplay("{ModuleName}")]
 	public class ModuleData
 	{
 		public ModuleData(string moduleName, string imageName, string loadedImageName, string loadedPdbName, ulong baseOfImage,
@@ -54,7 +55,11 @@ namespace PSExt
 
 		public DateTime Built => new DateTime((62135600400 + TimeDateStamp)*10000000, DateTimeKind.Utc);
 
+		public ulong EndOfImage => BaseOfImage + ImageSize;
+
 		public FileVersionInfo VersionInfo
 			=> File.Exists(LoadedImageName) ? FileVersionInfo.GetVersionInfo(LoadedImageName) : null;
+
+		public override string ToString() => ModuleName;
 	}
 }

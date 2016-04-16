@@ -8,7 +8,7 @@ using System.Threading;
 namespace PSExt.Host
 {
 	/// <summary>
-	///     A sample implementation of the PSHost abstract class for console
+	///     An implementation of the PSHost abstract class for Debugger
 	///     applications. Not all members are implemented. Those that are not
 	///     implemented throw a NotImplementedException exception.
 	/// </summary>

@@ -137,10 +137,10 @@
     <Compile Include="Debugger\IDebugSystemObjects3.cs" />
     <Compile Include="Debugger\Structs.cs" />
     <Compile Include="Module\DebugThread.cs" />
+    <Compile Include="Module\Format.cs" />
     <Compile Include="Module\GetCallstackCommand.cs" />
     <Compile Include="Extension\DebuggerDispatcher.cs" />
     <Compile Include="DebuggerProxy.cs" />
-    <Compile Include="Extension\PSExt.cs" />
     <Compile Include="Module\StackFrame.cs" />
     <Compile Include="Module\NewBreakpointCommand.cs" />
     <Compile Include="Module\DataBreakpointAccessTypes.cs" />
@@ -164,14 +164,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="PSExt.snk" />
-    <Content Include="PSExt.Format.ps1xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <SubType>Designer</SubType>
-    </Content>
-    <None Include="PSExt.Types.ps1xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <None Include="PSExt.Format.ps1xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="PSExt.snk" />
+    <Content Include="PSExt.Types.ps1xml">
+      <SubType>Designer</SubType>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

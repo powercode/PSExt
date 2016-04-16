@@ -57,13 +57,11 @@
 							<TableColumnItem>
 								<PropertyName>FrameNumber</PropertyName>
 							</TableColumnItem>
-							<TableColumnItem>
-								<FormatString>0x{0:x16}</FormatString>
-								<PropertyName>FrameOffset</PropertyName>
+							<TableColumnItem>								
+								<ScriptBlock>$_.FrameOffset.DisplayAddress</ScriptBlock>
 							</TableColumnItem>
 							<TableColumnItem>
-								<FormatString>0x{0:x16}</FormatString>
-								<PropertyName>ReturnOffset</PropertyName>
+								<ScriptBlock>$_.ReturnOffset.DisplayAddress</ScriptBlock>								
 							</TableColumnItem>
 							<TableColumnItem>
 								<ScriptBlock>'{0}+0x{1:x}' -f $_.Name, $_.Displacement</ScriptBlock>
@@ -79,42 +77,39 @@
 				<TypeName>PSExt.ModuleData</TypeName>
 			</ViewSelectedBy>
 			<TableControl>
-				<TableHeaders>
+				<TableHeaders>					
+					<TableColumnHeader>
+						<Label>BaseOfImage</Label>
+						<Width>17</Width>
+						<Alignment>Right</Alignment>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>EndOfImage</Label>
+						<Width>17</Width>
+						<Alignment>Right</Alignment>
+					</TableColumnHeader>
 					<TableColumnHeader>
 						<Label>ModuleName</Label>
 						<Width>20</Width>
 					</TableColumnHeader>
 					<TableColumnHeader>
-						<Label>BaseOfImage</Label>
-						<Width>18</Width>
-						<Alignment>Right</Alignment>
-					</TableColumnHeader>
-					<TableColumnHeader>
-						<Label>ImageSize</Label>
-						<Width>12</Width>
-						<Alignment>Right</Alignment>
-					</TableColumnHeader>
-					<TableColumnHeader>
-						<Label>Built</Label>
-						<Width>19</Width>
+						<Label>PDB</Label>						
 					</TableColumnHeader>
 				</TableHeaders>
 				<TableRowEntries>
 					<TableRowEntry>
-						<TableColumnItems>
+						<TableColumnItems>							
+							<TableColumnItem>								
+								<ScriptBlock>$_.BaseOfImage.DisplayAddress</ScriptBlock>
+							</TableColumnItem>
+							<TableColumnItem>
+								<ScriptBlock>$_.EndOfImage.DisplayAddress</ScriptBlock>
+							</TableColumnItem>
 							<TableColumnItem>
 								<PropertyName>ModuleName</PropertyName>
 							</TableColumnItem>
 							<TableColumnItem>
-								<FormatString>0x{0:x}</FormatString>
-								<PropertyName>BaseOfImage</PropertyName>
-							</TableColumnItem>
-							<TableColumnItem>
-								<FormatString>0x{0:x}</FormatString>
-								<PropertyName>ImageSize</PropertyName>
-							</TableColumnItem>
-							<TableColumnItem>
-								<PropertyName>Built</PropertyName>
+								<PropertyName>LoadedPdbName</PropertyName>
 							</TableColumnItem>
 						</TableColumnItems>
 					</TableRowEntry>

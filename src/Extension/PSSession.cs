@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -26,9 +27,20 @@ namespace PSExt.Extension
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger,
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("ShellID", "PSExt", "", ScopedItemOptions.Constant));
+			
+			// Add the executing assembly as a PowerShell module since we have cmdlets here we want to execute.
+			// This should be refactored into separate assemblies, since we could use the debugger parts outside
+			// of an extension
 			var location = Assembly.GetExecutingAssembly().Location;
 			initialSessionState.ImportPSModule(new[] { location });
-			var formatFile = Path.Combine(Path.GetDirectoryName(location), "PSExt.Format.ps1xml");
+
+			// Extend types for easier display			
+			var psextDir = Path.GetDirectoryName(location);
+			var typeFile = Path.Combine(psextDir, "PSExt.Types.ps1xml");
+			initialSessionState.Types.Add(new SessionStateTypeEntry(typeFile));
+
+			// Pretty formatting of debugger output
+			var formatFile = Path.Combine(psextDir, "PSExt.Format.ps1xml");
 			initialSessionState.Formats.Add(new SessionStateFormatEntry(formatFile));
 			_host = host;
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
@@ -61,36 +73,50 @@ namespace PSExt.Extension
 
 		private void InitializePowerShell()
 		{
-			LoadProfile();
+			try
+			{
+				_runspace.Open();
+			}
+			catch (Exception c)
+			{
+				Debug.WriteLine(c.ToString());
+			}
+			var ps = PowerShell.Create();
+			try
+			{				
+				ps.Runspace = _runspace;
+				LoadProfile(ps);
+			}
+			finally
+			{				
+				ps.Dispose();
+			}			
 		}
 
-		private void LoadProfile()
-		{
-			_pipelineDoneEvent.Reset();
-			var profileTask = Task.Factory.StartNew(InvokeProfileScripts);
+		private void LoadProfile(PowerShell ps)
+		{			
+			var profileTask = Task.Factory.StartNew(InvokeProfileScripts, ps);
 			_methodCallDispatch.DispatchMethodCalls(_pipelineDoneEvent);
 			profileTask.Wait();
 		}
 
-		private void InvokeProfileScripts()
+		private void InvokeProfileScripts(object ps)
 		{
-			_runspace.Open();
-			var ps = PowerShell.Create();
 			try
 			{
-				ps.Runspace = _runspace;
+				_pipelineDoneEvent.Reset();
+				var powerShell = (PowerShell) ps;
 				var profileCommand = HostUtilities.GetProfileCommands("PSExt");
 				foreach (var pc in profileCommand)
 				{
-					ps.Commands = pc;
-					ps.Invoke();
+					powerShell.Commands = pc;
+					powerShell.Invoke();
 				}
 			}
 			finally
 			{
 				_pipelineDoneEvent.Set();
-				ps.Dispose();
-			}
+			}		
 		}
 
 		/// <summary>
