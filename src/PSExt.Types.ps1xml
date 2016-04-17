@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Types>
+	<Type>		
+		<Name>System.UInt64</Name>
+		<Members>
+			<CodeProperty>
+				<Name>DisplayAddress</Name>
+				<GetCodeReference>
+					<TypeName>PSExt.Format</TypeName>
+					<MethodName>ToDisplayAddress</MethodName>
+				</GetCodeReference>
+			</CodeProperty>			
+		</Members>
+	</Type>
+</Types>	
