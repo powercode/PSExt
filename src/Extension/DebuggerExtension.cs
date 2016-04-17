@@ -94,10 +94,11 @@ namespace PSExt.Extension
 			if (!InitApi(client))
 				return -1;
 
-			var interactive = PowerShellSession as IInvokeInteractive;
-			if (interactive == null) return 1;
-			
-			interactive.Run();
+			if (!PowerShellSession.RunInteractive())
+			{
+				var ctrl = (IDebugControl5)DebugClient;
+				ctrl.Output(DEBUG_OUTPUT.ERROR, "The host does not support interactive PowerShell sessions\r\n");
+			}
 			return 0;
 		}
 

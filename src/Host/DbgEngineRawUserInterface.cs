@@ -1,18 +1,25 @@
 using System;
+using System.Diagnostics;
 using System.Management.Automation.Host;
+using System.Runtime.InteropServices;
 
 namespace PSExt.Host
 {
-	internal class RawUserInterface : PSHostRawUserInterface
-	{
+	internal class DbgEngineRawUserInterface : PSHostRawUserInterface
+	{		
+		private readonly Process _process;
+		public DbgEngineRawUserInterface()
+		{
+			_process = System.Diagnostics.Process.GetCurrentProcess();			
+		}
 		/// <summary>
 		///     Gets or sets the background color of text to be written.
 		///     This implementation maps to the Console.Background property.
 		/// </summary>
 		public override ConsoleColor BackgroundColor
 		{
-			get { return Console.BackgroundColor; }
-			set { Console.BackgroundColor = value; }
+			get { return ConsoleColor.White; }
+			set {  }
 		}
 
 		/// <summary>
@@ -21,8 +28,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override Size BufferSize
 		{
-			get { return new Size(Console.BufferWidth, Console.BufferHeight); }
-			set { Console.SetBufferSize(value.Width, value.Height); }
+			get { return new Size(80, 1); }
+			set {  }
 		}
 
 		/// <summary>
@@ -32,8 +39,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override Coordinates CursorPosition
 		{
-			get { return new Coordinates(Console.CursorTop, Console.CursorLeft); }
-			set { Console.SetCursorPosition(value.X, value.Y); }
+			get { return new Coordinates(0, 0); }
+			set { }
 		}
 
 		/// <summary>
@@ -42,8 +49,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override int CursorSize
 		{
-			get { return Console.CursorSize; }
-			set { Console.CursorSize = value; }
+			get { return 1; }
+			set { }
 		}
 
 		/// <summary>
@@ -53,29 +60,29 @@ namespace PSExt.Host
 		/// </summary>
 		public override ConsoleColor ForegroundColor
 		{
-			get { return Console.ForegroundColor; }
-			set { Console.ForegroundColor = value; }
+			get { return ConsoleColor.Black; }
+			set { }
 		}
 
 		/// <summary>
 		///     Gets a value that indicates whether a key is available.
 		///     This implementation maps to the Console.KeyAvailable property.
 		/// </summary>
-		public override bool KeyAvailable => Console.KeyAvailable;
+		public override bool KeyAvailable => false;
 
 		/// <summary>
 		///     Gets the maximum physical size of the window. This implementation is
 		///     adapted from the Console.LargestWindowWidth and
 		///     Console.LargestWindowHeight properties.
 		/// </summary>
-		public override Size MaxPhysicalWindowSize => new Size(Console.LargestWindowWidth, Console.LargestWindowHeight);
+		public override Size MaxPhysicalWindowSize => new Size(80, 100);
 
 		/// <summary>
 		///     Gets the maximum window size. This implementation is adapted from
 		///     the Console.LargestWindowWidth and Console.LargestWindowHeight
 		///     properties.
 		/// </summary>
-		public override Size MaxWindowSize => new Size(Console.LargestWindowWidth, Console.LargestWindowHeight);
+		public override Size MaxWindowSize => new Size(80,100);
 
 		/// <summary>
 		///     Gets or sets the window position. This implementation is adapted from
@@ -83,8 +90,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override Coordinates WindowPosition
 		{
-			get { return new Coordinates(Console.WindowLeft, Console.WindowTop); }
-			set { Console.SetWindowPosition(value.X, value.Y); }
+			get { return new Coordinates(0,0); }
+			set { }
 		}
 
 		/// <summary>
@@ -92,8 +99,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override Size WindowSize
 		{
-			get { return new Size(Console.WindowWidth, Console.WindowHeight); }
-			set { Console.SetWindowSize(value.Width, value.Height); }
+			get { return new Size(80,100); }
+			set {  }
 		}
 
 		/// <summary>
@@ -102,8 +109,8 @@ namespace PSExt.Host
 		/// </summary>
 		public override string WindowTitle
 		{
-			get { return Console.Title; }
-			set { Console.Title = value; }
+			get { return _process.MainWindowTitle; }
+			set { SetWindowText(_process.MainWindowHandle, value); }
 		}
 
 		/// <summary>
@@ -194,5 +201,9 @@ namespace PSExt.Host
 		{
 			throw new NotImplementedException("The SetBufferContents() method is not implemented by MyRawUserInterface.");
 		}
+
+		[DllImport("User32.dll")]
+		static extern bool SetWindowText(IntPtr hWnd, string text);
+
 	}
 }

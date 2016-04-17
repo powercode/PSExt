@@ -82,6 +82,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extension\ConsolePSSession.cs" />
+    <Compile Include="Extension\DbgEnginePSSession.cs" />
     <Compile Include="Extension\DebugStructs_x64.cs" />
     <Compile Include="Extension\DebugStructs_x86.cs" />
     <Compile Include="Host\ConsoleColorProxy.cs" />
@@ -161,7 +163,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Host\DbgPsHost.cs" />
     <Compile Include="Extension\PSSession.cs" />
-    <Compile Include="Host\RawUserInterface.cs" />
+    <Compile Include="Host\DbgEngineRawUserInterface.cs" />
     <Compile Include="Symbols.cs" />
     <Compile Include="SymbolSearchResult.cs" />
     <Compile Include="Module\SymType.cs" />

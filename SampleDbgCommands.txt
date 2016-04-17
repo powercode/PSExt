@@ -6,5 +6,5 @@ $$.load  D:\repos\PSExt\x64\Debug\PSExt.dll
 
 $$!ps $name = Read-Host -prompt 'Enter your name'
 $$!ps Write-Host "name = $name"
-!ps k -all
-$$!ps lm
+!psi
+$$!psi

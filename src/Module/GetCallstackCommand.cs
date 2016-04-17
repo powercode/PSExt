@@ -12,7 +12,8 @@ namespace PSExt.Commands
 		public SwitchParameter All { get; set; }
 		protected override void ProcessRecord()
 		{
-			WriteObject(Debugger.GetCallstack(All).SelectMany(c=>c.Frames), true);
+			var sendToPipeline = Debugger.GetCallstack(All).SelectMany(c=>c.Frames).ToList();
+			WriteObject(sendToPipeline, true);
 		}
 	}
 }

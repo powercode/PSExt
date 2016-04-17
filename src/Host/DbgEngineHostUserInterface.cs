@@ -20,14 +20,14 @@ namespace PSExt.Host
 		/// <summary>
 		///     A reference to the MyRawUserInterface implementation.
 		/// </summary>
-		private readonly RawUserInterface _rawUi;
+		private readonly DbgEngineRawUserInterface _rawUi;
 
 		public DbgEngineHostUserInterface(IDebugger debugger, ConsoleColorProxy consoleColors, PSHost host)
 		{
 			_debugger = debugger;
 			_consoleColors = consoleColors;
 			_host = host;
-			_rawUi = new RawUserInterface();
+			_rawUi = new DbgEngineRawUserInterface();
 		}
 
 		/// <summary>
@@ -355,14 +355,8 @@ namespace PSExt.Host
 			ConsoleColor foregroundColor,
 			ConsoleColor backgroundColor,
 			string value)
-		{
-			var oldFg = Console.ForegroundColor;
-			var oldBg = Console.BackgroundColor;
-			Console.ForegroundColor = foregroundColor;
-			Console.BackgroundColor = backgroundColor;
-			Write(value);
-			Console.ForegroundColor = oldFg;
-			Console.BackgroundColor = oldBg;
+		{			
+			Write(value);			
 		}
 
 		/// <summary>
@@ -377,13 +371,7 @@ namespace PSExt.Host
 			ConsoleColor backgroundColor,
 			string value)
 		{
-			var oldFg = Console.ForegroundColor;
-			var oldBg = Console.BackgroundColor;
-			Console.ForegroundColor = foregroundColor;
-			Console.BackgroundColor = backgroundColor;
 			WriteLine(value);
-			Console.ForegroundColor = oldFg;
-			Console.BackgroundColor = oldBg;
 		}
 
 		/// <summary>
@@ -392,9 +380,7 @@ namespace PSExt.Host
 		/// <param name="message">The debug message that is displayed.</param>
 		public override void WriteDebugLine(string message)
 		{
-			WriteLine(
-				ConsoleColor.DarkYellow,
-				ConsoleColor.Black,
+			WriteLine(				
 				string.Format(CultureInfo.CurrentCulture, "DEBUG: {0}", message));
 		}
 
