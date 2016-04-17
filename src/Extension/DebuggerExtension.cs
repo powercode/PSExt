@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 using Microsoft.Diagnostics.Runtime.Interop;
 using PSExt.Host;
 using RGiesecke.DllExport;
@@ -102,7 +103,32 @@ namespace PSExt.Extension
 			return 0;
 		}
 
+		[DllExport("help")]
+		public static int Help(IntPtr client, [MarshalAs(UnmanagedType.LPStr)] string args)
+		{
+			var dbgClient = (IDebugClient) Marshal.GetUniqueObjectForIUnknown(client);
+			var ctrl = (IDebugControl3) dbgClient;
+			var help = @"
+!ps <cmd> - Invokes PowerShell with the specified cmd.
 
+            Example: !ps k | where BaseOfImage -gt 0x7fff45000000 
+
+			";
+
+
+			ctrl.Output(DEBUG_OUTPUT.NORMAL, help);
+			if (!_supportsConsole)
+			{
+				return 0;
+			}
+			help = @"
+!psi      - Starts an interactive PowerShell session.
+
+";
+
+			ctrl.Output(DEBUG_OUTPUT.NORMAL, help);
+			return 0;
+		}
 
 		private static uint DEBUG_EXTENSION_VERSION(uint major, uint minor)
 		{
