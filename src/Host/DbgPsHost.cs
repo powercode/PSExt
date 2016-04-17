@@ -12,7 +12,7 @@ namespace PSExt.Host
 	///     applications. Not all members are implemented. Those that are not
 	///     implemented throw a NotImplementedException exception.
 	/// </summary>
-	internal class DbgPsHost : PSHost, IHostSupportsInteractiveSession
+	internal class DbgPsHost : PSHost
 	{		
 
 		public DbgPsHost(IDebugger debugger, ExitManager exitManager)
@@ -32,7 +32,7 @@ namespace PSExt.Host
 				ProgressBackgroundColor = ConsoleColor.DarkCyan,
 			};
 			PrivateData = new PSObject(consoleColors);
-			_hostUserInterface = new HostUserInterface(debugger, consoleColors, this);
+			_dbgEngineHostUserInterface = new DbgEngineHostUserInterface(debugger, consoleColors, this);
 		}
 
 		/// <summary>
@@ -44,7 +44,7 @@ namespace PSExt.Host
 		///     A reference to the implementation of the PSHostUserInterface
 		///     class for this application.
 		/// </summary>
-		private readonly HostUserInterface _hostUserInterface;
+		private readonly DbgEngineHostUserInterface _dbgEngineHostUserInterface;
 
 		/// <summary>
 		///     A reference to the listener.
@@ -92,7 +92,7 @@ namespace PSExt.Host
 		///     for this application. This instance is allocated once at startup time
 		///     and returned every time thereafter.
 		/// </summary>
-		public override PSHostUserInterface UI => _hostUserInterface;
+		public override PSHostUserInterface UI => _dbgEngineHostUserInterface;
 
 		/// <summary>
 		///     Gets the version object for this host application. Typically
@@ -156,44 +156,8 @@ namespace PSExt.Host
 			_exitManager.ShouldExit = true;
 			_exitManager.ExitCode = exitCode;
 		}
-
-		#region IHostSupportsInteractiveSession Properties
-
-		/// <summary>
-		///     Gets a value indicating whether a request
-		///     to open a PSSession has been made.
-		/// </summary>
-		public bool IsRunspacePushed => PushedRunspace != null;
-
-		/// <summary>
-		///     Gets or sets the runspace used by the PSSession.
-		/// </summary>
-		public Runspace Runspace { get; internal set; }
-
-		#endregion IHostSupportsInteractiveSession Properties
-
-		#region IHostSupportsInteractiveSession Methods
-
-		/// <summary>
-		///     Requests to close a PSSession.
-		/// </summary>
-		public void PopRunspace()
-		{
-			Runspace = PushedRunspace;
-			PushedRunspace = null;
-		}
-
-		/// <summary>
-		///     Requests to open a PSSession.
-		/// </summary>
-		/// <param name="runspace">Runspace to use.</param>
-		public void PushRunspace(Runspace runspace)
-		{
-			PushedRunspace = Runspace;
-			Runspace = runspace;
-		}
-
-		#endregion IHostSupportsInteractiveSession Methods
+	
 
 	}
+	
 }

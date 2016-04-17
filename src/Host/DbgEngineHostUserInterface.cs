@@ -11,7 +11,7 @@ using Microsoft.PowerShell.Commands;
 
 namespace PSExt.Host
 {
-	internal class HostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
+	internal class DbgEngineHostUserInterface : PSHostUserInterface, IHostUISupportsMultipleChoiceSelection
 	{
 		private readonly IDebugger _debugger;
 		private readonly ConsoleColorProxy _consoleColors;
@@ -22,7 +22,7 @@ namespace PSExt.Host
 		/// </summary>
 		private readonly RawUserInterface _rawUi;
 
-		public HostUserInterface(IDebugger debugger, ConsoleColorProxy consoleColors, PSHost host)
+		public DbgEngineHostUserInterface(IDebugger debugger, ConsoleColorProxy consoleColors, PSHost host)
 		{
 			_debugger = debugger;
 			_consoleColors = consoleColors;
@@ -319,8 +319,8 @@ namespace PSExt.Host
 		/// </summary>
 		/// <returns>The characters entered by the user.</returns>
 		public override string ReadLine()
-		{
-			return _debugger.ReadLine();
+		{					
+			return _debugger.ReadLine();			
 		}
 
 		/// <summary>
@@ -329,21 +329,7 @@ namespace PSExt.Host
 		/// </summary>
 		/// <returns>A secure string of the characters entered by the user.</returns>
 		public override SecureString ReadLineAsSecureString()
-		{
-			if(String.Compare(System.Diagnostics.Process.GetCurrentProcess().ProcessName, "cdb", StringComparison.OrdinalIgnoreCase) == 0) {
-				var ss = new SecureString();
-				int ci = 0;
-				while((ci = Console.Read()) != -1)
-				{
-					char c = (char) ci;
-					if (c == '\n')
-					{
-						return ss;
-					}
-					ss.AppendChar((char) c);						
-				}
-				return null;
-			}
+		{			
 			throw new NotImplementedException(
 				"The method ReadLineAsSecureString() is not implemented by MyHost.");
 		}

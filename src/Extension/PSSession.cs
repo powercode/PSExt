@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Management.Automation;
@@ -11,18 +12,24 @@ using PSExt.Host;
 
 namespace PSExt.Extension
 {
-	public sealed class PSSession : IDisposable
-	{		
-		private readonly PSHost _host;
-		private readonly object _instanceLock = new object();
-		private readonly AutoResetEvent _pipelineDoneEvent = new AutoResetEvent(false);
-		private readonly IMethodCallDispatch _methodCallDispatch;
-		private readonly Runspace _runspace;
-		private PowerShell _currentPowerShell;
+	interface IInvokeInteractive
+	{
+		void Run();
+	}
 
-		public PSSession(IDebugger debugger, PSHost host, IMethodCallDispatch methodCallDispatcher)
+	public abstract class PSSession : IDisposable
+	{		
+		protected readonly PSHost _host;
+		protected readonly object _instanceLock = new object();
+		protected Runspace _runspace;
+		protected PowerShell _currentPowerShell;
+		private readonly IMethodCallDispatch _methodCallDispatcher;
+		private readonly AutoResetEvent _pipelineDoneEvent = new AutoResetEvent(false);
+
+
+		protected PSSession(IDebugger debugger, PSHost host, IMethodCallDispatch methodCallDispatcher)
 		{
-			_methodCallDispatch = methodCallDispatcher;
+			_methodCallDispatcher = methodCallDispatcher;
 			var initialSessionState = InitialSessionState.CreateDefault();
 			initialSessionState.Variables.Add(new SessionStateVariableEntry("Debugger", debugger,
 				"Interface to the Windows debuggers", ScopedItemOptions.Constant));
@@ -46,11 +53,12 @@ namespace PSExt.Extension
 			_runspace = RunspaceFactory.CreateRunspace(_host, initialSessionState);
 		}
 
+		public abstract bool SupportsInteractive { get; }		
+
 		public void Dispose()
 		{
 			_runspace.Close();
-		}
-			
+		}			
 
 		public void Invoke(string command)
 		{
@@ -58,12 +66,51 @@ namespace PSExt.Extension
 			{
 				InitializePowerShell();
 			}
+			var settings = new PSInvocationSettings() {AddToHistory = true};
+			InvokeScript(command, settings);								
+		}
+		protected void InvokeScript(string script, PSInvocationSettings invocationSettings)
+		{
+			_pipelineDoneEvent.Reset();
+			var pipeTask = Task.Factory.StartNew(() => Execute(script, invocationSettings));
+			pipeTask.ContinueWith(t => { _pipelineDoneEvent.Set(); }, TaskContinuationOptions.ExecuteSynchronously);
+			_methodCallDispatcher.DispatchMethodCalls(_pipelineDoneEvent);
+			pipeTask.Wait();
+		}
 
+		protected Collection<T> InvokeScript<T>(string script)
+		{
+			_pipelineDoneEvent.Reset();
+			var pipeTask = Task<Collection<T>>.Factory.StartNew(() => Execute<T>(script));
+			pipeTask.ContinueWith(t => { _pipelineDoneEvent.Set(); }, TaskContinuationOptions.ExecuteSynchronously);
+			_methodCallDispatcher.DispatchMethodCalls(_pipelineDoneEvent);
+			pipeTask.Wait();
+			return pipeTask.Result;
+		}
+
+		protected void InvokeCommand(PSCommand command)
+		{
 			_pipelineDoneEvent.Reset();
 			var pipeTask = Task.Factory.StartNew(() => Execute(command));
 			pipeTask.ContinueWith(t => { _pipelineDoneEvent.Set(); }, TaskContinuationOptions.ExecuteSynchronously);
-			_methodCallDispatch.DispatchMethodCalls(_pipelineDoneEvent);
+			_methodCallDispatcher.DispatchMethodCalls(_pipelineDoneEvent);
 			pipeTask.Wait();
+		}
+
+		public void InvokeInteractive()
+		{
+			
+			if (!SupportsInteractive)
+			{
+				throw new InvalidOperationException();
+			}
+			if (!IsRunspaceOpen())
+			{
+				InitializePowerShell();
+			}
+
+						
+
 		}
 
 		private bool IsRunspaceOpen()
@@ -76,6 +123,8 @@ namespace PSExt.Extension
 			try
 			{
 				_runspace.Open();
+				InitialisePowerShellImpl();
+				LoadProfile();
 			}
 			catch (Exception c)
 			{
@@ -85,7 +134,7 @@ namespace PSExt.Extension
 			try
 			{				
 				ps.Runspace = _runspace;
-				LoadProfile(ps);
+				
 			}
 			finally
 			{				
@@ -93,31 +142,19 @@ namespace PSExt.Extension
 			}			
 		}
 
-		private void LoadProfile(PowerShell ps)
-		{			
-			var profileTask = Task.Factory.StartNew(InvokeProfileScripts, ps);
-			_methodCallDispatch.DispatchMethodCalls(_pipelineDoneEvent);
-			profileTask.Wait();
+		protected abstract void InitialisePowerShellImpl();
+
+
+		private void LoadProfile()
+		{
+			var profileCommand = HostUtilities.GetProfileCommands(ShellId);
+			foreach (var pc in profileCommand)
+			{
+				InvokeCommand(pc);				
+			}			
 		}
 
-		private void InvokeProfileScripts(object ps)
-		{
-			try
-			{
-				_pipelineDoneEvent.Reset();
-				var powerShell = (PowerShell) ps;
-				var profileCommand = HostUtilities.GetProfileCommands("PSExt");
-				foreach (var pc in profileCommand)
-				{
-					powerShell.Commands = pc;
-					powerShell.Invoke();
-				}
-			}
-			finally
-			{
-				_pipelineDoneEvent.Set();
-			}		
-		}
+		public abstract string ShellId { get; }
 
 		/// <summary>
 		///     A helper class that builds and executes a pipeline that writes
@@ -130,7 +167,8 @@ namespace PSExt.Extension
 		///     Any input arguments to pass to the script.
 		///     If null then nothing is passed in.
 		/// </param>
-		private void ExecuteHelper(string cmd, object input)
+		/// <param name="invocationSettings"></param>
+		private void ExecuteHelper(string cmd, object input, PSInvocationSettings invocationSettings = null)
 		{
 			// Ignore empty command lines.
 			if (string.IsNullOrEmpty(cmd))
@@ -154,6 +192,127 @@ namespace PSExt.Extension
 				_currentPowerShell.Runspace = _runspace;
 
 				_currentPowerShell.AddScript(cmd);
+
+				// Add the default outputter to the end of the pipe and then call the 
+				// MergeMyResults method to merge the output and error streams from the 
+				// pipeline. This will result in the output being written using the PSHost
+				// and PSHostUserInterface classes instead of returning objects to the host
+				// application.
+				_currentPowerShell.AddCommand("out-default");
+				_currentPowerShell.Commands.Commands[0].MergeMyResults(PipelineResultTypes.Error, PipelineResultTypes.Output);
+
+				// If there is any input pass it in, otherwise just invoke the
+				// the pipeline.
+				_currentPowerShell.Invoke(input != null ? new[] {input} : new PSObject[] {}, invocationSettings);
+			}
+			finally
+			{
+				// Dispose the PowerShell object and set currentPowerShell to null. 
+				// It is locked because currentPowerShell may be accessed by the 
+				// ctrl-C handler.
+				lock (_instanceLock)
+				{
+					_currentPowerShell.Dispose();
+					_currentPowerShell = null;
+				}
+			}
+		}
+
+		/// <summary>
+		///     A helper class that builds and executes a pipeline that writes
+		///     to the default output path. Any exceptions that are thrown are
+		///     just passed to the caller. Since all output goes to the default
+		///     outter, this method does not return anything.
+		/// </summary>
+		/// <param name="cmd">The script to run.</param>
+		/// <param name="input">
+		///     Any input arguments to pass to the script.
+		///     If null then nothing is passed in.
+		/// </param>
+		private Collection<T> ExecuteHelper<T>(string cmd, object input)
+		{
+			// Ignore empty command lines.
+			if (string.IsNullOrEmpty(cmd))
+			{
+				return new Collection<T>();
+			}
+
+			// Create the pipeline object and make it available to the
+			// ctrl-C handle through the currentPowerShell instance
+			// variable.
+			lock (_instanceLock)
+			{
+				_currentPowerShell = PowerShell.Create();
+			}
+
+			// Add a script and command to the pipeline and then run the pipeline. Place 
+			// the results in the currentPowerShell variable so that the pipeline can be 
+			// stopped.
+			try
+			{
+				_currentPowerShell.Runspace = _runspace;
+
+				_currentPowerShell.AddScript(cmd);
+				
+				// If there is any input pass it in, otherwise just invoke the
+				// the pipeline.
+				if (input != null)
+				{
+					return _currentPowerShell.Invoke<T>(new[] { input });
+				}
+				else
+				{
+					return _currentPowerShell.Invoke<T>();
+				}
+			}
+			finally
+			{
+				// Dispose the PowerShell object and set currentPowerShell to null. 
+				// It is locked because currentPowerShell may be accessed by the 
+				// ctrl-C handler.
+				lock (_instanceLock)
+				{
+					_currentPowerShell.Dispose();
+					_currentPowerShell = null;
+				}
+			}
+		}
+
+		/// <summary>
+		///     A helper class that builds and executes a pipeline that writes
+		///     to the default output path. Any exceptions that are thrown are
+		///     just passed to the caller. Since all output goes to the default
+		///     outter, this method does not return anything.
+		/// </summary>
+		/// <param name="command">The PSCommand to run.</param>
+		/// <param name="input">
+		///     Any input arguments to pass to the script.
+		///     If null then nothing is passed in.
+		/// </param>
+		private void ExecuteHelper(PSCommand command, object input)
+		{
+			// Ignore empty command lines.
+			if (command == null )
+			{
+				return;
+			}
+
+			// Create the pipeline object and make it available to the
+			// ctrl-C handle through the currentPowerShell instance
+			// variable.
+			lock (_instanceLock)
+			{
+				_currentPowerShell = PowerShell.Create();
+			}
+
+			// Add a script and command to the pipeline and then run the pipeline. Place 
+			// the results in the currentPowerShell variable so that the pipeline can be 
+			// stopped.
+			try
+			{
+				_currentPowerShell.Runspace = _runspace;
+
+				_currentPowerShell.Commands = command;
 
 				// Add the default outputter to the end of the pipe and then call the 
 				// MergeMyResults method to merge the output and error streams from the 
@@ -212,7 +371,7 @@ namespace PSExt.Extension
 			_currentPowerShell.Runspace = _runspace;
 
 			try
-			{
+			{				
 				_currentPowerShell.AddScript("$input").AddCommand("out-string");
 
 				// Do not merge errors, this function will swallow errors.
@@ -247,8 +406,8 @@ namespace PSExt.Extension
 		///     caught and passed back to the Windows PowerShell engine to
 		///     display.
 		/// </summary>
-		/// <param name="cmd">Script to run.</param>
-		private void Execute(string cmd)
+		/// <param name="cmd">Command to run.</param>
+		protected void Execute(PSCommand cmd)
 		{
 			try
 			{
@@ -260,5 +419,171 @@ namespace PSExt.Extension
 				ReportException(rte);
 			}
 		}
+
+		/// <summary>
+		///     Basic script execution routine. Any runtime exceptions are
+		///     caught and passed back to the Windows PowerShell engine to
+		///     display.
+		/// </summary>
+		/// <param name="cmd">Script to run.</param>
+		/// <param name="invocationSettings"></param>
+		protected void Execute(string cmd, PSInvocationSettings invocationSettings = null)
+		{
+			try
+			{
+				// Run the command with no input.
+				ExecuteHelper(cmd, null, invocationSettings);
+			}
+			catch (RuntimeException rte)
+			{
+				ReportException(rte);
+			}
+		}
+
+		/// <summary>
+		///     Basic script execution routine. Any runtime exceptions are
+		///     caught and passed back to the Windows PowerShell engine to
+		///     display.
+		/// </summary>
+		/// <param name="cmd">Script to run.</param>
+		protected Collection<T> Execute<T>(string cmd)
+		{
+			try
+			{
+				// Run the command with no input.
+				return ExecuteHelper<T>(cmd, null);
+			}
+			catch (RuntimeException rte)
+			{
+				ReportException(rte);
+				return null;				
+			}
+		}
+
+
+	}
+
+	// Can provide richer user interface 
+	class ConsolePSSession : PSSession, IInvokeInteractive
+	{
+		
+		private readonly ConsoleHost _consoleHost;		
+		private readonly ConsoleReadLine _consoleReadLine;
+		public ConsolePSSession(IDebugger debugger, ConsoleHost host, IMethodCallDispatch methodCallDispatcher) : base(debugger, host, methodCallDispatcher)
+		{
+			host.Program = this;
+			_consoleHost = host;			
+			_consoleReadLine = new ConsoleReadLine();
+		}
+
+		public Runspace Runspace { get { return _runspace; } set { _runspace = value; } }
+
+		public override bool SupportsInteractive => true;
+		public bool ShouldExit { get; set; }
+		public int ExitCode { get; set; }
+		
+		protected override void InitialisePowerShellImpl()
+		{
+			var ps = PowerShell.Create();
+			ps.Runspace = _runspace;
+			var readlineFunction = @"
+function PSConsoleHostReadline
+{
+	[PSExt.Host.ConsoleReadline]::Read()
+}
+Import-Module PSReadline -EA:0
+";
+			ps.AddScript(readlineFunction);
+			ps.Invoke();
+		}		
+
+		string GetScriptResultOrDefault(string command, string defaultValue)
+		{
+			var res = InvokeScript<string>(command);
+			if (res == null || res.Count == 0)
+			{
+				return defaultValue;
+			}
+			return res[0];
+		}
+
+		string ReadLine()
+		{			
+			return GetScriptResultOrDefault("PSConsoleHostReadline", null);
+		}
+
+		string GetPrompt()
+		{
+			return GetScriptResultOrDefault("prompt", "PSDBG>");			
+		}
+		
+		void IInvokeInteractive.Run()
+		{
+			ShouldExit = false;			
+			// Set up the control-C handler.
+			var treatAsInputOld = Console.TreatControlCAsInput;
+			Console.CancelKeyPress += HandleControlC;			
+			Console.TreatControlCAsInput = false;
+			try {
+			// Read commands and run them until the ShouldExit flag is set by
+			// the user calling "exit".
+			var invocationSettings = new PSInvocationSettings{AddToHistory = true};
+			while (!ShouldExit)
+			{
+
+				var prompt = GetPrompt();				
+				_consoleHost.UI.Write(_consoleHost.UI.RawUI.ForegroundColor, _consoleHost.UI.RawUI.BackgroundColor, prompt);
+				var cmd = ReadLine() ?? _consoleReadLine.Read();					
+				InvokeScript(cmd, invocationSettings);				
+			}
+			}
+			finally {
+				Console.CancelKeyPress -= HandleControlC;
+				Console.TreatControlCAsInput = treatAsInputOld;
+			}
+
+			// Exit with the desired exit code that was set by the exit command.
+			// The exit code is set in the host by the MyHost.SetShouldExit() method.						
+		}
+
+		private void HandleControlC(object sender, ConsoleCancelEventArgs e)
+		{
+			try
+			{
+				lock (_instanceLock)
+				{
+					if (_currentPowerShell != null && _currentPowerShell.InvocationStateInfo.State == PSInvocationState.Running)
+					{
+						_currentPowerShell.Stop();
+					}
+				}
+
+				e.Cancel = true;
+			}
+			catch (Exception exception)
+			{
+				_consoleHost.UI.WriteErrorLine(exception.ToString());
+			}
+			ShouldExit = true;
+			ExitCode = 1;
+		}
+
+		public override string ShellId => "ConsolePSExt";
+	}
+
+	class DbgEnginePSSession : PSSession
+	{
+		
+		public DbgEnginePSSession(IDebugger debugger, PSHost host, IMethodCallDispatch methodCallDispatcher) : base(debugger, host, methodCallDispatcher)
+		{
+		
+		}
+		public override bool SupportsInteractive => false;		
+
+		protected override void InitialisePowerShellImpl()
+		{
+		}
+
+		public override string ShellId => "DbgEngPSExt";
 	}
 }

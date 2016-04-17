@@ -85,6 +85,10 @@
     <Compile Include="Extension\DebugStructs_x64.cs" />
     <Compile Include="Extension\DebugStructs_x86.cs" />
     <Compile Include="Host\ConsoleColorProxy.cs" />
+    <Compile Include="Host\ConsoleHost.cs" />
+    <Compile Include="Host\ConsoleRawUserInterface.cs" />
+    <Compile Include="Host\ConsoleUserInterface.cs" />
+    <Compile Include="Host\ConsoleReadLine.cs" />
     <Compile Include="Module\BreakpointData.cs" />
     <Compile Include="Module\BreakpointFlags.cs" />
     <Compile Include="BreakpointManager.cs" />
@@ -149,7 +153,7 @@
     <Compile Include="Module\GetDebuggerModuleCommand.cs" />
     <Compile Include="Host\HostUtilities.cs" />
     <Compile Include="IDebugger.cs" />
-    <Compile Include="Host\HostUserInterface.cs" />
+    <Compile Include="Host\DbgEngineHostUserInterface.cs" />
     <Compile Include="Module\InvokeDbgCommand.cs" />
     <Compile Include="Module\ImageFileMachineType.cs" />
     <Compile Include="Host\ExitManager.cs" />
