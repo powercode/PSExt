@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Dynamic;
+using System.Management.Automation;
 
 namespace PSExt
 {
@@ -55,7 +56,12 @@ namespace PSExt
 		{
 			return _proxy.GetCallstack(all);
 		}
-		
+
+		public IList<SymbolValue> GetVariables(StackFrame frame, int levels)
+		{
+			return _proxy.GetStackFrame(frame, levels);
+		}
+
 		private class DynamicDebuggerProxy : DynamicObject
 		{			
 			private readonly IDebugger _proxy;

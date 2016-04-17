@@ -2,6 +2,7 @@
 // Licensed under the MIT license. See LICENSE file in the project root for full license information.
 
 using System;
+// ReSharper disable InconsistentNaming
 
 #pragma warning disable 1591
 
@@ -786,6 +787,8 @@ namespace Microsoft.Diagnostics.Runtime.Interop
 		IS_ARGUMENT = 0x100,
 		IS_LOCAL = 0x200
 	}
+	
+	
 
 	[Flags]
 	public enum DEBUG_OUTPUT_SYMBOLS

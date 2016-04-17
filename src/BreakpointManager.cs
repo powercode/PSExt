@@ -7,7 +7,7 @@ using Microsoft.Diagnostics.Runtime.Interop;
 namespace PSExt
 {
 	[SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
-	internal class BreakpointManager
+	public class BreakpointManager
 	{
 		private readonly IDebugControl5 _control5;
 		private readonly StringBuilder _builder = new StringBuilder(256);

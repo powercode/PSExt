@@ -1,0 +1,546 @@
+Opened log file 'struct_x64'
+0:000> dt -v _ACTIVATION_CONTEXT_STACK
+urlmon!_ACTIVATION_CONTEXT_STACK
+struct _ACTIVATION_CONTEXT_STACK, 5 elements, 0x28 bytes
+   +0x000 ActiveFrame      : Ptr64 to struct _RTL_ACTIVATION_CONTEXT_STACK_FRAME, 3 elements, 0x18 bytes
+   +0x008 FrameListCache   : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x018 Flags            : Uint4B
+   +0x01c NextCookieSequenceNumber : Uint4B
+   +0x020 StackId          : Uint4B
+0:000> dt -v _CLIENT_ID
+urlmon!_CLIENT_ID
+struct _CLIENT_ID, 2 elements, 0x10 bytes
+   +0x000 UniqueProcess    : Ptr64 to Void
+   +0x008 UniqueThread     : Ptr64 to Void
+0:000> dt -v _CURDIR
+urlmon!_CURDIR
+struct _CURDIR, 2 elements, 0x18 bytes
+   +0x000 DosPath          : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x010 Handle           : Ptr64 to Void
+0:000> dt -v _EXCEPTION_REGISTRATION_RECORD
+urlmon!_EXCEPTION_REGISTRATION_RECORD
+struct _EXCEPTION_REGISTRATION_RECORD, 2 elements, 0x10 bytes
+   +0x000 Next             : Ptr64 to struct _EXCEPTION_REGISTRATION_RECORD, 2 elements, 0x10 bytes
+   +0x008 Handler          : Ptr64 to     _EXCEPTION_DISPOSITION 
+0:000> dt -v _GDI_TEB_BATCH
+urlmon!_GDI_TEB_BATCH
+struct _GDI_TEB_BATCH, 4 elements, 0x4e8 bytes
+   +0x000 Offset           : Bitfield Pos 0, 31 Bits
+   +0x000 HasRenderingCommand : Bitfield Pos 31, 1 Bit
+   +0x008 HDC              : Uint8B
+   +0x010 Buffer           : [310] Uint4B
+0:000> dt -v _LIST_ENTRY
+urlmon!_LIST_ENTRY
+struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x000 Flink            : Ptr64 to struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x008 Blink            : Ptr64 to struct _LIST_ENTRY, 2 elements, 0x10 bytes
+0:000> dt -v LDR_DATA_TABLE_ENTRY
+urlmon!LDR_DATA_TABLE_ENTRY
+struct _LDR_DATA_TABLE_ENTRY, 56 elements, 0x118 bytes
+   +0x000 InLoadOrderLinks : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x010 InMemoryOrderLinks : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x020 InInitializationOrderLinks : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x030 DllBase          : Ptr64 to Void
+   +0x038 EntryPoint       : Ptr64 to Void
+   +0x040 SizeOfImage      : Uint4B
+   +0x048 FullDllName      : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x058 BaseDllName      : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x068 FlagGroup        : [4] UChar
+   +0x068 Flags            : Uint4B
+   +0x068 PackagedBinary   : Bitfield Pos 0, 1 Bit
+   +0x068 MarkedForRemoval : Bitfield Pos 1, 1 Bit
+   +0x068 ImageDll         : Bitfield Pos 2, 1 Bit
+   +0x068 LoadNotificationsSent : Bitfield Pos 3, 1 Bit
+   +0x068 TelemetryEntryProcessed : Bitfield Pos 4, 1 Bit
+   +0x068 ProcessStaticImport : Bitfield Pos 5, 1 Bit
+   +0x068 InLegacyLists    : Bitfield Pos 6, 1 Bit
+   +0x068 InIndexes        : Bitfield Pos 7, 1 Bit
+   +0x068 ShimDll          : Bitfield Pos 8, 1 Bit
+   +0x068 InExceptionTable : Bitfield Pos 9, 1 Bit
+   +0x068 ReservedFlags1   : Bitfield Pos 10, 2 Bits
+   +0x068 LoadInProgress   : Bitfield Pos 12, 1 Bit
+   +0x068 LoadConfigProcessed : Bitfield Pos 13, 1 Bit
+   +0x068 EntryProcessed   : Bitfield Pos 14, 1 Bit
+   +0x068 ProtectDelayLoad : Bitfield Pos 15, 1 Bit
+   +0x068 ReservedFlags3   : Bitfield Pos 16, 2 Bits
+   +0x068 DontCallForThreads : Bitfield Pos 18, 1 Bit
+   +0x068 ProcessAttachCalled : Bitfield Pos 19, 1 Bit
+   +0x068 ProcessAttachFailed : Bitfield Pos 20, 1 Bit
+   +0x068 CorDeferredValidate : Bitfield Pos 21, 1 Bit
+   +0x068 CorImage         : Bitfield Pos 22, 1 Bit
+   +0x068 DontRelocate     : Bitfield Pos 23, 1 Bit
+   +0x068 CorILOnly        : Bitfield Pos 24, 1 Bit
+   +0x068 ReservedFlags5   : Bitfield Pos 25, 3 Bits
+   +0x068 Redirected       : Bitfield Pos 28, 1 Bit
+   +0x068 ReservedFlags6   : Bitfield Pos 29, 2 Bits
+   +0x068 CompatDatabaseProcessed : Bitfield Pos 31, 1 Bit
+   +0x06c ObsoleteLoadCount : Uint2B
+   +0x06e TlsIndex         : Uint2B
+   +0x070 HashLinks        : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x080 TimeDateStamp    : Uint4B
+   +0x088 EntryPointActivationContext : Ptr64 to struct _ACTIVATION_CONTEXT, 0 elements, 0x0 bytes
+   +0x090 Lock             : Ptr64 to Void
+   +0x098 DdagNode         : Ptr64 to struct _LDR_DDAG_NODE, 10 elements, 0x50 bytes
+   +0x0a0 NodeModuleLink   : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x0b0 LoadContext      : Ptr64 to struct _LDRP_LOAD_CONTEXT, 0 elements, 0x0 bytes
+   +0x0b8 ParentDllBase    : Ptr64 to Void
+   +0x0c0 SwitchBackContext : Ptr64 to Void
+   +0x0c8 BaseAddressIndexNode : struct _RTL_BALANCED_NODE, 6 elements, 0x18 bytes
+   +0x0e0 MappingInfoIndexNode : struct _RTL_BALANCED_NODE, 6 elements, 0x18 bytes
+   +0x0f8 OriginalBase     : Uint8B
+   +0x100 LoadTime         : union _LARGE_INTEGER, 4 elements, 0x8 bytes
+   +0x108 BaseNameHashValue : Uint4B
+   +0x10c LoadReason       : Enum _LDR_DLL_LOAD_REASON,  8 total enums
+
+   +0x110 ImplicitPathOptions : Uint4B
+   +0x114 ReferenceCount   : Uint4B
+0:000> dt -v RTL_BALANCED_NODE
+urlmon!RTL_BALANCED_NODE
+struct _RTL_BALANCED_NODE, 6 elements, 0x18 bytes
+   +0x000 Children         : [2] Ptr64 to struct _RTL_BALANCED_NODE, 6 elements, 0x18 bytes
+   +0x000 Left             : Ptr64 to struct _RTL_BALANCED_NODE, 6 elements, 0x18 bytes
+   +0x008 Right            : Ptr64 to struct _RTL_BALANCED_NODE, 6 elements, 0x18 bytes
+   +0x010 Red              : Bitfield Pos 0, 1 Bit
+   +0x010 Balance          : Bitfield Pos 0, 2 Bits
+   +0x010 ParentValue      : Uint8B
+0:000> dt -v _NT_TIB
+urlmon!_NT_TIB
+struct _NT_TIB, 8 elements, 0x38 bytes
+   +0x000 ExceptionList    : Ptr64 to struct _EXCEPTION_REGISTRATION_RECORD, 2 elements, 0x10 bytes
+   +0x008 StackBase        : Ptr64 to Void
+   +0x010 StackLimit       : Ptr64 to Void
+   +0x018 SubSystemTib     : Ptr64 to Void
+   +0x020 FiberData        : Ptr64 to Void
+   +0x020 Version          : Uint4B
+   +0x028 ArbitraryUserPointer : Ptr64 to Void
+   +0x030 Self             : Ptr64 to struct _NT_TIB, 8 elements, 0x38 bytes
+0:000> dt -v _PEB
+urlmon!_PEB
+struct _PEB, 105 elements, 0x7a0 bytes
+   +0x000 InheritedAddressSpace : UChar
+   +0x001 ReadImageFileExecOptions : UChar
+   +0x002 BeingDebugged    : UChar
+   +0x003 BitField         : UChar
+   +0x003 ImageUsesLargePages : Bitfield Pos 0, 1 Bit
+   +0x003 IsProtectedProcess : Bitfield Pos 1, 1 Bit
+   +0x003 IsImageDynamicallyRelocated : Bitfield Pos 2, 1 Bit
+   +0x003 SkipPatchingUser32Forwarders : Bitfield Pos 3, 1 Bit
+   +0x003 IsPackagedProcess : Bitfield Pos 4, 1 Bit
+   +0x003 IsAppContainer   : Bitfield Pos 5, 1 Bit
+   +0x003 IsProtectedProcessLight : Bitfield Pos 6, 1 Bit
+   +0x003 SpareBits        : Bitfield Pos 7, 1 Bit
+   +0x004 Padding0         : [4] UChar
+   +0x008 Mutant           : Ptr64 to Void
+   +0x010 ImageBaseAddress : Ptr64 to Void
+   +0x018 Ldr              : Ptr64 to struct _PEB_LDR_DATA, 9 elements, 0x58 bytes
+   +0x020 ProcessParameters : Ptr64 to struct _RTL_USER_PROCESS_PARAMETERS, 33 elements, 0x410 bytes
+   +0x028 SubSystemData    : Ptr64 to Void
+   +0x030 ProcessHeap      : Ptr64 to Void
+   +0x038 FastPebLock      : Ptr64 to struct _RTL_CRITICAL_SECTION, 6 elements, 0x28 bytes
+   +0x040 AtlThunkSListPtr : Ptr64 to Void
+   +0x048 IFEOKey          : Ptr64 to Void
+   +0x050 CrossProcessFlags : Uint4B
+   +0x050 ProcessInJob     : Bitfield Pos 0, 1 Bit
+   +0x050 ProcessInitializing : Bitfield Pos 1, 1 Bit
+   +0x050 ProcessUsingVEH  : Bitfield Pos 2, 1 Bit
+   +0x050 ProcessUsingVCH  : Bitfield Pos 3, 1 Bit
+   +0x050 ProcessUsingFTH  : Bitfield Pos 4, 1 Bit
+   +0x050 ReservedBits0    : Bitfield Pos 5, 27 Bits
+   +0x054 Padding1         : [4] UChar
+   +0x058 KernelCallbackTable : Ptr64 to Void
+   +0x058 UserSharedInfoPtr : Ptr64 to Void
+   +0x060 SystemReserved   : [1] Uint4B
+   +0x064 AtlThunkSListPtr32 : Uint4B
+   +0x068 ApiSetMap        : Ptr64 to Void
+   +0x070 TlsExpansionCounter : Uint4B
+   +0x074 Padding2         : [4] UChar
+   +0x078 TlsBitmap        : Ptr64 to Void
+   +0x080 TlsBitmapBits    : [2] Uint4B
+   +0x088 ReadOnlySharedMemoryBase : Ptr64 to Void
+   +0x090 SparePvoid0      : Ptr64 to Void
+   +0x098 ReadOnlyStaticServerData : Ptr64 to Ptr64 to Void
+   +0x0a0 AnsiCodePageData : Ptr64 to Void
+   +0x0a8 OemCodePageData  : Ptr64 to Void
+   +0x0b0 UnicodeCaseTableData : Ptr64 to Void
+   +0x0b8 NumberOfProcessors : Uint4B
+   +0x0bc NtGlobalFlag     : Uint4B
+   +0x0c0 CriticalSectionTimeout : union _LARGE_INTEGER, 4 elements, 0x8 bytes
+   +0x0c8 HeapSegmentReserve : Uint8B
+   +0x0d0 HeapSegmentCommit : Uint8B
+   +0x0d8 HeapDeCommitTotalFreeThreshold : Uint8B
+   +0x0e0 HeapDeCommitFreeBlockThreshold : Uint8B
+   +0x0e8 NumberOfHeaps    : Uint4B
+   +0x0ec MaximumNumberOfHeaps : Uint4B
+   +0x0f0 ProcessHeaps     : Ptr64 to Ptr64 to Void
+   +0x0f8 GdiSharedHandleTable : Ptr64 to Void
+   +0x100 ProcessStarterHelper : Ptr64 to Void
+   +0x108 GdiDCAttributeList : Uint4B
+   +0x10c Padding3         : [4] UChar
+   +0x110 LoaderLock       : Ptr64 to struct _RTL_CRITICAL_SECTION, 6 elements, 0x28 bytes
+   +0x118 OSMajorVersion   : Uint4B
+   +0x11c OSMinorVersion   : Uint4B
+   +0x120 OSBuildNumber    : Uint2B
+   +0x122 OSCSDVersion     : Uint2B
+   +0x124 OSPlatformId     : Uint4B
+   +0x128 ImageSubsystem   : Uint4B
+   +0x12c ImageSubsystemMajorVersion : Uint4B
+   +0x130 ImageSubsystemMinorVersion : Uint4B
+   +0x134 Padding4         : [4] UChar
+   +0x138 ActiveProcessAffinityMask : Uint8B
+   +0x140 GdiHandleBuffer  : [60] Uint4B
+   +0x230 PostProcessInitRoutine : Ptr64 to     void 
+   +0x238 TlsExpansionBitmap : Ptr64 to Void
+   +0x240 TlsExpansionBitmapBits : [32] Uint4B
+   +0x2c0 SessionId        : Uint4B
+   +0x2c4 Padding5         : [4] UChar
+   +0x2c8 AppCompatFlags   : union _ULARGE_INTEGER, 4 elements, 0x8 bytes
+   +0x2d0 AppCompatFlagsUser : union _ULARGE_INTEGER, 4 elements, 0x8 bytes
+   +0x2d8 pShimData        : Ptr64 to Void
+   +0x2e0 AppCompatInfo    : Ptr64 to Void
+   +0x2e8 CSDVersion       : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x2f8 ActivationContextData : Ptr64 to struct _ACTIVATION_CONTEXT_DATA, 0 elements, 0x0 bytes
+   +0x300 ProcessAssemblyStorageMap : Ptr64 to struct _ASSEMBLY_STORAGE_MAP, 0 elements, 0x0 bytes
+   +0x308 SystemDefaultActivationContextData : Ptr64 to struct _ACTIVATION_CONTEXT_DATA, 0 elements, 0x0 bytes
+   +0x310 SystemAssemblyStorageMap : Ptr64 to struct _ASSEMBLY_STORAGE_MAP, 0 elements, 0x0 bytes
+   +0x318 MinimumStackCommit : Uint8B
+   +0x320 FlsCallback      : Ptr64 to struct _FLS_CALLBACK_INFO, 0 elements, 0x0 bytes
+   +0x328 FlsListHead      : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x338 FlsBitmap        : Ptr64 to Void
+   +0x340 FlsBitmapBits    : [4] Uint4B
+   +0x350 FlsHighIndex     : Uint4B
+   +0x358 WerRegistrationData : Ptr64 to Void
+   +0x360 WerShipAssertPtr : Ptr64 to Void
+   +0x368 pUnused          : Ptr64 to Void
+   +0x370 pImageHeaderHash : Ptr64 to Void
+   +0x378 TracingFlags     : Uint4B
+   +0x378 HeapTracingEnabled : Bitfield Pos 0, 1 Bit
+   +0x378 CritSecTracingEnabled : Bitfield Pos 1, 1 Bit
+   +0x378 LibLoaderTracingEnabled : Bitfield Pos 2, 1 Bit
+   +0x378 SpareTracingBits : Bitfield Pos 3, 29 Bits
+   +0x37c Padding6         : [4] UChar
+   +0x380 CsrServerReadOnlySharedMemoryBase : Uint8B
+   +0x388 TppWorkerpListLock : Uint8B
+   +0x390 TppWorkerpList   : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x3a0 WaitOnAddressHashTable : [128] Ptr64 to Void
+0:000> dt -v _PEB_LDR_DATA
+urlmon!_PEB_LDR_DATA
+struct _PEB_LDR_DATA, 9 elements, 0x58 bytes
+   +0x000 Length           : Uint4B
+   +0x004 Initialized      : UChar
+   +0x008 SsHandle         : Ptr64 to Void
+   +0x010 InLoadOrderModuleList : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x020 InMemoryOrderModuleList : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x030 InInitializationOrderModuleList : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x040 EntryInProgress  : Ptr64 to Void
+   +0x048 ShutdownInProgress : UChar
+   +0x050 ShutdownThreadId : Ptr64 to Void
+0:000> dt -v _PROCESSOR_NUMBER
+urlmon!_PROCESSOR_NUMBER
+struct _PROCESSOR_NUMBER, 3 elements, 0x4 bytes
+   +0x000 Group            : Uint2B
+   +0x002 Number           : UChar
+   +0x003 Reserved         : UChar
+0:000> dt -v _RTL_ACTIVATION_CONTEXT_STACK_FRAME
+urlmon!_RTL_ACTIVATION_CONTEXT_STACK_FRAME
+struct _RTL_ACTIVATION_CONTEXT_STACK_FRAME, 3 elements, 0x18 bytes
+   +0x000 Previous         : Ptr64 to struct _RTL_ACTIVATION_CONTEXT_STACK_FRAME, 3 elements, 0x18 bytes
+   +0x008 ActivationContext : Ptr64 to struct _ACTIVATION_CONTEXT, 0 elements, 0x0 bytes
+   +0x010 Flags            : Uint4B
+0:000> dt -v _RTL_CRITICAL_SECTION
+urlmon!_RTL_CRITICAL_SECTION
+struct _RTL_CRITICAL_SECTION, 6 elements, 0x28 bytes
+   +0x000 DebugInfo        : Ptr64 to struct _RTL_CRITICAL_SECTION_DEBUG, 9 elements, 0x30 bytes
+   +0x008 LockCount        : Int4B
+   +0x00c RecursionCount   : Int4B
+   +0x010 OwningThread     : Ptr64 to Void
+   +0x018 LockSemaphore    : Ptr64 to Void
+   +0x020 SpinCount        : Uint8B
+0:000> dt -v _RTL_CRITICAL_SECTION_DEBUG
+urlmon!_RTL_CRITICAL_SECTION_DEBUG
+struct _RTL_CRITICAL_SECTION_DEBUG, 9 elements, 0x30 bytes
+   +0x000 Type             : Uint2B
+   +0x002 CreatorBackTraceIndex : Uint2B
+   +0x008 CriticalSection  : Ptr64 to struct _RTL_CRITICAL_SECTION, 6 elements, 0x28 bytes
+   +0x010 ProcessLocksList : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x020 EntryCount       : Uint4B
+   +0x024 ContentionCount  : Uint4B
+   +0x028 Flags            : Uint4B
+   +0x02c CreatorBackTraceIndexHigh : Uint2B
+   +0x02e SpareWORD        : Uint2B
+0:000> dt -v _RTL_DRIVE_LETTER_CURDIR
+urlmon!_RTL_DRIVE_LETTER_CURDIR
+struct _RTL_DRIVE_LETTER_CURDIR, 4 elements, 0x18 bytes
+   +0x000 Flags            : Uint2B
+   +0x002 Length           : Uint2B
+   +0x004 TimeStamp        : Uint4B
+   +0x008 DosPath          : struct _STRING, 3 elements, 0x10 bytes
+0:000> dt -v _RTL_USER_PROCESS_PARAMETERS
+urlmon!_RTL_USER_PROCESS_PARAMETERS
+struct _RTL_USER_PROCESS_PARAMETERS, 33 elements, 0x410 bytes
+   +0x000 MaximumLength    : Uint4B
+   +0x004 Length           : Uint4B
+   +0x008 Flags            : Uint4B
+   +0x00c DebugFlags       : Uint4B
+   +0x010 ConsoleHandle    : Ptr64 to Void
+   +0x018 ConsoleFlags     : Uint4B
+   +0x020 StandardInput    : Ptr64 to Void
+   +0x028 StandardOutput   : Ptr64 to Void
+   +0x030 StandardError    : Ptr64 to Void
+   +0x038 CurrentDirectory : struct _CURDIR, 2 elements, 0x18 bytes
+   +0x050 DllPath          : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x060 ImagePathName    : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x070 CommandLine      : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x080 Environment      : Ptr64 to Void
+   +0x088 StartingX        : Uint4B
+   +0x08c StartingY        : Uint4B
+   +0x090 CountX           : Uint4B
+   +0x094 CountY           : Uint4B
+   +0x098 CountCharsX      : Uint4B
+   +0x09c CountCharsY      : Uint4B
+   +0x0a0 FillAttribute    : Uint4B
+   +0x0a4 WindowFlags      : Uint4B
+   +0x0a8 ShowWindowFlags  : Uint4B
+   +0x0b0 WindowTitle      : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x0c0 DesktopInfo      : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x0d0 ShellInfo        : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x0e0 RuntimeData      : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x0f0 CurrentDirectores : [32] struct _RTL_DRIVE_LETTER_CURDIR, 4 elements, 0x18 bytes
+   +0x3f0 EnvironmentSize  : Uint8B
+   +0x3f8 EnvironmentVersion : Uint8B
+   +0x400 PackageDependencyData : Ptr64 to Void
+   +0x408 ProcessGroupId   : Uint4B
+   +0x40c LoaderThreads    : Uint4B
+0:000> dt -v _STRING
+urlmon!_STRING
+struct _STRING, 3 elements, 0x10 bytes
+   +0x000 Length           : Uint2B
+   +0x002 MaximumLength    : Uint2B
+   +0x008 Buffer           : Ptr64 to Char
+0:000> dt -v _TEB
+urlmon!_TEB
+struct _TEB, 120 elements, 0x1838 bytes
+   +0x000 NtTib            : struct _NT_TIB, 8 elements, 0x38 bytes
+   +0x038 EnvironmentPointer : Ptr64 to Void
+   +0x040 ClientId         : struct _CLIENT_ID, 2 elements, 0x10 bytes
+   +0x050 ActiveRpcHandle  : Ptr64 to Void
+   +0x058 ThreadLocalStoragePointer : Ptr64 to Void
+   +0x060 ProcessEnvironmentBlock : Ptr64 to struct _PEB, 105 elements, 0x7a0 bytes
+   +0x068 LastErrorValue   : Uint4B
+   +0x06c CountOfOwnedCriticalSections : Uint4B
+   +0x070 CsrClientThread  : Ptr64 to Void
+   +0x078 Win32ThreadInfo  : Ptr64 to Void
+   +0x080 User32Reserved   : [26] Uint4B
+   +0x0e8 UserReserved     : [5] Uint4B
+   +0x100 WOW32Reserved    : Ptr64 to Void
+   +0x108 CurrentLocale    : Uint4B
+   +0x10c FpSoftwareStatusRegister : Uint4B
+   +0x110 ReservedForDebuggerInstrumentation : [16] Ptr64 to Void
+   +0x190 SystemReserved1  : [38] Ptr64 to Void
+   +0x2c0 ExceptionCode    : Int4B
+   +0x2c4 Padding0         : [4] UChar
+   +0x2c8 ActivationContextStackPointer : Ptr64 to struct _ACTIVATION_CONTEXT_STACK, 5 elements, 0x28 bytes
+   +0x2d0 InstrumentationCallbackSp : Uint8B
+   +0x2d8 InstrumentationCallbackPreviousPc : Uint8B
+   +0x2e0 InstrumentationCallbackPreviousSp : Uint8B
+   +0x2e8 TxFsContext      : Uint4B
+   +0x2ec InstrumentationCallbackDisabled : UChar
+   +0x2ed Padding1         : [3] UChar
+   +0x2f0 GdiTebBatch      : struct _GDI_TEB_BATCH, 4 elements, 0x4e8 bytes
+   +0x7d8 RealClientId     : struct _CLIENT_ID, 2 elements, 0x10 bytes
+   +0x7e8 GdiCachedProcessHandle : Ptr64 to Void
+   +0x7f0 GdiClientPID     : Uint4B
+   +0x7f4 GdiClientTID     : Uint4B
+   +0x7f8 GdiThreadLocalInfo : Ptr64 to Void
+   +0x800 Win32ClientInfo  : [62] Uint8B
+   +0x9f0 glDispatchTable  : [233] Ptr64 to Void
+   +0x1138 glReserved1      : [29] Uint8B
+   +0x1220 glReserved2      : Ptr64 to Void
+   +0x1228 glSectionInfo    : Ptr64 to Void
+   +0x1230 glSection        : Ptr64 to Void
+   +0x1238 glTable          : Ptr64 to Void
+   +0x1240 glCurrentRC      : Ptr64 to Void
+   +0x1248 glContext        : Ptr64 to Void
+   +0x1250 LastStatusValue  : Uint4B
+   +0x1254 Padding2         : [4] UChar
+   +0x1258 StaticUnicodeString : struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x1268 StaticUnicodeBuffer : [261] Wchar
+   +0x1472 Padding3         : [6] UChar
+   +0x1478 DeallocationStack : Ptr64 to Void
+   +0x1480 TlsSlots         : [64] Ptr64 to Void
+   +0x1680 TlsLinks         : struct _LIST_ENTRY, 2 elements, 0x10 bytes
+   +0x1690 Vdm              : Ptr64 to Void
+   +0x1698 ReservedForNtRpc : Ptr64 to Void
+   +0x16a0 DbgSsReserved    : [2] Ptr64 to Void
+   +0x16b0 HardErrorMode    : Uint4B
+   +0x16b4 Padding4         : [4] UChar
+   +0x16b8 Instrumentation  : [11] Ptr64 to Void
+   +0x1710 ActivityId       : struct _GUID, 4 elements, 0x10 bytes
+   +0x1720 SubProcessTag    : Ptr64 to Void
+   +0x1728 PerflibData      : Ptr64 to Void
+   +0x1730 EtwTraceData     : Ptr64 to Void
+   +0x1738 WinSockData      : Ptr64 to Void
+   +0x1740 GdiBatchCount    : Uint4B
+   +0x1744 CurrentIdealProcessor : struct _PROCESSOR_NUMBER, 3 elements, 0x4 bytes
+   +0x1744 IdealProcessorValue : Uint4B
+   +0x1744 ReservedPad0     : UChar
+   +0x1745 ReservedPad1     : UChar
+   +0x1746 ReservedPad2     : UChar
+   +0x1747 IdealProcessor   : UChar
+   +0x1748 GuaranteedStackBytes : Uint4B
+   +0x174c Padding5         : [4] UChar
+   +0x1750 ReservedForPerf  : Ptr64 to Void
+   +0x1758 ReservedForOle   : Ptr64 to Void
+   +0x1760 WaitingOnLoaderLock : Uint4B
+   +0x1764 Padding6         : [4] UChar
+   +0x1768 SavedPriorityState : Ptr64 to Void
+   +0x1770 ReservedForCodeCoverage : Uint8B
+   +0x1778 ThreadPoolData   : Ptr64 to Void
+   +0x1780 TlsExpansionSlots : Ptr64 to Ptr64 to Void
+   +0x1788 DeallocationBStore : Ptr64 to Void
+   +0x1790 BStoreLimit      : Ptr64 to Void
+   +0x1798 MuiGeneration    : Uint4B
+   +0x179c IsImpersonating  : Uint4B
+   +0x17a0 NlsCache         : Ptr64 to Void
+   +0x17a8 pShimData        : Ptr64 to Void
+   +0x17b0 HeapVirtualAffinity : Uint2B
+   +0x17b2 LowFragHeapDataSlot : Uint2B
+   +0x17b4 Padding7         : [4] UChar
+   +0x17b8 CurrentTransactionHandle : Ptr64 to Void
+   +0x17c0 ActiveFrame      : Ptr64 to struct _TEB_ACTIVE_FRAME, 3 elements, 0x18 bytes
+   +0x17c8 FlsData          : Ptr64 to Void
+   +0x17d0 PreferredLanguages : Ptr64 to Void
+   +0x17d8 UserPrefLanguages : Ptr64 to Void
+   +0x17e0 MergedPrefLanguages : Ptr64 to Void
+   +0x17e8 MuiImpersonation : Uint4B
+   +0x17ec CrossTebFlags    : Uint2B
+   +0x17ec SpareCrossTebBits : Bitfield Pos 0, 16 Bits
+   +0x17ee SameTebFlags     : Uint2B
+   +0x17ee SafeThunkCall    : Bitfield Pos 0, 1 Bit
+   +0x17ee InDebugPrint     : Bitfield Pos 1, 1 Bit
+   +0x17ee HasFiberData     : Bitfield Pos 2, 1 Bit
+   +0x17ee SkipThreadAttach : Bitfield Pos 3, 1 Bit
+   +0x17ee WerInShipAssertCode : Bitfield Pos 4, 1 Bit
+   +0x17ee RanProcessInit   : Bitfield Pos 5, 1 Bit
+   +0x17ee ClonedThread     : Bitfield Pos 6, 1 Bit
+   +0x17ee SuppressDebugMsg : Bitfield Pos 7, 1 Bit
+   +0x17ee DisableUserStackWalk : Bitfield Pos 8, 1 Bit
+   +0x17ee RtlExceptionAttached : Bitfield Pos 9, 1 Bit
+   +0x17ee InitialThread    : Bitfield Pos 10, 1 Bit
+   +0x17ee SessionAware     : Bitfield Pos 11, 1 Bit
+   +0x17ee LoadOwner        : Bitfield Pos 12, 1 Bit
+   +0x17ee LoaderWorker     : Bitfield Pos 13, 1 Bit
+   +0x17ee SpareSameTebBits : Bitfield Pos 14, 2 Bits
+   +0x17f0 TxnScopeEnterCallback : Ptr64 to Void
+   +0x17f8 TxnScopeExitCallback : Ptr64 to Void
+   +0x1800 TxnScopeContext  : Ptr64 to Void
+   +0x1808 LockCount        : Uint4B
+   +0x180c WowTebOffset     : Int4B
+   +0x1810 ResourceRetValue : Ptr64 to Void
+   +0x1818 ReservedForWdf   : Ptr64 to Void
+   +0x1820 ReservedForCrt   : Uint8B
+   +0x1828 EffectiveContainerId : struct _GUID, 4 elements, 0x10 bytes
+0:000> dt -v _TEB_ACTIVE_FRAME
+urlmon!_TEB_ACTIVE_FRAME
+struct _TEB_ACTIVE_FRAME, 3 elements, 0x18 bytes
+   +0x000 Flags            : Uint4B
+   +0x008 Previous         : Ptr64 to struct _TEB_ACTIVE_FRAME, 3 elements, 0x18 bytes
+   +0x010 Context          : Ptr64 to struct _TEB_ACTIVE_FRAME_CONTEXT, 2 elements, 0x10 bytes
+0:000> dt -v _TEB_ACTIVE_FRAME_CONTEXT
+urlmon!_TEB_ACTIVE_FRAME_CONTEXT
+struct _TEB_ACTIVE_FRAME_CONTEXT, 2 elements, 0x10 bytes
+   +0x000 Flags            : Uint4B
+   +0x008 FrameName        : Ptr64 to Char
+0:000> dt -v _UNICODE_STRING
+urlmon!_UNICODE_STRING
+struct _UNICODE_STRING, 3 elements, 0x10 bytes
+   +0x000 Length           : Uint2B
+   +0x002 MaximumLength    : Uint2B
+   +0x008 Buffer           : Ptr64 to Uint2B
+0:000> dt -v _CONTEXT
+urlmon!_CONTEXT
+struct _CONTEXT, 64 elements, 0x4d0 bytes
+   +0x000 P1Home           : Uint8B
+   +0x008 P2Home           : Uint8B
+   +0x010 P3Home           : Uint8B
+   +0x018 P4Home           : Uint8B
+   +0x020 P5Home           : Uint8B
+   +0x028 P6Home           : Uint8B
+   +0x030 ContextFlags     : Uint4B
+   +0x034 MxCsr            : Uint4B
+   +0x038 SegCs            : Uint2B
+   +0x03a SegDs            : Uint2B
+   +0x03c SegEs            : Uint2B
+   +0x03e SegFs            : Uint2B
+   +0x040 SegGs            : Uint2B
+   +0x042 SegSs            : Uint2B
+   +0x044 EFlags           : Uint4B
+   +0x048 Dr0              : Uint8B
+   +0x050 Dr1              : Uint8B
+   +0x058 Dr2              : Uint8B
+   +0x060 Dr3              : Uint8B
+   +0x068 Dr6              : Uint8B
+   +0x070 Dr7              : Uint8B
+   +0x078 Rax              : Uint8B
+   +0x080 Rcx              : Uint8B
+   +0x088 Rdx              : Uint8B
+   +0x090 Rbx              : Uint8B
+   +0x098 Rsp              : Uint8B
+   +0x0a0 Rbp              : Uint8B
+   +0x0a8 Rsi              : Uint8B
+   +0x0b0 Rdi              : Uint8B
+   +0x0b8 R8               : Uint8B
+   +0x0c0 R9               : Uint8B
+   +0x0c8 R10              : Uint8B
+   +0x0d0 R11              : Uint8B
+   +0x0d8 R12              : Uint8B
+   +0x0e0 R13              : Uint8B
+   +0x0e8 R14              : Uint8B
+   +0x0f0 R15              : Uint8B
+   +0x0f8 Rip              : Uint8B
+   +0x100 FltSave          : struct _XSAVE_FORMAT, 16 elements, 0x200 bytes
+   +0x100 Header           : [2] struct _M128A, 2 elements, 0x10 bytes
+   +0x120 Legacy           : [8] struct _M128A, 2 elements, 0x10 bytes
+   +0x1a0 Xmm0             : struct _M128A, 2 elements, 0x10 bytes
+   +0x1b0 Xmm1             : struct _M128A, 2 elements, 0x10 bytes
+   +0x1c0 Xmm2             : struct _M128A, 2 elements, 0x10 bytes
+   +0x1d0 Xmm3             : struct _M128A, 2 elements, 0x10 bytes
+   +0x1e0 Xmm4             : struct _M128A, 2 elements, 0x10 bytes
+   +0x1f0 Xmm5             : struct _M128A, 2 elements, 0x10 bytes
+   +0x200 Xmm6             : struct _M128A, 2 elements, 0x10 bytes
+   +0x210 Xmm7             : struct _M128A, 2 elements, 0x10 bytes
+   +0x220 Xmm8             : struct _M128A, 2 elements, 0x10 bytes
+   +0x230 Xmm9             : struct _M128A, 2 elements, 0x10 bytes
+   +0x240 Xmm10            : struct _M128A, 2 elements, 0x10 bytes
+   +0x250 Xmm11            : struct _M128A, 2 elements, 0x10 bytes
+   +0x260 Xmm12            : struct _M128A, 2 elements, 0x10 bytes
+   +0x270 Xmm13            : struct _M128A, 2 elements, 0x10 bytes
+   +0x280 Xmm14            : struct _M128A, 2 elements, 0x10 bytes
+   +0x290 Xmm15            : struct _M128A, 2 elements, 0x10 bytes
+   +0x300 VectorRegister   : [26] struct _M128A, 2 elements, 0x10 bytes
+   +0x4a0 VectorControl    : Uint8B
+   +0x4a8 DebugControl     : Uint8B
+   +0x4b0 LastBranchToRip  : Uint8B
+   +0x4b8 LastBranchFromRip : Uint8B
+   +0x4c0 LastExceptionToRip : Uint8B
+   +0x4c8 LastExceptionFromRip : Uint8B
+0:000> dt -v _XSAVE_FORMAT
+urlmon!_XSAVE_FORMAT
+struct _XSAVE_FORMAT, 16 elements, 0x200 bytes
+   +0x000 ControlWord      : Uint2B
+   +0x002 StatusWord       : Uint2B
+   +0x004 TagWord          : UChar
+   +0x005 Reserved1        : UChar
+   +0x006 ErrorOpcode      : Uint2B
+   +0x008 ErrorOffset      : Uint4B
+   +0x00c ErrorSelector    : Uint2B
+   +0x00e Reserved2        : Uint2B
+   +0x010 DataOffset       : Uint4B
+   +0x014 DataSelector     : Uint2B
+   +0x016 Reserved3        : Uint2B
+   +0x018 MxCsr            : Uint4B
+   +0x01c MxCsr_Mask       : Uint4B
+   +0x020 FloatRegisters   : [8] struct _M128A, 2 elements, 0x10 bytes
+   +0x0a0 XmmRegisters     : [16] struct _M128A, 2 elements, 0x10 bytes
+   +0x1a0 Reserved4        : [96] UChar
+0:000> .logclose
+Closing open log file struct_x64
