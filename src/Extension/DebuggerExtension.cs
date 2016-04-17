@@ -70,21 +70,21 @@ namespace PSExt.Extension
 		[DllExport("DebugExtensionUninitialize")]		
 		public static int DebugExtensionUninitialize()
 		{
-			PowerShellSession.Dispose();
-			Marshal.ReleaseComObject(DebugClient);
+			PowerShellSession?.Dispose();			
 			DebugClient = null;			
 			return 0;
 		}
 
 
 		[DllExport("ps")]
-		public static void PS(IntPtr client, [MarshalAs(UnmanagedType.LPStr)] string args)
+		public static int PS(IntPtr client, [MarshalAs(UnmanagedType.LPStr)] string args)
 		{
 			// Must be the first thing in our extension.
 			if (!InitApi(client))
-				return;
+				return -1;
 
 			PowerShellSession.Invoke(args);
+			return 0;
 		}
 
 		[DllExport("psi")]
@@ -98,7 +98,6 @@ namespace PSExt.Extension
 			if (interactive == null) return 1;
 			
 			interactive.Run();
-
 			return 0;
 		}
 

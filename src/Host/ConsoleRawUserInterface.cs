@@ -1,5 +1,6 @@
 using System;
 using System.Management.Automation.Host;
+using System.Runtime.InteropServices;
 
 namespace PSExt.Host
 {
@@ -180,19 +181,76 @@ namespace PSExt.Host
 		/// <param name="contents">A BufferCell structure that defines the fill character.</param>
 		public override void SetBufferContents(Coordinates origin, BufferCell[,] contents)
 		{
+			
 			throw new NotImplementedException("The SetBufferContents() method is not implemented by MyRawUserInterface.");
 		}
 
 		/// <summary>
 		///     Copies a given character to a rectangular region of the screen
-		///     buffer. This method is not implemented. The call fails with an
-		///     exception.
+		///     buffer.
 		/// </summary>
 		/// <param name="rectangle">A Rectangle structure that defines the area to be filled.</param>
 		/// <param name="fill">A BufferCell structure that defines the fill character.</param>
 		public override void SetBufferContents(Rectangle rectangle, BufferCell fill)
 		{
-			throw new NotImplementedException("The SetBufferContents() method is not implemented by MyRawUserInterface.");
+			var stdOut = GetStdHandle(STD_OUTPUT_HANDLE);
+			COORD coord = new COORD() {X = (short) rectangle.Top, Y = (short) rectangle.Left};					
+			var rows = rectangle.Top - rectangle.Bottom;
+			var cols = rectangle.Right - rectangle.Left;
+			uint length = (uint) (rows*cols);
+			if (length == 0)
+			{
+				length = (uint) (Console.BufferWidth*Console.BufferHeight);
+				coord = new COORD() { X = 0, Y = 0};
+			}
+			uint written;
+			int res = FillConsoleOutputCharacter(stdOut, fill.Character, length , coord, out written);
+		}
+
+		public const int STD_OUTPUT_HANDLE = -11;
+		public const char WHITE_SPACE = ' ';
+
+		[DllImport("Kernel32.dll")]
+		public static extern IntPtr GetStdHandle(int nStdHandle);
+
+		[DllImport("Kernel32.dll")]
+		public static extern int GetConsoleScreenBufferInfo
+			(IntPtr hConsoleOutput,
+			out CONSOLE_SCREEN_BUFFER_INFO lpConsoleScreenBufferInfo);
+
+		[DllImport("Kernel32.dll")]
+		public static extern int FillConsoleOutputCharacter
+			(IntPtr hConsoleOutput, char cCharacter, uint nLength,
+			COORD dwWriteCoord, out uint lpNumberOfCharsWritten);
+
+		[DllImport("Kernel32.dll")]
+		public static extern int SetConsoleCursorPosition
+			(IntPtr hConsoleOutput, COORD dwCursorPosition);
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct CONSOLE_SCREEN_BUFFER_INFO
+		{
+			public COORD dwSize;
+			public COORD dwCursorPosition;
+			public ushort wAttributes;
+			public SMALL_RECT srWindow;
+			public COORD dwMaximumWindowSize;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct COORD
+		{
+			public short X;
+			public short Y;
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		public struct SMALL_RECT
+		{
+			public short Left;
+			public short Top;
+			public short Right;
+			public short Bottom;
 		}
 	}
 }
