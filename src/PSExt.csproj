@@ -147,6 +147,7 @@
     <Compile Include="Module\GetCallstackCommand.cs" />
     <Compile Include="Extension\DebuggerDispatcher.cs" />
     <Compile Include="DebuggerProxy.cs" />
+    <Compile Include="Module\GetThreadCommand.cs" />
     <Compile Include="Module\StackFrame.cs" />
     <Compile Include="Module\NewBreakpointCommand.cs" />
     <Compile Include="Module\DataBreakpointAccessTypes.cs" />
