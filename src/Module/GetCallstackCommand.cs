@@ -3,7 +3,7 @@ using System.Management.Automation;
 
 namespace PSExt.Commands
 {
-	[Cmdlet(VerbsCommon.Get, "Thread")]
+	[Cmdlet(VerbsCommon.Get, "StackFrame")]
 	[OutputType(typeof (StackFrame))]
 	[Alias("k")]
 	public class GetCallstackCommand : DbgBaseCmdlet
@@ -12,8 +12,8 @@ namespace PSExt.Commands
 		public SwitchParameter All { get; set; }
 		protected override void ProcessRecord()
 		{
-			var sendToPipeline = Debugger.GetCallstack(All).SelectMany(c=>c.Frames).ToList();
-			WriteObject(sendToPipeline, true);
+			var stackFrames = Debugger.GetCallstack(All).SelectMany(c=>c.Frames).ToList();
+			WriteObject(stackFrames, true);
 		}
 	}
 }
