@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Diagnostics.Runtime.Interop;
 using static PSExt.ErrorHelper;
@@ -13,7 +14,52 @@ namespace PSExt
 
 		public Symbols(IDebugSymbols3 symbols)
 		{
-			_symbols = symbols;
+			_symbols = symbols;		
+		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		struct LangAndCodepage
+		{
+			public short lang;
+			public short codepage;
+
+			public override string ToString()
+			{
+				return $"{lang:x4}{codepage:x4}";
+			}
+		}
+
+		private unsafe string GetModuleVersionItemInfo(uint moduleIndex, string itemName)
+		{			
+			byte[] buffer = new byte[256];			
+			uint verInfoSize;
+			LangAndCodepage[] translation = new LangAndCodepage[5];
+			fixed (byte* buf = buffer)
+			fixed (LangAndCodepage* tb = translation) {				
+				uint tsSize;
+				var res = _symbols.GetModuleVersionInformationWide(moduleIndex, 0, "\\VarFileInfo\\Translation", new IntPtr(tb), sizeof(LangAndCodepage)*translation.Length, out tsSize);
+				res = _symbols.GetModuleVersionInformationWide(moduleIndex, 0, $"\\StringFileInfo\\{translation[0]}\\{itemName}", new IntPtr(buf), 
+					buffer.Length, out verInfoSize);
+				if (res != 0)
+				{
+					return String.Empty;
+				}
+			}
+
+			return Encoding.Unicode.GetString(buffer, 0, (int) verInfoSize - 2);
+					
+		}
+
+		public ModuleVersionInfo GetModuleVersionInfo(uint moduleIndex)
+		{
+			var productVersion = GetModuleVersionItemInfo(moduleIndex, "ProductVersion");
+			var fileVersion = GetModuleVersionItemInfo(moduleIndex, "FileVersion");
+			var productName = GetModuleVersionItemInfo(moduleIndex, "ProductName");
+			var company = GetModuleVersionItemInfo(moduleIndex, "CompanyName");
+			var desc = GetModuleVersionItemInfo(moduleIndex, "FileDescription");
+			var comments = GetModuleVersionItemInfo(moduleIndex, "Comments");
+			
+			return new ModuleVersionInfo(fileVersion, productVersion, desc, company, productName, comments);
 		}
 
 		public IList<SymbolSearchResult> GetMatchingSymbols(string pattern)
@@ -130,6 +176,37 @@ namespace PSExt
 			return new ScopeSymbolGroup(group);
 		}
 
+		public DEBUG_MODULE_PARAMETERS GetModuleParameters(uint moduleIndex)
+		{
+			DEBUG_MODULE_PARAMETERS[] moduleParam = new DEBUG_MODULE_PARAMETERS[1];
+			int res = _symbols.GetModuleParameters(1, null, moduleIndex, moduleParam);
+			if(res != 0)
+			{
+				ThrowDebuggerException(res, "IDebugSymbols.GetModuleParameters");
+			}
+			return moduleParam[0];
+
+		}
+	}
+
+	public class ModuleVersionInfo
+	{
+		public string FileVersion { get; }
+		public string ProductVersion { get;}
+		public string Description { get; }
+		public string Company { get;  }
+		public string ProductName { get; }
+		public string Comments { get; }
+
+		public ModuleVersionInfo(string fileVersion, string productVersion, string description, string company, string productName, string comments)
+		{
+			FileVersion = fileVersion;
+			ProductVersion = productVersion;
+			Description = description;
+			Company = company;
+			ProductName = productName;
+			Comments = comments;
+		}
 	}
 
 	internal class ScopeSymbolGroup

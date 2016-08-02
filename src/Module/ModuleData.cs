@@ -7,10 +7,7 @@ namespace PSExt
 	[DebuggerDisplay("{ModuleName}")]
 	public class ModuleData
 	{
-		public ModuleData(string moduleName, string imageName, string loadedImageName, string loadedPdbName, ulong baseOfImage,
-			uint imageSize, uint timeDateStamp, uint checkSum, uint numSyms, uint symType,
-			Guid pdbSig70, uint pdbAge, bool pdbUnmatched, bool lineNumbers, bool globalSymbols, bool typeInfo,
-			bool sourceIndexed, bool publics, uint machineType)
+		public ModuleData(string moduleName, string imageName, string loadedImageName, string loadedPdbName, ulong baseOfImage, uint imageSize, uint timeDateStamp, uint checkSum, uint numSyms, uint symType, Guid pdbSig70, uint pdbAge, bool pdbUnmatched, bool lineNumbers, bool globalSymbols, bool typeInfo, bool sourceIndexed, bool publics, uint machineType, ModuleVersionInfo versionInfo)
 		{
 			ModuleName = moduleName;
 			ImageName = imageName;
@@ -31,6 +28,12 @@ namespace PSExt
 			SourceIndexed = sourceIndexed;
 			Publics = publics;
 			MachineType = (ImageFileMachineType) machineType;
+			FileVersion = versionInfo.FileVersion;
+			ProductVersion = versionInfo.ProductVersion;
+			ProductName = versionInfo.ProductName;
+			Comments = versionInfo.Comments;
+			Description = versionInfo.Description;
+			Company = versionInfo.Company;
 		}
 
 		public string ModuleName { get; } // module name
@@ -59,6 +62,13 @@ namespace PSExt
 
 		public FileVersionInfo VersionInfo
 			=> File.Exists(LoadedImageName) ? FileVersionInfo.GetVersionInfo(LoadedImageName) : null;
+
+		public string FileVersion { get; }
+		public string ProductVersion { get; }
+		public string Description { get; }
+		public string Company { get; }
+		public string ProductName { get; }
+		public string Comments { get; }
 
 		public override string ToString() => ModuleName;
 	}

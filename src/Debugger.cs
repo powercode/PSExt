@@ -112,7 +112,7 @@ namespace PSExt
 			{
 				ThrowDebuggerException(res, "IDebugSymbols.GetNumberModules");
 			}
-
+			
 			for (UInt32 i = 0; i < loaded; ++i)
 			{
 				ulong moduleBase;
@@ -131,21 +131,25 @@ namespace PSExt
 				{
 					ThrowDebuggerException(status, "IDebugSymbols.GetSymbolInformation");
 				}
-				var md = ToModuleData(buffer);
+
+				var versionInfo = Symbols.GetModuleVersionInfo(i);
+				var moduleParams = Symbols.GetModuleParameters(i);
+
+				var md = ToModuleData(buffer, versionInfo, moduleParams);
 				modules.Add(md);
 			}
 
 			return modules;
 		}
 
-		private unsafe ModuleData ToModuleData(byte[] moduleInfoBuffer)
+		private unsafe ModuleData ToModuleData(byte[] moduleInfoBuffer, ModuleVersionInfo versionInfo, DEBUG_MODULE_PARAMETERS moduleParams)
 		{
 			fixed (byte* buf = moduleInfoBuffer)
 			{
 				IMAGEHLP_MODULEW64 mi = Marshal.PtrToStructure<IMAGEHLP_MODULEW64>(new IntPtr(buf));
 				return new ModuleData(mi.ModuleName, mi.ImageName, mi.LoadedImageName, mi.LoadedPdbName, mi.BaseOfImage, mi.ImageSize,
-					 mi.TimeDateStamp, mi.CheckSum, mi.NumSyms, (uint)mi.SymType, mi.PdbSig70, mi.PdbAge, mi.PdbUnmatched, mi.LineNumbers, mi.GlobalSymbols,
-					 mi.TypeInfo, mi.SourceIndexed, mi.Publics, mi.MachineType);
+					 moduleParams.TimeDateStamp, moduleParams.Checksum, mi.NumSyms, (uint)mi.SymType, mi.PdbSig70, mi.PdbAge, mi.PdbUnmatched, mi.LineNumbers, mi.GlobalSymbols,
+					 mi.TypeInfo, mi.SourceIndexed, mi.Publics, mi.MachineType, versionInfo);
 			}
 		}
 
