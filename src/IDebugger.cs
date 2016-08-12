@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Management.Automation;
+using DebugData;
 
 namespace PSExt
 {
-	public interface IDebugger
+	public interface IDebugger : IDisposable
 	{
 		string ExecuteCommand(string command);
 		string ReadLine();
@@ -13,5 +15,8 @@ namespace PSExt
 		IList<ModuleData> GetModules();
 		IList<DebugThread> GetCallstack(bool all);
 		IList<SymbolValue> GetVariables(StackFrame frame, int levels);
+		void SetSymbolPath(string symbolPath);
+		void ReloadSymbols();
+		void EndDumpSession();
 	}
 }

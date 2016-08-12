@@ -64,6 +64,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.PowerShell.4.ReferenceAssemblies.1.0.0\lib\net4\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="xunit.abstractions, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8d05b1bb7a6fdb6c, processorArchitecture=MSIL">
       <HintPath>..\packages\xunit.abstractions.2.0.0\lib\net35\xunit.abstractions.dll</HintPath>
       <Private>True</Private>
@@ -103,6 +107,10 @@
     <None Include="PSExt.snk" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DebuggerData\DebuggerData.csproj">
+      <Project>{96b4b115-59bc-4bc5-96fb-f93777bdf5a0}</Project>
+      <Name>DebuggerData</Name>
+    </ProjectReference>
     <ProjectReference Include="..\src\PSExt.csproj">
       <Project>{789e85cb-0a34-4175-9ebe-3f1e0661f483}</Project>
       <Name>PSExt</Name>

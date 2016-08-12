@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using DebugData;
 using Microsoft.Diagnostics.Runtime.Interop;
 using static PSExt.ErrorHelper;
 
@@ -10,11 +11,11 @@ namespace PSExt
 {
 	internal class Symbols
 	{
-		private readonly IDebugSymbols3 _symbols;
+		private readonly IDebugSymbols5 _symbols;
 
-		public Symbols(IDebugSymbols3 symbols)
+		public Symbols(IDebugSymbols5 symbols)
 		{
-			_symbols = symbols;		
+			_symbols = symbols;
 		}
 
 		[StructLayout(LayoutKind.Sequential)]
@@ -88,10 +89,29 @@ namespace PSExt
 					GetSymbolNameByOffset(offset, ref builder, out displacement);
 					return;
 				default:
-					builder.AppendFormat($"0x{offset:x}");
-					//ErrorHelper.ThrowDebuggerException(res, "IDebugSymbols3.GetNameByOffsetWide");
+					builder.Clear();
+					builder.AppendFormat($"0x{offset:x}");					
 					return;
 			}
+		}
+
+		public void GetNameByInlineContext(ulong offset, uint inlineContext, ref StringBuilder builder, out ulong displacement)
+		{
+			uint nameSize;
+			var res = _symbols.GetNameByInlineContextWide(offset, inlineContext, builder, builder.Capacity, out nameSize, out displacement);
+			switch (res)
+			{
+				case 0: // S_OK					
+					return;
+				case 1: // S_FALSE					
+					builder = new StringBuilder((int)nameSize);
+					GetSymbolNameByOffset(offset, ref builder, out displacement);
+					return;
+				default:
+					builder.Clear();
+					builder.AppendFormat($"0x{offset:x}");					
+					return;
+			}			
 		}
 
 		private class SymbolsSearch : IDisposable
@@ -187,28 +207,30 @@ namespace PSExt
 			return moduleParam[0];
 
 		}
-	}
 
-	public class ModuleVersionInfo
-	{
-		public string FileVersion { get; }
-		public string ProductVersion { get;}
-		public string Description { get; }
-		public string Company { get;  }
-		public string ProductName { get; }
-		public string Comments { get; }
-
-		public ModuleVersionInfo(string fileVersion, string productVersion, string description, string company, string productName, string comments)
+		public void SetSymbolPath(string symbolPath)
 		{
-			FileVersion = fileVersion;
-			ProductVersion = productVersion;
-			Description = description;
-			Company = company;
-			ProductName = productName;
-			Comments = comments;
+			var res = _symbols.SetSymbolPathWide(symbolPath);
+			if (res != 0)
+			{
+				ThrowDebuggerException(res, "IDebugSymbols.SetSymbolPathWide");
+			}
+		}
+
+		public int Reload(string moduleName)
+		{
+			var res = _symbols.ReloadWide(moduleName);
+			return res;
+		}
+
+		public void Dispose()
+		{
+			var res = Marshal.FinalReleaseComObject(_symbols);
+			Debug.Assert(res == 0);
 		}
 	}
 
+	
 	internal class ScopeSymbolGroup
 	{
 		private readonly IDebugSymbolGroup2 _group;

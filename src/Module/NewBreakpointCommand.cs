@@ -1,4 +1,5 @@
 ﻿using System.Management.Automation;
+using DebugData;
 
 namespace PSExt.Commands
 {

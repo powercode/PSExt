@@ -22,9 +22,9 @@
 	</Controls>
 	<ViewDefinitions>
 		<View>
-			<Name>PSExt.StackFrame</Name>
+			<Name>DebugData.StackFrame</Name>
 			<ViewSelectedBy>
-				<TypeName>PSExt.StackFrame</TypeName>
+				<TypeName>DebugData.StackFrame</TypeName>
 			</ViewSelectedBy>
 			<GroupBy>
 				<PropertyName>Thread</PropertyName>
@@ -58,13 +58,13 @@
 								<PropertyName>FrameNumber</PropertyName>
 							</TableColumnItem>
 							<TableColumnItem>								
-								<ScriptBlock>$_.FrameOffset.DisplayAddress</ScriptBlock>
+								<ScriptBlock>if ($_.IsInline) {'(Inline function)'} else{ $_.FrameOffset.DisplayAddress}</ScriptBlock>
 							</TableColumnItem>
 							<TableColumnItem>
-								<ScriptBlock>$_.ReturnOffset.DisplayAddress</ScriptBlock>								
+								<ScriptBlock>if ($_.IsInline) {'--------`--------'} else{ $_.ReturnOffset.DisplayAddress}</ScriptBlock>								
 							</TableColumnItem>
 							<TableColumnItem>
-								<ScriptBlock>'{0}+0x{1:x}' -f $_.Name, $_.Displacement</ScriptBlock>
+								<ScriptBlock>if ($_.Displacement) {'{0}+0x{1:x}' -f $_.Name, $_.Displacement} else {$_.Name}</ScriptBlock>
 							</TableColumnItem>
 						</TableColumnItems>
 					</TableRowEntry>
@@ -72,9 +72,9 @@
 			</TableControl>
 		</View>
 		<View>
-			<Name>PSExt.ModuleData</Name>
+			<Name>DebugData.ModuleData</Name>
 			<ViewSelectedBy>
-				<TypeName>PSExt.ModuleData</TypeName>
+				<TypeName>DebugData.ModuleData</TypeName>
 			</ViewSelectedBy>
 			<TableControl>
 				<TableHeaders>					
@@ -90,7 +90,7 @@
 					</TableColumnHeader>
 					<TableColumnHeader>
 						<Label>ModuleName</Label>
-						<Width>20</Width>
+						<Width>30</Width>
 					</TableColumnHeader>
 					<TableColumnHeader>
 						<Label>PDB</Label>						
@@ -110,6 +110,56 @@
 							</TableColumnItem>
 							<TableColumnItem>
 								<PropertyName>LoadedPdbName</PropertyName>
+							</TableColumnItem>
+						</TableColumnItems>
+					</TableRowEntry>
+				</TableRowEntries>
+			</TableControl>
+		</View>
+
+		<View>
+			<Name>ver</Name>
+			<ViewSelectedBy>
+				<TypeName>DebugData.ModuleData</TypeName>
+			</ViewSelectedBy>
+			<TableControl>
+				<TableHeaders>
+					<TableColumnHeader>
+						<Label>ModuleName</Label>						
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>TimeStamp</Label>						
+						<Alignment>Right</Alignment>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Built</Label>						
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>FileVersion</Label>
+						<Width>30</Width>
+					</TableColumnHeader>
+					<TableColumnHeader>
+						<Label>Description</Label>						
+					</TableColumnHeader>
+				</TableHeaders>
+				<TableRowEntries>
+					<TableRowEntry>
+						<TableColumnItems>
+							<TableColumnItem>
+								<PropertyName>ModuleName</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<FormatString>X8</FormatString>
+								<PropertyName>TimeDateStamp</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>								
+								<PropertyName>Built</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>FileVersion</PropertyName>
+							</TableColumnItem>
+							<TableColumnItem>
+								<PropertyName>Description</PropertyName>
 							</TableColumnItem>
 						</TableColumnItems>
 					</TableRowEntry>

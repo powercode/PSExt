@@ -8,6 +8,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using PSExt.Commands;
 using PSExt.Host;
 
 namespace PSExt.Extension
@@ -38,7 +39,7 @@ namespace PSExt.Extension
 			// Add the executing assembly as a PowerShell module since we have cmdlets here we want to execute.
 			// This should be refactored into separate assemblies, since we could use the debugger parts outside
 			// of an extension
-			var location = Assembly.GetExecutingAssembly().Location;
+			var location = typeof(DbgBaseCmdlet).Assembly.Location;
 			initialSessionState.ImportPSModule(new[] { location });
 
 			// Extend types for easier display			

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Management.Automation;
+using DebugData;
 
 namespace PSExt
 {
@@ -60,6 +61,26 @@ namespace PSExt
 		public IList<SymbolValue> GetVariables(StackFrame frame, int levels)
 		{
 			return _proxy.GetStackFrame(frame, levels);
+		}
+
+		public void SetSymbolPath(string symbolPath)
+		{
+			_proxy.SetSymbolPath(symbolPath);
+		}
+
+		public void ReloadSymbols()
+		{
+			_proxy.ReloadSymbols();
+		}
+
+		public void EndDumpSession()
+		{
+			_proxy.EndDumpSession();
+		}
+
+		public void Dispose()
+		{
+			_proxy.Dispose();
 		}
 
 		private class DynamicDebuggerProxy : DynamicObject

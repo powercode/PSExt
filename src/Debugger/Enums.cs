@@ -262,7 +262,28 @@ namespace Microsoft.Diagnostics.Runtime.Interop
 		///     OutBuffer - Unused
 		///     return - ResumeThreads() return.
 		/// </summary>
-		RESUME_THREAD = 34
+		RESUME_THREAD = 34,
+
+		/// <summary>
+		//	InBuffer - LONG32 - 0:query current state; >0:enable inline queries; <0: disable inline queries
+		//	OutBuffer - Unused
+		//	return - S_OK: inline queries are enabled; S_FALSE: inline queries are disabled; others: errors.
+		/// </summary>
+		INLINE_QUERY = 35,
+		/// <summary>
+		// InBuffer - Unused
+		// OutBuffer - Unused
+		// return - S_OK.
+		/// </summary>
+		TL_INSTRUMENTATION_AWARE = 36,
+
+		/// <summary>
+		// InBuffer - Unused
+		// OutBuffer - ULONG for version number supported
+		// return - S_OK.
+		/// </summary>
+		GET_INSTRUMENTATION_VERSION = 37,
+	
 	}
 
 	public enum DEBUG_SRCFILE : uint
@@ -440,7 +461,7 @@ namespace Microsoft.Diagnostics.Runtime.Interop
 		PROCESS = 2,
 		ALL = 3
 	}
-
+	
 	public enum DEBUG_END : uint
 	{
 		PASSIVE = 0,

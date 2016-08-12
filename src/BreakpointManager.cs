@@ -1,13 +1,17 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using DebugData;
 using Microsoft.Diagnostics.Runtime.Interop;
 
 namespace PSExt
 {
 	[SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
-	public class BreakpointManager
+	public class BreakpointManager : IDisposable
 	{
 		private readonly IDebugControl5 _control5;
 		private readonly StringBuilder _builder = new StringBuilder(256);
@@ -16,7 +20,7 @@ namespace PSExt
 		public BreakpointManager(IDebugClient6 client)
 		{
 			_control5 = (IDebugControl5) client;
-			_symbols = new Symbols((IDebugSymbols3) client);
+			_symbols = new Symbols((IDebugSymbols5) client);
 		}
 
 		private uint GetBreakpointCount()
@@ -175,6 +179,12 @@ namespace PSExt
 			var bps = GetBreakpoints();
 
 			return bps.Where(bp => ids.Contains(bp.Id)).ToList();
+		}
+
+		public void Dispose()
+		{
+			_symbols.Dispose();
+			Marshal.ReleaseComObject(_control5);			
 		}
 	}
 }

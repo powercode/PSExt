@@ -304,6 +304,31 @@ namespace Microsoft.Diagnostics.Runtime.Interop
 		public uint FrameNumber;
 	}
 
+	[Flags]
+	public enum StackFrameType : byte
+	{
+		Init = 0,
+		Stack = 1,
+		Inline = 2,
+		RelativeAddress = 0x80,
+		Ignore = 0xFF,
+	}
+
+	[StructLayout(LayoutKind.Explicit, Size=4)]
+	public struct InlineFrameContext
+	{
+		[FieldOffset(0)]
+		public uint ContextValue;
+
+		[FieldOffset(0)]
+		public byte FrameId;
+		[FieldOffset(1)]
+		public StackFrameType FrameType;
+		[FieldOffset(2)]
+		public short FrameSignature;
+
+	}
+
 	[StructLayout(LayoutKind.Sequential)]
 	public unsafe struct DEBUG_STACK_FRAME_EX
 	{
@@ -319,7 +344,7 @@ namespace Microsoft.Diagnostics.Runtime.Interop
 		public uint FrameNumber;
 
 		/* DEBUG_STACK_FRAME_EX */
-		public uint InlineFrameContext;
+		public InlineFrameContext InlineFrameContext;
 		public uint Reserved1;
 
 		public DEBUG_STACK_FRAME_EX(DEBUG_STACK_FRAME dsf)
@@ -341,7 +366,10 @@ namespace Microsoft.Diagnostics.Runtime.Interop
 			}
 			Virtual = dsf.Virtual;
 			FrameNumber = dsf.FrameNumber;
-			InlineFrameContext = 0xFFFFFFFF;
+			InlineFrameContext.FrameId = 0;
+			InlineFrameContext.FrameSignature = 0;
+			InlineFrameContext.FrameType = StackFrameType.Ignore;
+			InlineFrameContext.ContextValue = 0xFFFFFFFF;
 			Reserved1 = 0;
 		}
 	}
